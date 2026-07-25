@@ -146,6 +146,7 @@ GameObject:
   - component: {fileID: 8685373749486869375}
   - component: {fileID: 966299853694655838}
   - component: {fileID: 6369505412604317244}
+  - component: {fileID: 1427195640078385707}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -249,6 +250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Morrow.Runtime::Morrow.Player.PlayerController
   inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  actionMap: Player
   moveSpeed: 3.5
   runMultiplier: 1.7
   crouchMultiplier: 0.45
@@ -266,6 +268,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Morrow.Runtime::Morrow.Interaction.PlayerInteractor
   inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  actionMap: Player
   reach: 0.5
   radius: 0.45
   searchLayers:
@@ -336,6 +339,27 @@ MonoBehaviour:
   beam: {fileID: 5462522140775758744}
   hearingRing: {fileID: 3743583923798362931}
   startOn: 1
+--- !u!114 &1427195640078385707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82980660af2e2d84a9ccbb08d44ba3b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Monster.Captive
+  disableWhileHeld:
+  - {fileID: 4619516547538424807}
+  - {fileID: 5971796654612665053}
+  - {fileID: 6369505412604317244}
+  - {fileID: 8685373749486869375}
+  hideWhileHeld:
+  - {fileID: 5462522140775758744}
+  - {fileID: 3743583923798362931}
+  rescuePrompt: "\uAD6C\uCD9C\uD558\uAE30"
 --- !u!1 &3743583923798362931
 GameObject:
   m_ObjectHideFlags: 0
