@@ -143,6 +143,9 @@ GameObject:
   - component: {fileID: 4619516547538424807}
   - component: {fileID: 5971796654612665053}
   - component: {fileID: 842092005693342314}
+  - component: {fileID: 8685373749486869375}
+  - component: {fileID: 966299853694655838}
+  - component: {fileID: 6369505412604317244}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -166,6 +169,7 @@ Transform:
   - {fileID: 4340877740333203927}
   - {fileID: 3378130258239158657}
   - {fileID: 3458341423288537807}
+  - {fileID: 8967620835550725823}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &3066994895097694869
@@ -246,6 +250,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Morrow.Runtime::Morrow.Player.PlayerController
   inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   moveSpeed: 3.5
+  runMultiplier: 1.7
+  crouchMultiplier: 0.45
   acceleration: 0.08
 --- !u!114 &5971796654612665053
 MonoBehaviour:
@@ -278,6 +284,176 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb765fa488a7fb147bd07e88f7209577, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Morrow.Runtime::Morrow.Player.PlayerAnimator
+--- !u!114 &8685373749486869375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 483b7f5e207d91e42903f92a995bcf23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Noise.FootstepNoise
+  kind: 0
+  crouchRange: 2.5
+  walkRange: 7
+  runRange: 13
+  crouchInterval: 0.75
+  walkInterval: 0.45
+  runInterval: 0.28
+--- !u!114 &966299853694655838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a83952cbdf314e748ac9fab680aeb488, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Noise.NoiseEars
+  hearSelf: 0
+  hearAlly: 1
+  hearMonster: 1
+  sensitivity: 1
+  memory: 4
+--- !u!114 &6369505412604317244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cede85a3e032844495adbc43bb2722e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Player.FlashlightToggle
+  inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  beam: {fileID: 5462522140775758744}
+  hearingRing: {fileID: 3743583923798362931}
+  startOn: 1
+--- !u!1 &3743583923798362931
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8967620835550725823}
+  - component: {fileID: 267521059162700650}
+  - component: {fileID: 206358646710803842}
+  - component: {fileID: 4172112002726867711}
+  m_Layer: 0
+  m_Name: HearingRing
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8967620835550725823
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3743583923798362931}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.35, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 556623649489529968}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &267521059162700650
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3743583923798362931}
+  m_Mesh: {fileID: 0}
+--- !u!23 &206358646710803842
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3743583923798362931}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 0e3b329c245888e408f7ad9391f04370, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 100
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4172112002726867711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3743583923798362931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a673c2244999a7e4a9b31cc64285e131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Noise.NoiseRing
+  radius: 2.2
+  thickness: 0.05
+  segments: 96
+  verticalScale: 0.75
+  maxDisplacement: 0.55
+  rippleLifetime: 0.9
+  rippleSpread: 38
+  rippleFrequency: 3
+  allyColour: {r: 0.35, g: 1, b: 0.45, a: 1}
+  monsterColour: {r: 1, g: 0.25, b: 0.25, a: 1}
+  unknownColour: {r: 1, g: 0.9, b: 0.3, a: 1}
+  restColour: {r: 0.5, g: 0.55, b: 0.7, a: 1}
+  restAlpha: 0.18
+  ally: {fileID: 0}
+  allyRecognitionRange: 9
 --- !u!1 &5462522140775758744
 GameObject:
   m_ObjectHideFlags: 0
