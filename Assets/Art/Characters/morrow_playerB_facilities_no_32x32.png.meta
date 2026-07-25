@@ -170,9 +170,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 3b8499ae98feea750800000000000000
+      spriteID: ca0bc4a997a17dd4f8595299e6c5dd93
       internalID: 6318250702872856755
       vertices: []
       indices: 
@@ -192,9 +192,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e05d3df0d3c0fe050800000000000000
+      spriteID: 1f02adea1c459a441ab13df3051ffdc8
       internalID: 5831893498866160910
       vertices: []
       indices: 
@@ -214,9 +214,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e7ad0ad7b07f341c0800000000000000
+      spriteID: ad3b704423767d54badccc663aab8bdf
       internalID: -4520497972225451394
       vertices: []
       indices: 
@@ -236,9 +236,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 146697604c753b320800000000000000
+      spriteID: 987a50d83c6dead4587dcd1aafe6cd1b
       internalID: 2572496311592511041
       vertices: []
       indices: 
@@ -258,9 +258,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 337bc98a70c5dfb70800000000000000
+      spriteID: f42754154001ba7459a74f3b21c1c4cd
       internalID: 8934398423736301363
       vertices: []
       indices: 
@@ -270,8 +270,8 @@ TextureImporter:
       name: morrow_playerB_facilities_no_32x32_5
       rect:
         serializedVersion: 2
-        x: 0
-        y: 64
+        x: 160
+        y: 96
         width: 32
         height: 32
       alignment: 7
@@ -280,9 +280,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 3f0afb4f733616930800000000000000
+      spriteID: dc6bb84d96cd2d343a5fc7e82eab432f
       internalID: 4134695024883376371
       vertices: []
       indices: 
@@ -292,8 +292,8 @@ TextureImporter:
       name: morrow_playerB_facilities_no_32x32_6
       rect:
         serializedVersion: 2
-        x: 32
-        y: 64
+        x: 192
+        y: 96
         width: 32
         height: 32
       alignment: 7
@@ -302,9 +302,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d5347c72e88cb19a0800000000000000
+      spriteID: 1fd430193ae79aa4783f930c5c63d471
       internalID: -6261190344050261155
       vertices: []
       indices: 
@@ -314,7 +314,7 @@ TextureImporter:
       name: morrow_playerB_facilities_no_32x32_7
       rect:
         serializedVersion: 2
-        x: 64
+        x: 0
         y: 64
         width: 32
         height: 32
@@ -324,9 +324,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 85d7568c02c47ec40800000000000000
+      spriteID: c2b74d67bb8137d4c85ab9064fc669a9
       internalID: 5541481570187443544
       vertices: []
       indices: 
@@ -336,7 +336,7 @@ TextureImporter:
       name: morrow_playerB_facilities_no_32x32_8
       rect:
         serializedVersion: 2
-        x: 96
+        x: 32
         y: 64
         width: 32
         height: 32
@@ -346,9 +346,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 900242ec6c655e580800000000000000
+      spriteID: 6e13ba837e37e2346a2c6f4c16f09e01
       internalID: -8798530885136408567
       vertices: []
       indices: 
@@ -358,6 +358,50 @@ TextureImporter:
       name: morrow_playerB_facilities_no_32x32_9
       rect:
         serializedVersion: 2
+        x: 64
+        y: 64
+        width: 32
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 329820e736928144096f9e5fed57242f
+      internalID: 6501278636114248764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: morrow_playerB_facilities_no_32x32_10
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 64
+        width: 32
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 26e6fd53d61b8c148ba937101ee4bba9
+      internalID: 696534329620057890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: morrow_playerB_facilities_no_32x32_11
+      rect:
+        serializedVersion: 2
         x: 128
         y: 64
         width: 32
@@ -368,53 +412,9 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c340d6b697e293a50800000000000000
-      internalID: 6501278636114248764
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: morrow_playerB_facilities_no_32x32_10
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 32
-        width: 32
-        height: 32
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 22f4eda48469aa900800000000000000
-      internalID: 696534329620057890
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: morrow_playerB_facilities_no_32x32_11
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 32
-        width: 32
-        height: 32
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 55b63f42e221ede80800000000000000
+      spriteID: 777d1473963e3ad4cb4d6856b6a9ea31
       internalID: -8152058286096290987
       vertices: []
       indices: 
@@ -424,6 +424,94 @@ TextureImporter:
       name: morrow_playerB_facilities_no_32x32_12
       rect:
         serializedVersion: 2
+        x: 160
+        y: 64
+        width: 32
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: af45175cf5ceef049835b0e41b9fb9f7
+      internalID: 194224535522489377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: morrow_playerB_facilities_no_32x32_13
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 64
+        width: 32
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aebbbad23f4e4b74a80075f3f6183076
+      internalID: 2552340342405693329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: morrow_playerB_facilities_no_32x32_14
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 32
+        width: 32
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 16434c8ccbe9f3648af2a9f5ef26f967
+      internalID: -5142094798777848257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: morrow_playerB_facilities_no_32x32_15
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 32
+        width: 32
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75b1a39a40b47974d8e71b19736ce20a
+      internalID: -3937783831877337930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: morrow_playerB_facilities_no_32x32_16
+      rect:
+        serializedVersion: 2
         x: 64
         y: 32
         width: 32
@@ -434,16 +522,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 124bb7e9f2602b200800000000000000
-      internalID: 194224535522489377
+      spriteID: 2923daa2cdd74264facba3d4c5dfe355
+      internalID: -1141051362135577751
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: morrow_playerB_facilities_no_32x32_13
+      name: morrow_playerB_facilities_no_32x32_17
       rect:
         serializedVersion: 2
         x: 96
@@ -456,16 +544,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 19f7dfeb40cbb6320800000000000000
-      internalID: 2552340342405693329
+      spriteID: 7d15d92ddd7c32f4299f02203712bfd2
+      internalID: 5388071798112356969
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: morrow_playerB_facilities_no_32x32_14
+      name: morrow_playerB_facilities_no_32x32_18
       rect:
         serializedVersion: 2
         x: 128
@@ -478,16 +566,60 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f3e6675460c93a8b0800000000000000
-      internalID: -5142094798777848257
+      spriteID: f77f8aa432ad17d41b7b1b2f3182bb3f
+      internalID: -7124596277791265746
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: morrow_playerB_facilities_no_32x32_15
+      name: morrow_playerB_facilities_no_32x32_19
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 32
+        width: 32
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 178e1f33815223040b6408488779ab6e
+      internalID: 3745301369804583068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: morrow_playerB_facilities_no_32x32_20
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 32
+        width: 32
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7db86a881102ed141952f7ebd6e4c827
+      internalID: -322439510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: morrow_playerB_facilities_no_32x32_21
       rect:
         serializedVersion: 2
         x: 0
@@ -500,16 +632,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 6bcbcaad77e2a59c0800000000000000
-      internalID: -3937783831877337930
+      spriteID: e81da0151cbfd3549ba4f8430935b360
+      internalID: -459335526
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: morrow_playerB_facilities_no_32x32_16
+      name: morrow_playerB_facilities_no_32x32_22
       rect:
         serializedVersion: 2
         x: 32
@@ -522,16 +654,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 96bee69e4db2a20f0800000000000000
-      internalID: -1141051362135577751
+      spriteID: 7d2b25693b557354eacc236b33957881
+      internalID: 323190893
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: morrow_playerB_facilities_no_32x32_17
+      name: morrow_playerB_facilities_no_32x32_23
       rect:
         serializedVersion: 2
         x: 64
@@ -544,16 +676,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 96a89cec0c646ca40800000000000000
-      internalID: 5388071798112356969
+      spriteID: 5fe79b0dd5750274faa9a85f8ee839cc
+      internalID: -1123792481
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: morrow_playerB_facilities_no_32x32_18
+      name: morrow_playerB_facilities_no_32x32_24
       rect:
         serializedVersion: 2
         x: 96
@@ -566,16 +698,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e2c6e2ede69502d90800000000000000
-      internalID: -7124596277791265746
+      spriteID: 1798b263a58d55b40a7da258ab3f3f33
+      internalID: 1152009829
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: morrow_playerB_facilities_no_32x32_19
+      name: morrow_playerB_facilities_no_32x32_25
       rect:
         serializedVersion: 2
         x: 128
@@ -588,10 +720,54 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: c907cfb90cbf9f330800000000000000
-      internalID: 3745301369804583068
+      spriteID: 1cebc7d4ba211a24980f9ec7181b4ba0
+      internalID: -1635841286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: morrow_playerB_facilities_no_32x32_26
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 32
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 356ed21d04010064099ecd65c75fe33d
+      internalID: 1113274659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: morrow_playerB_facilities_no_32x32_27
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 32
+        height: 32
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: df8546d19e4aae246bb8f932db45f653
+      internalID: 198204211
       vertices: []
       indices: 
       edges: []
@@ -600,7 +776,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 7dffe639e2872524abe368320eb35576
     internalID: 0
     vertices: []
     indices: 
@@ -623,6 +799,14 @@ TextureImporter:
       morrow_playerB_facilities_no_32x32_18: -7124596277791265746
       morrow_playerB_facilities_no_32x32_19: 3745301369804583068
       morrow_playerB_facilities_no_32x32_2: -4520497972225451394
+      morrow_playerB_facilities_no_32x32_20: -322439510
+      morrow_playerB_facilities_no_32x32_21: -459335526
+      morrow_playerB_facilities_no_32x32_22: 323190893
+      morrow_playerB_facilities_no_32x32_23: -1123792481
+      morrow_playerB_facilities_no_32x32_24: 1152009829
+      morrow_playerB_facilities_no_32x32_25: -1635841286
+      morrow_playerB_facilities_no_32x32_26: 1113274659
+      morrow_playerB_facilities_no_32x32_27: 198204211
       morrow_playerB_facilities_no_32x32_3: 2572496311592511041
       morrow_playerB_facilities_no_32x32_4: 8934398423736301363
       morrow_playerB_facilities_no_32x32_5: 4134695024883376371
