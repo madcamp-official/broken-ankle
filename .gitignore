@@ -110,3 +110,6 @@ InitTestScene*.unity*
 # Claude Code local settings (machine-specific, not shared)
 /CLAUDE.local.md
 /.claude/settings.local.json
+
+# Editor screenshots (throwaway captures, not project content)
+/[Aa]ssets/[Ss]creenshots/
