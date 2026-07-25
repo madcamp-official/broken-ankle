@@ -7,7 +7,6 @@ namespace Morrow.Player
     /// walks. The controller owns the movement decision; this component only reports it.
     /// </summary>
     [RequireComponent(typeof(PlayerController))]
-    [RequireComponent(typeof(Animator))]
     public class PlayerAnimator : MonoBehaviour
     {
         static readonly int MoveX = Animator.StringToHash("MoveX");
@@ -20,7 +19,12 @@ namespace Morrow.Player
         void Awake()
         {
             _controller = GetComponent<PlayerController>();
-            _animator = GetComponent<Animator>();
+
+            // The Animator lives on the pixel-snapped visual child, not here, because rounding the
+            // body's own transform would stall slow movement.
+            _animator = GetComponentInChildren<Animator>();
+            if (_animator == null)
+                Debug.LogError($"{nameof(PlayerAnimator)} on '{name}' found no Animator in its children.", this);
         }
 
         void Update()
