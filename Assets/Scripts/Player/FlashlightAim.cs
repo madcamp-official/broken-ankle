@@ -4,29 +4,39 @@ using UnityEngine.InputSystem;
 namespace Morrow.Player
 {
     /// <summary>
-    /// Turns the flashlight toward the mouse, independently of which way the body is walking.
+    /// Points the flashlight, and decides what "forward" means for the beam.
     ///
-    /// Aiming apart from movement is the point: the player can back away down a corridor while
-    /// keeping the beam on whatever is behind them. With a pointer the beam is continuous even
-    /// though the character sprite only has four facings, and that reads fine because the light
-    /// is not pixel art.
+    /// The three sources trade expressiveness against simplicity, and which one feels right is a
+    /// question for playing rather than reasoning, so all three stay available and the field is
+    /// switchable at runtime.
     /// </summary>
     [DefaultExecutionOrder(900)]
     public class FlashlightAim : MonoBehaviour
     {
-        [Header("Input")]
-        [Tooltip("Drag Assets/InputSystem_Actions here. The Player/Aim action is read from it.")]
-        [SerializeField] InputActionAsset inputActions;
+        public enum AimSource
+        {
+            /// <summary>Follows the movement stick, so the beam always leads the walk.</summary>
+            MoveDirection,
+
+            /// <summary>Follows the mouse, letting the player look one way and walk another.</summary>
+            Pointer,
+
+            /// <summary>Follows the body's four-way facing. Matches the sprite exactly, but is coarse.</summary>
+            Facing,
+        }
 
         [Header("Aim")]
-        [Tooltip("Degrees the cone is rotated relative to the object's right. Point lights open along +X.")]
-        [SerializeField] float angleOffset;
+        [SerializeField] AimSource source = AimSource.MoveDirection;
+
+        [Tooltip("Degrees the cone is rotated relative to the object's right. Light shapes open along +Y, so -90 lines them up.")]
+        [SerializeField] float angleOffset = -90f;
 
         [Tooltip("Degrees per second the beam swings. Zero snaps instantly.")]
         [SerializeField] float turnSpeed = 900f;
 
-        [Tooltip("Without a mouse — a gamepad, say — fall back to the direction the body faces.")]
-        [SerializeField] bool fallBackToFacing = true;
+        [Header("Input")]
+        [Tooltip("Only needed for the Pointer source. Drag Assets/InputSystem_Actions here.")]
+        [SerializeField] InputActionAsset inputActions;
 
         InputAction _aimAction;
         PlayerController _controller;
@@ -36,16 +46,13 @@ namespace Morrow.Player
         void Awake()
         {
             _controller = GetComponentInParent<PlayerController>();
+            if (_controller == null)
+                Debug.LogError($"{nameof(FlashlightAim)} on '{name}' found no PlayerController above it.", this);
 
             if (inputActions == null)
-            {
-                Debug.LogError($"{nameof(FlashlightAim)} on '{name}' has no Input Actions asset assigned.", this);
                 return;
-            }
 
             _aimAction = inputActions.FindAction("Player/Aim", throwIfNotFound: false);
-            if (_aimAction == null)
-                Debug.LogError("Could not find the 'Player/Aim' action in the assigned asset.", this);
         }
 
         void OnEnable() => _aimAction?.Enable();
@@ -66,27 +73,45 @@ namespace Morrow.Player
 
         float TargetAngle()
         {
-            var pointer = ReadPointerDirection();
-            if (pointer.HasValue)
-                return Mathf.Atan2(pointer.Value.y, pointer.Value.x) * Mathf.Rad2Deg;
-
-            if (fallBackToFacing && _controller != null)
+            Vector2? direction;
+            switch (source)
             {
-                var facing = _controller.FacingDirection;
-                return Mathf.Atan2(facing.y, facing.x) * Mathf.Rad2Deg;
+                case AimSource.Pointer:
+                    direction = PointerDirection();
+                    break;
+                case AimSource.Facing:
+                    direction = _controller != null ? _controller.FacingDirection : (Vector2?)null;
+                    break;
+                default:
+                    direction = MoveDirection();
+                    break;
             }
 
-            return _currentAngle;
+            // Standing still leaves no direction to read, so hold the last one rather than
+            // snapping the beam back to some default and lighting up the wrong wall.
+            return direction.HasValue
+                ? Mathf.Atan2(direction.Value.y, direction.Value.x) * Mathf.Rad2Deg
+                : _currentAngle;
         }
 
-        Vector2? ReadPointerDirection()
+        Vector2? MoveDirection()
         {
-            if (_aimAction == null || !_aimAction.enabled)
+            if (_controller == null)
                 return null;
 
+            var input = _controller.MoveInput;
+            if (input.sqrMagnitude > 0.01f)
+                return input;
+
+            // Idle: keep pointing where the body faces, which is where the walk left off.
+            return _controller.FacingDirection;
+        }
+
+        Vector2? PointerDirection()
+        {
             // A pointer that never reported a position reads as (0,0), which would aim at the
             // screen's bottom-left corner instead of telling us there is no mouse.
-            if (_aimAction.activeControl == null)
+            if (_aimAction == null || !_aimAction.enabled || _aimAction.activeControl == null)
                 return null;
 
             if (_camera == null)

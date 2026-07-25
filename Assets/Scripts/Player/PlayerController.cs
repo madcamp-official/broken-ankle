@@ -38,6 +38,14 @@ namespace Morrow.Player
         /// <summary>True while the player is actually moving, for footstep noise and animation.</summary>
         public bool IsMoving => _moveInput.sqrMagnitude > 0.01f;
 
+        /// <summary>
+        /// The movement stick or key combination as read this frame, before it is snapped to a
+        /// cardinal. Zero while standing still. Anything that should point exactly where the player
+        /// is walking — the flashlight, for one — wants this rather than
+        /// <see cref="FacingDirection"/>, which only ever holds four values.
+        /// </summary>
+        public Vector2 MoveInput => _moveInput;
+
         void Awake()
         {
             _body = GetComponent<Rigidbody2D>();
