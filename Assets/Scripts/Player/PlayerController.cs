@@ -14,8 +14,12 @@ namespace Morrow.Player
     public class PlayerController : MonoBehaviour
     {
         [Header("Input")]
-        [Tooltip("Drag Assets/InputSystem_Actions here. The Player/Move action is read from it.")]
+        [Tooltip("Drag Assets/InputSystem_Actions here. The Move action is read from it.")]
         [SerializeField] InputActionAsset inputActions;
+
+        [Tooltip("Which action map to read. A second local character uses its own map so two " +
+                 "players at one keyboard do not fight over the same keys.")]
+        [SerializeField] string actionMap = "Player";
 
         [Header("Movement")]
         [Tooltip("World units per second while walking. One unit is one 32x32 tile at PPU 32.")]
@@ -78,12 +82,12 @@ namespace Morrow.Player
                 return;
             }
 
-            _moveAction = inputActions.FindAction("Player/Move", throwIfNotFound: false);
+            _moveAction = inputActions.FindAction($"{actionMap}/Move", throwIfNotFound: false);
             if (_moveAction == null)
-                Debug.LogError("Could not find the 'Player/Move' action in the assigned asset.", this);
+                Debug.LogError($"Could not find the '{actionMap}/Move' action in the assigned asset.", this);
 
-            _sprintAction = inputActions.FindAction("Player/Sprint", throwIfNotFound: false);
-            _crouchAction = inputActions.FindAction("Player/Crouch", throwIfNotFound: false);
+            _sprintAction = inputActions.FindAction($"{actionMap}/Sprint", throwIfNotFound: false);
+            _crouchAction = inputActions.FindAction($"{actionMap}/Crouch", throwIfNotFound: false);
         }
 
         // Each component enables only the actions it reads. Enabling the whole Player map here

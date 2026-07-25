@@ -16,8 +16,11 @@ namespace Morrow.Interaction
     public class PlayerInteractor : MonoBehaviour
     {
         [Header("Input")]
-        [Tooltip("Drag Assets/InputSystem_Actions here. The Player/Interact action is read from it.")]
+        [Tooltip("Drag Assets/InputSystem_Actions here. The Interact action is read from it.")]
         [SerializeField] InputActionAsset inputActions;
+
+        [Tooltip("Which action map to read. A second local character uses its own map.")]
+        [SerializeField] string actionMap = "Player";
 
         [Header("Search")]
         [Tooltip("How far in front of the player the search circle sits, in world units.")]
@@ -66,9 +69,9 @@ namespace Morrow.Interaction
                 return;
             }
 
-            _interactAction = inputActions.FindAction("Player/Interact", throwIfNotFound: false);
+            _interactAction = inputActions.FindAction($"{actionMap}/Interact", throwIfNotFound: false);
             if (_interactAction == null)
-                Debug.LogError("Could not find the 'Player/Interact' action in the assigned asset.", this);
+                Debug.LogError($"Could not find the '{actionMap}/Interact' action in the assigned asset.", this);
         }
 
         void OnEnable()
