@@ -439,7 +439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a673c2244999a7e4a9b31cc64285e131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Morrow.Runtime::Morrow.Noise.NoiseRing
-  radius: 2.2
+  radius: 3.3000002
   thickness: 0.05
   segments: 192
   verticalScale: 0.75
