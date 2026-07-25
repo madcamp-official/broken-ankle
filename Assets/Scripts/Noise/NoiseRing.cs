@@ -52,6 +52,10 @@ namespace Morrow.Noise
         [Tooltip("Waves along the ripple. Higher looks more agitated.")]
         [SerializeField] float rippleFrequency = 3f;
 
+        [Tooltip("Times the spike shakes over its lifetime. A narrow ripple has almost no width " +
+                 "for the spatial waves to show in, so this is what makes it read as violent.")]
+        [SerializeField] float rippleOscillations = 4f;
+
         [Header("Colour")]
         [SerializeField] Color allyColour = new(0.35f, 1f, 0.45f);
         [SerializeField] Color monsterColour = new(1f, 0.25f, 0.25f);
@@ -212,7 +216,7 @@ namespace Morrow.Noise
 
                     // The wave travels outward as it ages, so a ripple reads as something arriving
                     // rather than the line simply swelling.
-                    push += amount * Mathf.Cos(delta * rippleFrequency - age * Mathf.PI * 2f);
+                    push += amount * Mathf.Cos(delta * rippleFrequency - age * Mathf.PI * 2f * rippleOscillations);
                     weight += amount;
                     tint += ColourFor(ripple.Kind, recognisable) * amount;
                 }
