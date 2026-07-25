@@ -1,0 +1,949 @@
+fileFormatVersion: 2
+guid: be1a7b7d88b55874eb4dead403e0b993
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1217543469388718817
+    second: player_audio_technician_32x32_4dir_4f_0
+  - first:
+      213: -2796744055888346770
+    second: player_audio_technician_32x32_4dir_4f_1
+  - first:
+      213: -3255461382697490976
+    second: player_audio_technician_32x32_4dir_4f_2
+  - first:
+      213: 2311880311469609851
+    second: player_audio_technician_32x32_4dir_4f_3
+  - first:
+      213: 1769799573969515997
+    second: player_audio_technician_32x32_4dir_4f_4
+  - first:
+      213: 2254914330550734622
+    second: player_audio_technician_32x32_4dir_4f_5
+  - first:
+      213: 9012728372801468093
+    second: player_audio_technician_32x32_4dir_4f_6
+  - first:
+      213: 104216206087182393
+    second: player_audio_technician_32x32_4dir_4f_7
+  - first:
+      213: 2231992444544043430
+    second: player_audio_technician_32x32_4dir_4f_8
+  - first:
+      213: -819091547918055149
+    second: player_audio_technician_32x32_4dir_4f_9
+  - first:
+      213: 2012479350820916863
+    second: player_audio_technician_32x32_4dir_4f_10
+  - first:
+      213: 9057120363236318867
+    second: player_audio_technician_32x32_4dir_4f_11
+  - first:
+      213: 5917828355858935278
+    second: player_audio_technician_32x32_4dir_4f_12
+  - first:
+      213: 7840011181739538121
+    second: player_audio_technician_32x32_4dir_4f_13
+  - first:
+      213: 4708688818051716703
+    second: player_audio_technician_32x32_4dir_4f_14
+  - first:
+      213: -3694975411779670663
+    second: player_audio_technician_32x32_4dir_4f_15
+  - first:
+      213: -5029495651308717686
+    second: player_audio_technician_32x32_4dir_4f_16
+  - first:
+      213: 6515518547538488211
+    second: player_audio_technician_32x32_4dir_4f_17
+  - first:
+      213: -1199295327052225928
+    second: player_audio_technician_32x32_4dir_4f_18
+  - first:
+      213: 7260873101720606289
+    second: player_audio_technician_32x32_4dir_4f_19
+  - first:
+      213: -7118791928922723674
+    second: player_audio_technician_32x32_4dir_4f_20
+  - first:
+      213: 8733044902645176644
+    second: player_audio_technician_32x32_4dir_4f_21
+  - first:
+      213: -4043960694120632473
+    second: player_audio_technician_32x32_4dir_4f_22
+  - first:
+      213: 8370016741153189063
+    second: player_audio_technician_32x32_4dir_4f_23
+  - first:
+      213: 8930989056706877853
+    second: player_audio_technician_32x32_4dir_4f_24
+  - first:
+      213: -4799753804257576166
+    second: player_audio_technician_32x32_4dir_4f_25
+  - first:
+      213: 6254930665340873301
+    second: player_audio_technician_32x32_4dir_4f_26
+  - first:
+      213: 8752091122564459407
+    second: player_audio_technician_32x32_4dir_4f_27
+  - first:
+      213: 2961369652125335068
+    second: player_audio_technician_32x32_4dir_4f_28
+  - first:
+      213: -1796264992853104001
+    second: player_audio_technician_32x32_4dir_4f_29
+  - first:
+      213: -5519116784772329754
+    second: player_audio_technician_32x32_4dir_4f_30
+  - first:
+      213: 3578138628917550233
+    second: player_audio_technician_32x32_4dir_4f_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_0
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 96
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1d1d785aaa6a1fe0800000000000000
+      internalID: -1217543469388718817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_1
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 112
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6107155918ff29d0800000000000000
+      internalID: -2796744055888346770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_2
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 95
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e56050ee1742d2d0800000000000000
+      internalID: -3255461382697490976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_3
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 111
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b739d58f4e2751020800000000000000
+      internalID: 2311880311469609851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_4
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 96
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd53712f5579f8810800000000000000
+      internalID: 1769799573969515997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_5
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 112
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1f0a67f2a01b4f10800000000000000
+      internalID: 2254914330550734622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_6
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 111
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db67aed14b4a31d70800000000000000
+      internalID: 9012728372801468093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_7
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 95
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9385aa75610427100800000000000000
+      internalID: 104216206087182393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_8
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 64
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a9476e7d41a9fe10800000000000000
+      internalID: 2231992444544043430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_9
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 81
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 319c1dfa39002a4f0800000000000000
+      internalID: -819091547918055149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_10
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 63
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7e4d779e43cdeb10800000000000000
+      internalID: 2012479350820916863
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_11
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 80
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39e58a2dbfa51bd70800000000000000
+      internalID: 9057120363236318867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_12
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 64
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eeda4b02989502250800000000000000
+      internalID: 5917828355858935278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_13
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 81
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c6fca2b1a05dcc60800000000000000
+      internalID: 7840011181739538121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_14
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 80
+        width: 17
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5693d5488f985140800000000000000
+      internalID: 4708688818051716703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_15
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 63
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97de117907fc8bcc0800000000000000
+      internalID: -3694975411779670663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_16
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 32
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a893f504a54a33ab0800000000000000
+      internalID: -5029495651308717686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_17
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 48
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39b20892995cb6a50800000000000000
+      internalID: 6515518547538488211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_18
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 31
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8722442114f3b5fe0800000000000000
+      internalID: -1199295327052225928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_19
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 47
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 156de33cd9dc3c460800000000000000
+      internalID: 7260873101720606289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_20
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 32
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6aaa4a62578f43d90800000000000000
+      internalID: -7118791928922723674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_21
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 48
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44993bdb112023970800000000000000
+      internalID: 8733044902645176644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_22
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 31
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76f2c4dac27f0e7c0800000000000000
+      internalID: -4043960694120632473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_23
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 47
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cc228c31e5482470800000000000000
+      internalID: 8370016741153189063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_24
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 0
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d991ae98a3f31fb70800000000000000
+      internalID: 8930989056706877853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_25
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 16
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1bb5ef5859d36db0800000000000000
+      internalID: -4799753804257576166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_26
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 0
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55a2752dc4afdc650800000000000000
+      internalID: 6254930665340873301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_27
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 15
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8bed42618ca57970800000000000000
+      internalID: 8752091122564459407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_28
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 0
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1e7d833206e81920800000000000000
+      internalID: 2961369652125335068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_29
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 16
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7a658a81826217e0800000000000000
+      internalID: -1796264992853104001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_30
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 0
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6eecfb996882863b0800000000000000
+      internalID: -5519116784772329754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_audio_technician_32x32_4dir_4f_31
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 15
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99cdbbd002a18a130800000000000000
+      internalID: 3578138628917550233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      player_audio_technician_32x32_4dir_4f_0: -1217543469388718817
+      player_audio_technician_32x32_4dir_4f_1: -2796744055888346770
+      player_audio_technician_32x32_4dir_4f_10: 2012479350820916863
+      player_audio_technician_32x32_4dir_4f_11: 9057120363236318867
+      player_audio_technician_32x32_4dir_4f_12: 5917828355858935278
+      player_audio_technician_32x32_4dir_4f_13: 7840011181739538121
+      player_audio_technician_32x32_4dir_4f_14: 4708688818051716703
+      player_audio_technician_32x32_4dir_4f_15: -3694975411779670663
+      player_audio_technician_32x32_4dir_4f_16: -5029495651308717686
+      player_audio_technician_32x32_4dir_4f_17: 6515518547538488211
+      player_audio_technician_32x32_4dir_4f_18: -1199295327052225928
+      player_audio_technician_32x32_4dir_4f_19: 7260873101720606289
+      player_audio_technician_32x32_4dir_4f_2: -3255461382697490976
+      player_audio_technician_32x32_4dir_4f_20: -7118791928922723674
+      player_audio_technician_32x32_4dir_4f_21: 8733044902645176644
+      player_audio_technician_32x32_4dir_4f_22: -4043960694120632473
+      player_audio_technician_32x32_4dir_4f_23: 8370016741153189063
+      player_audio_technician_32x32_4dir_4f_24: 8930989056706877853
+      player_audio_technician_32x32_4dir_4f_25: -4799753804257576166
+      player_audio_technician_32x32_4dir_4f_26: 6254930665340873301
+      player_audio_technician_32x32_4dir_4f_27: 8752091122564459407
+      player_audio_technician_32x32_4dir_4f_28: 2961369652125335068
+      player_audio_technician_32x32_4dir_4f_29: -1796264992853104001
+      player_audio_technician_32x32_4dir_4f_3: 2311880311469609851
+      player_audio_technician_32x32_4dir_4f_30: -5519116784772329754
+      player_audio_technician_32x32_4dir_4f_31: 3578138628917550233
+      player_audio_technician_32x32_4dir_4f_4: 1769799573969515997
+      player_audio_technician_32x32_4dir_4f_5: 2254914330550734622
+      player_audio_technician_32x32_4dir_4f_6: 9012728372801468093
+      player_audio_technician_32x32_4dir_4f_7: 104216206087182393
+      player_audio_technician_32x32_4dir_4f_8: 2231992444544043430
+      player_audio_technician_32x32_4dir_4f_9: -819091547918055149
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

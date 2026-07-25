@@ -1,0 +1,949 @@
+fileFormatVersion: 2
+guid: bdd112cbdc79d5f4eab1b3b9bf0e5965
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7763081090510844220
+    second: player_power_technician_32x32_4dir_4f_0
+  - first:
+      213: 2614519300179844550
+    second: player_power_technician_32x32_4dir_4f_1
+  - first:
+      213: 4195881784661508189
+    second: player_power_technician_32x32_4dir_4f_2
+  - first:
+      213: -7701443965202292271
+    second: player_power_technician_32x32_4dir_4f_3
+  - first:
+      213: -5877176859177415763
+    second: player_power_technician_32x32_4dir_4f_4
+  - first:
+      213: -98242267635282304
+    second: player_power_technician_32x32_4dir_4f_5
+  - first:
+      213: 5410275042995645307
+    second: player_power_technician_32x32_4dir_4f_6
+  - first:
+      213: -5349570931752742883
+    second: player_power_technician_32x32_4dir_4f_7
+  - first:
+      213: 8510199061714623060
+    second: player_power_technician_32x32_4dir_4f_8
+  - first:
+      213: 1030272672912917255
+    second: player_power_technician_32x32_4dir_4f_9
+  - first:
+      213: 6053997693688145963
+    second: player_power_technician_32x32_4dir_4f_10
+  - first:
+      213: 6695319913932098708
+    second: player_power_technician_32x32_4dir_4f_11
+  - first:
+      213: 779504325524775117
+    second: player_power_technician_32x32_4dir_4f_12
+  - first:
+      213: 5132240864888536785
+    second: player_power_technician_32x32_4dir_4f_13
+  - first:
+      213: 2301339476883539102
+    second: player_power_technician_32x32_4dir_4f_14
+  - first:
+      213: 3983127590978928230
+    second: player_power_technician_32x32_4dir_4f_15
+  - first:
+      213: 7237864618828322196
+    second: player_power_technician_32x32_4dir_4f_16
+  - first:
+      213: 2330173137907561850
+    second: player_power_technician_32x32_4dir_4f_17
+  - first:
+      213: -1110608230217356377
+    second: player_power_technician_32x32_4dir_4f_18
+  - first:
+      213: 2459682426316348946
+    second: player_power_technician_32x32_4dir_4f_19
+  - first:
+      213: -5343310835040219884
+    second: player_power_technician_32x32_4dir_4f_20
+  - first:
+      213: -7602981721847213182
+    second: player_power_technician_32x32_4dir_4f_21
+  - first:
+      213: 1091157403881138867
+    second: player_power_technician_32x32_4dir_4f_22
+  - first:
+      213: 8123734721378363162
+    second: player_power_technician_32x32_4dir_4f_23
+  - first:
+      213: -3578124496362833487
+    second: player_power_technician_32x32_4dir_4f_24
+  - first:
+      213: -3324113512087342440
+    second: player_power_technician_32x32_4dir_4f_25
+  - first:
+      213: 5669473497591947846
+    second: player_power_technician_32x32_4dir_4f_26
+  - first:
+      213: -3175726299332392936
+    second: player_power_technician_32x32_4dir_4f_27
+  - first:
+      213: -8282392880577977298
+    second: player_power_technician_32x32_4dir_4f_28
+  - first:
+      213: -1680522574308486310
+    second: player_power_technician_32x32_4dir_4f_29
+  - first:
+      213: -6347611840179948190
+    second: player_power_technician_32x32_4dir_4f_30
+  - first:
+      213: 5025219711741782287
+    second: player_power_technician_32x32_4dir_4f_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_0
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 96
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c31737a0f110cbb60800000000000000
+      internalID: 7763081090510844220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_1
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 112
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cd5f918373a84420800000000000000
+      internalID: 2614519300179844550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_2
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 95
+        width: 21
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d50084e9044ca3a30800000000000000
+      internalID: 4195881784661508189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_3
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 111
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d1aa848489fe1590800000000000000
+      internalID: -7701443965202292271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_4
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 96
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dab859209c2107ea0800000000000000
+      internalID: -5877176859177415763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_5
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 112
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08e8ba79d29f2aef0800000000000000
+      internalID: -98242267635282304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_6
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 95
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7baaea9c78251b40800000000000000
+      internalID: 5410275042995645307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_7
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 111
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d105f10b49182c5b0800000000000000
+      internalID: -5349570931752742883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_8
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 64
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45adc5925fc4a1670800000000000000
+      internalID: 8510199061714623060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_9
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 81
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70344c299834c4e00800000000000000
+      internalID: 1030272672912917255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_10
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 63
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b28e053b3de140450800000000000000
+      internalID: 6053997693688145963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_11
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 80
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49c85870dfd8aec50800000000000000
+      internalID: 6695319913932098708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_12
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 64
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc0e8c7dd0b51da00800000000000000
+      internalID: 779504325524775117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_13
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 81
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1debc65ffd1693740800000000000000
+      internalID: 5132240864888536785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_14
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 80
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e940a3baf0000ff10800000000000000
+      internalID: 2301339476883539102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_15
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 63
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66e3b53c079e64730800000000000000
+      internalID: 3983127590978928230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_16
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 32
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49551a1e58f027460800000000000000
+      internalID: 7237864618828322196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_17
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 48
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7533268f10765020800000000000000
+      internalID: 2330173137907561850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_18
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 31
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7abe449e2b35690f0800000000000000
+      internalID: -1110608230217356377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_19
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 47
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21e5bd0822c822220800000000000000
+      internalID: 2459682426316348946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_20
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 32
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41d8ee80b1fb8d5b0800000000000000
+      internalID: -5343310835040219884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_21
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 48
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28352830868cc7690800000000000000
+      internalID: -7602981721847213182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_22
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 31
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ba6f5ca0e1942f00800000000000000
+      internalID: 1091157403881138867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_23
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 47
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a17a34d00bd4db070800000000000000
+      internalID: 8123734721378363162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_24
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 16
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b97b207ab2f75ec0800000000000000
+      internalID: -3578124496362833487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_25
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 0
+        width: 19
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89235f66f506ed1d0800000000000000
+      internalID: -3324113512087342440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_26
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 15
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 642a57f9b140eae40800000000000000
+      internalID: 5669473497591947846
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_27
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 0
+        width: 19
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8184d68a1cd8de3d0800000000000000
+      internalID: -3175726299332392936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_28
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 16
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e24ecee9e870f0d80800000000000000
+      internalID: -8282392880577977298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_29
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 0
+        width: 19
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5351595f959da8e0800000000000000
+      internalID: -1680522574308486310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_30
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 15
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 265b20699a0c8e7a0800000000000000
+      internalID: -6347611840179948190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_power_technician_32x32_4dir_4f_31
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 0
+        width: 19
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f09e8acf3ba2db540800000000000000
+      internalID: 5025219711741782287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      player_power_technician_32x32_4dir_4f_0: 7763081090510844220
+      player_power_technician_32x32_4dir_4f_1: 2614519300179844550
+      player_power_technician_32x32_4dir_4f_10: 6053997693688145963
+      player_power_technician_32x32_4dir_4f_11: 6695319913932098708
+      player_power_technician_32x32_4dir_4f_12: 779504325524775117
+      player_power_technician_32x32_4dir_4f_13: 5132240864888536785
+      player_power_technician_32x32_4dir_4f_14: 2301339476883539102
+      player_power_technician_32x32_4dir_4f_15: 3983127590978928230
+      player_power_technician_32x32_4dir_4f_16: 7237864618828322196
+      player_power_technician_32x32_4dir_4f_17: 2330173137907561850
+      player_power_technician_32x32_4dir_4f_18: -1110608230217356377
+      player_power_technician_32x32_4dir_4f_19: 2459682426316348946
+      player_power_technician_32x32_4dir_4f_2: 4195881784661508189
+      player_power_technician_32x32_4dir_4f_20: -5343310835040219884
+      player_power_technician_32x32_4dir_4f_21: -7602981721847213182
+      player_power_technician_32x32_4dir_4f_22: 1091157403881138867
+      player_power_technician_32x32_4dir_4f_23: 8123734721378363162
+      player_power_technician_32x32_4dir_4f_24: -3578124496362833487
+      player_power_technician_32x32_4dir_4f_25: -3324113512087342440
+      player_power_technician_32x32_4dir_4f_26: 5669473497591947846
+      player_power_technician_32x32_4dir_4f_27: -3175726299332392936
+      player_power_technician_32x32_4dir_4f_28: -8282392880577977298
+      player_power_technician_32x32_4dir_4f_29: -1680522574308486310
+      player_power_technician_32x32_4dir_4f_3: -7701443965202292271
+      player_power_technician_32x32_4dir_4f_30: -6347611840179948190
+      player_power_technician_32x32_4dir_4f_31: 5025219711741782287
+      player_power_technician_32x32_4dir_4f_4: -5877176859177415763
+      player_power_technician_32x32_4dir_4f_5: -98242267635282304
+      player_power_technician_32x32_4dir_4f_6: 5410275042995645307
+      player_power_technician_32x32_4dir_4f_7: -5349570931752742883
+      player_power_technician_32x32_4dir_4f_8: 8510199061714623060
+      player_power_technician_32x32_4dir_4f_9: 1030272672912917255
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
