@@ -18,14 +18,22 @@ namespace Morrow.Player
         [SerializeField] InputActionAsset inputActions;
 
         [Header("Movement")]
-        [Tooltip("World units per second. One unit is one 32x32 tile at PPU 32.")]
+        [Tooltip("World units per second while walking. One unit is one 32x32 tile at PPU 32.")]
         [SerializeField] float moveSpeed = 3.5f;
+
+        [Tooltip("Multiplies walk speed while sprinting. Fast, but the loudest way to travel.")]
+        [SerializeField] float runMultiplier = 1.7f;
+
+        [Tooltip("Multiplies walk speed while crouching. Slow, and nearly silent.")]
+        [SerializeField] float crouchMultiplier = 0.45f;
 
         [Tooltip("Seconds to reach full speed. Zero is instant, which feels twitchy for a horror pace.")]
         [SerializeField] float acceleration = 0.08f;
 
         Rigidbody2D _body;
         InputAction _moveAction;
+        InputAction _sprintAction;
+        InputAction _crouchAction;
         Vector2 _moveInput;
 
         /// <summary>
@@ -45,6 +53,13 @@ namespace Morrow.Player
         /// <see cref="FacingDirection"/>, which only ever holds four values.
         /// </summary>
         public Vector2 MoveInput => _moveInput;
+
+        /// <summary>
+        /// How the player is travelling. Crouching trades speed for quiet and sprinting does the
+        /// reverse, which is the whole tension of moving through a room something else is listening
+        /// to. Reported even while standing still, so a crouching player stays crouched.
+        /// </summary>
+        public MovementMode Mode { get; private set; } = MovementMode.Walk;
 
         void Awake()
         {
@@ -66,13 +81,26 @@ namespace Morrow.Player
             _moveAction = inputActions.FindAction("Player/Move", throwIfNotFound: false);
             if (_moveAction == null)
                 Debug.LogError("Could not find the 'Player/Move' action in the assigned asset.", this);
+
+            _sprintAction = inputActions.FindAction("Player/Sprint", throwIfNotFound: false);
+            _crouchAction = inputActions.FindAction("Player/Crouch", throwIfNotFound: false);
         }
 
         // Each component enables only the actions it reads. Enabling the whole Player map here
         // would mean disabling this component also silences interaction, which is not our call.
-        void OnEnable() => _moveAction?.Enable();
+        void OnEnable()
+        {
+            _moveAction?.Enable();
+            _sprintAction?.Enable();
+            _crouchAction?.Enable();
+        }
 
-        void OnDisable() => _moveAction?.Disable();
+        void OnDisable()
+        {
+            _moveAction?.Disable();
+            _sprintAction?.Disable();
+            _crouchAction?.Disable();
+        }
 
         void Update()
         {
@@ -86,17 +114,37 @@ namespace Morrow.Player
 
             if (IsMoving)
                 FacingDirection = SnapToCardinal(_moveInput);
+
+            // Crouch wins over sprint. Holding both is a fumble, and the quiet option is the one
+            // a player who pressed crouch was trying to get.
+            if (_crouchAction != null && _crouchAction.IsPressed())
+                Mode = MovementMode.Crouch;
+            else if (_sprintAction != null && _sprintAction.IsPressed())
+                Mode = MovementMode.Run;
+            else
+                Mode = MovementMode.Walk;
         }
 
         void FixedUpdate()
         {
-            var target = _moveInput * moveSpeed;
+            var speed = moveSpeed * SpeedMultiplier(Mode);
+            var target = _moveInput * speed;
 
             if (acceleration <= 0f)
                 _body.linearVelocity = target;
             else
                 _body.linearVelocity = Vector2.MoveTowards(
-                    _body.linearVelocity, target, moveSpeed / acceleration * Time.fixedDeltaTime);
+                    _body.linearVelocity, target, speed / acceleration * Time.fixedDeltaTime);
+        }
+
+        float SpeedMultiplier(MovementMode mode)
+        {
+            switch (mode)
+            {
+                case MovementMode.Run: return runMultiplier;
+                case MovementMode.Crouch: return crouchMultiplier;
+                default: return 1f;
+            }
         }
 
         /// <summary>
