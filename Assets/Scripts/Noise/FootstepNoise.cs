@@ -16,6 +16,16 @@ namespace Morrow.Noise
         [Tooltip("Whose footsteps these are. The player's own are not drawn back to them.")]
         [SerializeField] NoiseKind kind = NoiseKind.Self;
 
+        /// <summary>
+        /// Settable because the same prefab is both the player and their partner, and which one it
+        /// is only becomes known when the character is spawned.
+        /// </summary>
+        public NoiseKind Kind
+        {
+            get => kind;
+            set => kind = value;
+        }
+
         [Header("How far each step carries, in world units")]
         [SerializeField] float crouchRange = 2.5f;
         [SerializeField] float walkRange = 7f;

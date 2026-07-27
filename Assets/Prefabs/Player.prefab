@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 966299853694655838}
   - component: {fileID: 6369505412604317244}
   - component: {fileID: 1427195640078385707}
+  - component: {fileID: 9096929615804728950}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -361,6 +362,35 @@ MonoBehaviour:
   - {fileID: 5462522140775758744}
   - {fileID: 3743583923798362931}
   rescuePrompt: "\uAD6C\uCD9C\uD558\uAE30"
+--- !u!114 &9096929615804728950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78f2a10b16ecda24985fb975193a8924, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Player.PlayerRig
+  isViewer: 1
+  isControlled: 1
+  inputComponents:
+  - {fileID: 4619516547538424807}
+  - {fileID: 5971796654612665053}
+  viewerOnlyObjects:
+  - {fileID: 5462522140775758744}
+  - {fileID: 8304847542237617635}
+  - {fileID: 3743583923798362931}
+  - {fileID: 6331766093216544031}
+  viewerOnlyComponents:
+  - {fileID: 6369505412604317244}
+  - {fileID: 7763660687779653444}
+  body: {fileID: 7209351696308771934}
+  localBodyLayer: Character
+  remoteBodyLayer: Default
+  footsteps: {fileID: 8685373749486869375}
 --- !u!1 &3743583923798362931
 GameObject:
   m_ObjectHideFlags: 0
@@ -731,6 +761,7 @@ MonoBehaviour:
   darkness: {r: 0, g: 0, b: 0, a: 0.95}
   outerRadius: 26
   edgeSoftness: 0.6
+  roomLight: {fileID: 0}
 --- !u!1 &8304847542237617635
 GameObject:
   m_ObjectHideFlags: 0
