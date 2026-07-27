@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Ashburn.Core
@@ -64,10 +65,25 @@ namespace Ashburn.Core
         Transform _self;
         float[] _reach;
 
+        readonly List<RaycastHit2D> _hits = new();
+        ContactFilter2D _filter;
+
         void Awake()
         {
             _self = transform;
             _renderer = GetComponent<MeshRenderer>();
+
+            _filter = new ContactFilter2D
+            {
+                useLayerMask = true,
+                layerMask = blockers,
+
+                // A room trigger, a doorway, an interaction zone: none of them are walls, and
+                // sight has to pass through all of them. Left on, the trigger the player is
+                // standing inside answers every ray at zero distance and the world goes black.
+                useTriggers = false,
+            };
+
             Build();
         }
 
@@ -142,8 +158,17 @@ namespace Ashburn.Core
                 if (haveBeam && Mathf.Abs(Mathf.DeltaAngle(beamAngle, degrees)) <= beamHalfAngle)
                     want = Mathf.Max(want, beamRange);
 
-                var hit = Physics2D.Raycast(origin, direction, want, blockers);
-                _reach[i] = hit.collider == null ? want : Mathf.Min(want, hit.distance + wallBleed);
+                var nearest = want;
+                var count = Physics2D.Raycast(origin, direction, _filter, _hits, want);
+                for (var h = 0; h < count; h++)
+                {
+                    // Hits are not documented as sorted, so take the closest rather than the
+                    // first, or a far wall could cut sight before a near one.
+                    if (_hits[h].distance < nearest)
+                        nearest = _hits[h].distance;
+                }
+
+                _reach[i] = nearest >= want ? want : Mathf.Min(want, nearest + wallBleed);
             }
         }
 
