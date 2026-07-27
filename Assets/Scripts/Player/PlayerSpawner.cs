@@ -1,3 +1,4 @@
+using Ashburn.World;
 using UnityEngine;
 
 namespace Ashburn.Player
@@ -32,8 +33,21 @@ namespace Ashburn.Player
         [Tooltip("Which of them the screen follows.")]
         [SerializeField] int offlineViewerIndex;
 
+        MapEntry _arrival;
+
         void Start()
         {
+            // Asked for once, at the top: whoever walked through the door named an entry to come
+            // out of, and it stops being true the moment it has been used.
+            var entryId = MapTravel.TakeEntry();
+            if (!string.IsNullOrEmpty(entryId))
+            {
+                _arrival = MapEntry.Find(entryId);
+                if (_arrival == null)
+                    Debug.LogWarning($"Arrived asking for the '{entryId}' entry, which this scene " +
+                                     "does not have. Falling back to the spawn points.", this);
+            }
+
             // Says so rather than doing nothing quietly. An empty level used to look identical
             // whether this was set to zero or the spawner had never run at all.
             if (offlinePlayers <= 0)
@@ -62,8 +76,7 @@ namespace Ashburn.Player
                 return null;
             }
 
-            var point = PointFor(index);
-            var character = Instantiate(playerPrefab, point.position, Quaternion.identity);
+            var character = Instantiate(playerPrefab, PositionFor(index), Quaternion.identity);
             character.name = viewer ? "Player" : $"Player {index + 1}";
 
             // Before the rig, because switching maps disables and re-enables the input components
@@ -81,12 +94,21 @@ namespace Ashburn.Player
             return character;
         }
 
-        Transform PointFor(int index)
+        /// <summary>
+        /// Where character <paramref name="index"/> starts. Arriving from another map overrides the
+        /// scene's own spawn points: a player who walked in the front door should be at the front
+        /// door, not wherever the level happens to begin.
+        /// </summary>
+        Vector3 PositionFor(int index)
         {
-            if (spawnPoints == null || spawnPoints.Length == 0)
-                return transform;
+            if (_arrival != null)
+                return _arrival.PointFor(index);
 
-            return spawnPoints[Mathf.Clamp(index, 0, spawnPoints.Length - 1)];
+            if (spawnPoints == null || spawnPoints.Length == 0)
+                return transform.position;
+
+            var point = spawnPoints[Mathf.Clamp(index, 0, spawnPoints.Length - 1)];
+            return point != null ? point.position : transform.position;
         }
 
         void OnDrawGizmos()
