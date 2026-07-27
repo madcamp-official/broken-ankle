@@ -113,3 +113,9 @@ InitTestScene*.unity*
 
 # Editor screenshots (throwaway captures, not project content)
 /[Aa]ssets/[Ss]creenshots/
+
+# Purchased asset packs. Licensed per seat, so each teammate imports their own copy.
+# The .meta files ship inside the package, so GUIDs match across installs and any
+# prefab or scene referencing them still resolves.
+/[Aa]ssets/[Tt]hird[Pp]arty/
+/[Aa]ssets/[Tt]hird[Pp]arty.meta
