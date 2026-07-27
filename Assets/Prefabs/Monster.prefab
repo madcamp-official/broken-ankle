@@ -144,7 +144,7 @@ GameObject:
   - component: {fileID: 8726943682941502200}
   - component: {fileID: 6461336053237752515}
   - component: {fileID: 2643284791473467026}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Monster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -268,7 +268,7 @@ MonoBehaviour:
   searchSpeed: 2
   obstacles:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294967039
   feelerLength: 1.2
   searchRadius: 3.5
   searchDuration: 6
@@ -292,7 +292,7 @@ MonoBehaviour:
   carryOffset: {x: 0, y: -0.4}
   playerLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 256
 --- !u!114 &2643284791473467026
 MonoBehaviour:
   m_ObjectHideFlags: 0
