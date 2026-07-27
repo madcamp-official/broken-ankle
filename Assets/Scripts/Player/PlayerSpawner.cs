@@ -34,6 +34,16 @@ namespace Ashburn.Player
 
         void Start()
         {
+            // Says so rather than doing nothing quietly. An empty level used to look identical
+            // whether this was set to zero or the spawner had never run at all.
+            if (offlinePlayers <= 0)
+            {
+                Debug.LogWarning($"{nameof(PlayerSpawner)} on '{name}' has Offline Players set to " +
+                                 $"{offlinePlayers}, so it creates nobody. Set it to 2 for the " +
+                                 "local two-player test.", this);
+                return;
+            }
+
             for (var i = 0; i < offlinePlayers; i++)
                 Spawn(i, viewer: i == offlineViewerIndex, controlled: true);
         }
