@@ -188,7 +188,19 @@ namespace Morrow.Core
 
             const float gutter = 14f;
             const float pad = 9f;
-            var rect = new Rect(margin.x, margin.y,
+
+            // Anchor to the camera's viewport, not the window. Pixel Perfect letterboxes the game
+            // into the middle of a larger window, and screen-corner coordinates land in the black
+            // bars outside it, where the card is easy to miss entirely.
+            var origin = Vector2.zero;
+            var camera = Camera.main;
+            if (camera != null)
+            {
+                var view = camera.pixelRect;
+                origin = new Vector2(view.x, Screen.height - view.yMax);
+            }
+
+            var rect = new Rect(origin.x + margin.x, origin.y + margin.y,
                 labelWidth + gutter + keyWidth + pad * 2f,
                 _labelColumn.Count * lineHeight + pad * 2f);
 
