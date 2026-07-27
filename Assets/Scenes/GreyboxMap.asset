@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: GreyboxMap
+  m_EditorClassIdentifier: Assembly-CSharp-Editor:Ashburn.EditorTools:GreyboxSettings
+  layout: '###########################################
+
+    #.............#.............#.............#
+
+    #.............#.............#.............#
+
+    #....O........#......B......#......N......#
+
+    #.............#.............#.............#
+
+    #.............#.............#.............#
+
+    #.............#.............#.............#
+
+    #.............#.............#.............#
+
+    #######+#############+#############+#######
+
+    #.........................................#
+
+    #..1..2..............L....................#
+
+    #.........................................#
+
+    ###########################################
+
+'
+  cellSize: 1
+  wall: {fileID: 4136755959636209050, guid: 09b508f970c0cb2409f81441c4070fcb, type: 3}
+  floor: {fileID: 8323003306373764176, guid: b7ce6b0430763c64ba65a150ce251afc, type: 3}
+  pillar: {fileID: 672953282101396089, guid: 31976ce921501084c96fe1c3c3d99f9f, type: 3}
+  breakerBox: {fileID: 7766417468216175741, guid: 9b034a020ece4af40aa0a3ddd051589e, type: 3}
+  nest: {fileID: 7986450475059840573, guid: b47599116f238754a8a2612581ae65c6, type: 3}
+  lamp: {fileID: 0}
+  rootName: Level (generated)
+  rewireSpawner: 1
