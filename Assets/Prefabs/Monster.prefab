@@ -268,7 +268,7 @@ MonoBehaviour:
   searchSpeed: 2
   obstacles:
     serializedVersion: 2
-    m_Bits: 4294967039
+    m_Bits: 55
   feelerLength: 1.2
   searchRadius: 3.5
   searchDuration: 6

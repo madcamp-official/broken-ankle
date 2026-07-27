@@ -148,6 +148,8 @@ GameObject:
   - component: {fileID: 6369505412604317244}
   - component: {fileID: 1427195640078385707}
   - component: {fileID: 9096929615804728950}
+  - component: {fileID: 411529039634923077}
+  - component: {fileID: 740498217874627470}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -391,6 +393,63 @@ MonoBehaviour:
   localBodyLayer: Character
   remoteBodyLayer: Default
   footsteps: {fileID: 8685373749486869375}
+--- !u!33 &411529039634923077
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Mesh: {fileID: 0}
+--- !u!23 &740498217874627470
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &3743583923798362931
 GameObject:
   m_ObjectHideFlags: 0
@@ -496,7 +555,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Noise.NoiseRing
   radius: 3.3000002
   thickness: 0.05
-  segments: 420
+  segments: 256
   verticalScale: 0.75
   maxDisplacement: 0.9
   rippleLifetime: 0.5
@@ -581,8 +640,8 @@ MonoBehaviour:
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
+    m_Center: {x: 0, y: 3.5, z: 0}
+    m_Extent: {x: 3, y: 3.5, z: 0}
   m_PointLightInnerAngle: 12
   m_PointLightOuterAngle: 52
   m_PointLightInnerRadius: 0
@@ -627,7 +686,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Player.FlashlightOcclusion
   blockers:
     serializedVersion: 2
-    m_Bits: 4294967039
+    m_Bits: 55
   rayCount: 96
   surfaceBleed: 0.22
 --- !u!114 &3425006476537733219
@@ -749,14 +808,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cc0117eca86bb9498f47e7e230f9ff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Core.VisibilityMask
-  ambientRadius: 2.4
+  ambientRadius: 1.5
   beamRange: 7.5
   beamHalfAngle: 24
   beam: {fileID: 3378130258239158657}
   rayCount: 180
   blockers:
     serializedVersion: 2
-    m_Bits: 4294967039
+    m_Bits: 55
   wallBleed: 0.25
   darkness: {r: 0, g: 0, b: 0, a: 0.95}
   outerRadius: 26
@@ -830,12 +889,12 @@ MonoBehaviour:
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
+    m_Center: {x: 0, y: -0.00000011920929, z: 0}
+    m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
-  m_PointLightInnerRadius: 0.5
-  m_PointLightOuterRadius: 2.5
+  m_PointLightInnerRadius: 0.2
+  m_PointLightOuterRadius: 1.4
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
   m_ShapeLightParametricRadius: 1
