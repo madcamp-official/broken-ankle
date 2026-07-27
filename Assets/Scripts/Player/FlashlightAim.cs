@@ -39,6 +39,7 @@ namespace Ashburn.Player
         [SerializeField] InputActionAsset inputActions;
 
         InputAction _aimAction;
+        InputActionAsset _ownedActions;
         PlayerController _controller;
         Camera _camera;
         float _currentAngle;
@@ -52,12 +53,23 @@ namespace Ashburn.Player
             if (inputActions == null)
                 return;
 
+            // Private copy per character, for the same reason as the other input readers: this
+            // component switches off on every character that is not the viewer, and doing so would
+            // disable the shared Player/Aim action for the one that is.
+            inputActions = _ownedActions = Instantiate(inputActions);
+
             _aimAction = inputActions.FindAction("Player/Aim", throwIfNotFound: false);
         }
 
         void OnEnable() => _aimAction?.Enable();
 
         void OnDisable() => _aimAction?.Disable();
+
+        void OnDestroy()
+        {
+            if (_ownedActions != null)
+                Destroy(_ownedActions);
+        }
 
         // LateUpdate so the camera has already been moved for this frame. Reading a stale camera
         // would convert the pointer against last frame's view and make the beam lag while walking.

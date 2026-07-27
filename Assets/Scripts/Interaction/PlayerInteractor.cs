@@ -38,6 +38,7 @@ namespace Ashburn.Interaction
         readonly List<Collider2D> _hits = new();
         ContactFilter2D _filter;
         InputAction _interactAction;
+        InputActionAsset _ownedActions;
         PlayerController _controller;
         IInteractable _current;
 
@@ -69,7 +70,18 @@ namespace Ashburn.Interaction
                 return;
             }
 
+            // Private copy per character. Actions belong to the asset, so the partner switching to
+            // its own map disables Player/Interact on the way past and takes this character's use
+            // key with it — silently, since nothing here is wrong afterwards.
+            inputActions = _ownedActions = Instantiate(inputActions);
+
             Resolve();
+        }
+
+        void OnDestroy()
+        {
+            if (_ownedActions != null)
+                Destroy(_ownedActions);
         }
 
         /// <summary>Points this character at a different action map, even after it has started.</summary>
