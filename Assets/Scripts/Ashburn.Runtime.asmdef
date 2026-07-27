@@ -4,7 +4,11 @@
     "references": [
         "Unity.InputSystem",
         "Unity.Cinemachine",
-        "Unity.RenderPipelines.Universal.2D.Runtime"
+        "Unity.RenderPipelines.Universal.2D.Runtime",
+        "PhotonRealtime",
+        "PhotonVoice.API",
+        "PhotonVoice",
+        "PhotonUnityNetworking"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
