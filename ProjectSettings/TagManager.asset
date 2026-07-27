@@ -13,7 +13,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Actor
   - 
   - 
   - 
@@ -54,7 +54,7 @@ TagManager:
     uniqueID: 3210334499
     locked: 0
   - name: Character
-    uniqueID: 2867326379
+    uniqueID: 1
     locked: 0
   - name: Effect
     uniqueID: 2072791887

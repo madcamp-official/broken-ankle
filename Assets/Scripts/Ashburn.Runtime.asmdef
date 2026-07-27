@@ -1,0 +1,22 @@
+{
+    "name": "Ashburn.Runtime",
+    "rootNamespace": "Ashburn",
+    "references": [
+        "Unity.InputSystem",
+        "Unity.Cinemachine",
+        "Unity.RenderPipelines.Universal.2D.Runtime",
+        "PhotonRealtime",
+        "PhotonVoice.API",
+        "PhotonVoice",
+        "PhotonUnityNetworking"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

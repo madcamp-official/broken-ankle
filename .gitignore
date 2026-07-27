@@ -51,6 +51,7 @@ ExportedObj/
 *.csproj
 *.unityproj
 *.sln
+*.slnx
 *.suo
 *.tmp
 *.user
@@ -105,3 +106,24 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Claude Code local settings (machine-specific, not shared)
+/CLAUDE.local.md
+/.claude/settings.local.json
+
+# Editor screenshots (throwaway captures, not project content)
+/[Aa]ssets/[Ss]creenshots/
+
+# Purchased asset packs. Licensed per seat, so each teammate imports their own copy.
+# The .meta files ship inside the package, so GUIDs match across installs and any
+# prefab or scene referencing them still resolves.
+/[Aa]ssets/[Tt]hird[Pp]arty/
+/[Aa]ssets/[Tt]hird[Pp]arty.meta
+
+# Photon App IDs. This repository is public and an App ID is what a client connects
+# with, so anyone who finds one can spend the plan's concurrent users. PhotonAppIds
+# injects these into PhotonServerSettings at startup, which is why that asset is
+# committed with its App ID fields empty — it also carries RpcList, and PUN sends
+# RPCs as indices into that list, so it has to stay identical on both machines.
+/[Aa]ssets/[Rr]esources/[Pp]hoton[Aa]pp[Ii]ds.asset
+/[Aa]ssets/[Rr]esources/[Pp]hoton[Aa]pp[Ii]ds.asset.meta
