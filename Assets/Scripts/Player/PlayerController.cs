@@ -11,7 +11,7 @@ namespace Morrow.Player
     /// player straight through level geometry.
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D))]
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, IUsesActionMap
     {
         [Header("Input")]
         [Tooltip("Drag Assets/InputSystem_Actions here. The Move action is read from it.")]
@@ -81,6 +81,31 @@ namespace Morrow.Player
                 Debug.LogError($"{nameof(PlayerController)} on '{name}' has no Input Actions asset assigned.", this);
                 return;
             }
+
+            Resolve();
+        }
+
+        /// <summary>Points this character at a different action map, even after it has started.</summary>
+        public void UseActionMap(string map)
+        {
+            if (map == actionMap)
+                return;
+
+            var wasEnabled = isActiveAndEnabled;
+            if (wasEnabled)
+                OnDisable();
+
+            actionMap = map;
+            Resolve();
+
+            if (wasEnabled)
+                OnEnable();
+        }
+
+        void Resolve()
+        {
+            if (inputActions == null)
+                return;
 
             _moveAction = inputActions.FindAction($"{actionMap}/Move", throwIfNotFound: false);
             if (_moveAction == null)

@@ -13,7 +13,7 @@ namespace Morrow.Interaction
     /// Content objects never talk to this component. They implement IInteractable and are found
     /// automatically, which is what keeps level building and systems work on separate files.
     /// </summary>
-    public class PlayerInteractor : MonoBehaviour
+    public class PlayerInteractor : MonoBehaviour, Morrow.Player.IUsesActionMap
     {
         [Header("Input")]
         [Tooltip("Drag Assets/InputSystem_Actions here. The Interact action is read from it.")]
@@ -68,6 +68,31 @@ namespace Morrow.Interaction
                 Debug.LogError($"{nameof(PlayerInteractor)} on '{name}' has no Input Actions asset assigned.", this);
                 return;
             }
+
+            Resolve();
+        }
+
+        /// <summary>Points this character at a different action map, even after it has started.</summary>
+        public void UseActionMap(string map)
+        {
+            if (map == actionMap)
+                return;
+
+            var wasEnabled = isActiveAndEnabled;
+            if (wasEnabled)
+                OnDisable();
+
+            actionMap = map;
+            Resolve();
+
+            if (wasEnabled)
+                OnEnable();
+        }
+
+        void Resolve()
+        {
+            if (inputActions == null)
+                return;
 
             _interactAction = inputActions.FindAction($"{actionMap}/Interact", throwIfNotFound: false);
             if (_interactAction == null)
