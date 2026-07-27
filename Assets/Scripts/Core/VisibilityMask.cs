@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Morrow.Core
+namespace Ashburn.Core
 {
     /// <summary>
     /// Blacks out everything the player cannot actually see, leaving holes where they can.

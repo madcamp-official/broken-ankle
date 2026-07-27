@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Morrow.Player;
+using Ashburn.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Morrow.Interaction
+namespace Ashburn.Interaction
 {
     /// <summary>
     /// Watches the space just in front of the player, keeps track of the best
@@ -13,7 +13,7 @@ namespace Morrow.Interaction
     /// Content objects never talk to this component. They implement IInteractable and are found
     /// automatically, which is what keeps level building and systems work on separate files.
     /// </summary>
-    public class PlayerInteractor : MonoBehaviour, Morrow.Player.IUsesActionMap
+    public class PlayerInteractor : MonoBehaviour, Ashburn.Player.IUsesActionMap
     {
         [Header("Input")]
         [Tooltip("Drag Assets/InputSystem_Actions here. The Interact action is read from it.")]

@@ -2,7 +2,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace Morrow.EditorTools
+namespace Ashburn.EditorTools
 {
     /// <summary>
     /// Settings for the flashlight cookie, kept as an asset so the recipe is versioned alongside
@@ -41,7 +41,7 @@ namespace Morrow.EditorTools
     /// re-running it made every one of those a slow round trip, so the recipe lives in an asset
     /// and the bake is a button.
     /// </summary>
-    class MorrowFlashlightCookieBaker : EditorWindow
+    class AshburnFlashlightCookieBaker : EditorWindow
     {
         const string SettingsPath = "Assets/Art/Debug/FlashlightCookie.asset";
 
@@ -49,8 +49,8 @@ namespace Morrow.EditorTools
         SerializedObject _serialized;
         Vector2 _scroll;
 
-        [MenuItem("Morrow/Flashlight Cookie Baker")]
-        static void Open() => GetWindow<MorrowFlashlightCookieBaker>("Cookie Baker").Show();
+        [MenuItem("Ashburn/Flashlight Cookie Baker")]
+        static void Open() => GetWindow<AshburnFlashlightCookieBaker>("Cookie Baker").Show();
 
         void OnEnable()
         {
@@ -146,7 +146,7 @@ namespace Morrow.EditorTools
                 if (p.a > 0)
                     lit++;
 
-            Debug.Log($"[Morrow] Baked '{s.outputPath}': {s.width}x{s.height}, {lit} lit pixels.");
+            Debug.Log($"[Ashburn] Baked '{s.outputPath}': {s.width}x{s.height}, {lit} lit pixels.");
         }
 
         /// <summary>Alpha for a pixel this far inside an edge, or zero once past the ramp.</summary>

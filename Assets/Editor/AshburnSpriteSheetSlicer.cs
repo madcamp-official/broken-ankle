@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.U2D.Sprites;
 using UnityEngine;
 
-namespace Morrow.EditorTools
+namespace Ashburn.EditorTools
 {
     /// <summary>
     /// Re-slices a pixel-art sheet on an exact cell grid instead of relying on Unity's automatic
@@ -18,9 +18,9 @@ namespace Morrow.EditorTools
     ///
     /// Cell size is read from the "_WxH" suffix in the file name.
     /// </summary>
-    static class MorrowSpriteSheetSlicer
+    static class AshburnSpriteSheetSlicer
     {
-        const string MenuPath = "Assets/Morrow/Slice Pixel Sheet on Cell Grid";
+        const string MenuPath = "Assets/Ashburn/Slice Pixel Sheet on Cell Grid";
         static readonly Regex CellSuffix = new Regex(@"_(\d+)x(\d+)$");
 
         [MenuItem(MenuPath, false, 30)]
@@ -34,7 +34,7 @@ namespace Morrow.EditorTools
             }
 
             if (sliced > 0)
-                Debug.Log($"[Morrow] Sliced {sliced} sheet(s) on the cell grid.");
+                Debug.Log($"[Ashburn] Sliced {sliced} sheet(s) on the cell grid.");
         }
 
         [MenuItem(MenuPath, true)]
@@ -61,7 +61,7 @@ namespace Morrow.EditorTools
             var match = CellSuffix.Match(sheetName);
             if (!match.Success)
             {
-                Debug.LogWarning($"[Morrow] '{sheetName}' has no _WxH size suffix, so the cell size " +
+                Debug.LogWarning($"[Ashburn] '{sheetName}' has no _WxH size suffix, so the cell size " +
                                  "is unknown. Rename it (for example foo_32x32.png) and try again.");
                 return false;
             }
@@ -85,7 +85,7 @@ namespace Morrow.EditorTools
             var provider = factories.GetSpriteEditorDataProviderFromObject(importer);
             if (provider == null)
             {
-                Debug.LogError($"[Morrow] No sprite data provider for '{sheetName}'.");
+                Debug.LogError($"[Ashburn] No sprite data provider for '{sheetName}'.");
                 return false;
             }
 
@@ -94,7 +94,7 @@ namespace Morrow.EditorTools
             var textureProvider = provider.GetDataProvider<ITextureDataProvider>();
             if (textureProvider == null)
             {
-                Debug.LogError($"[Morrow] No texture data provider for '{sheetName}'.");
+                Debug.LogError($"[Ashburn] No texture data provider for '{sheetName}'.");
                 return false;
             }
 
@@ -103,7 +103,7 @@ namespace Morrow.EditorTools
 
             if (width % cellWidth != 0 || height % cellHeight != 0)
             {
-                Debug.LogError($"[Morrow] '{sheetName}' is {width}x{height}, which is not a whole " +
+                Debug.LogError($"[Ashburn] '{sheetName}' is {width}x{height}, which is not a whole " +
                                $"number of {cellWidth}x{cellHeight} cells. Aborted rather than " +
                                "slice a grid that would clip the art.");
                 return false;
@@ -150,7 +150,7 @@ namespace Morrow.EditorTools
             provider.Apply();
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
 
-            Debug.Log($"[Morrow] '{sheetName}': {columns}x{rows} = {rects.Length} sprites " +
+            Debug.Log($"[Ashburn] '{sheetName}': {columns}x{rows} = {rects.Length} sprites " +
                       $"at {cellWidth}x{cellHeight}, pivot bottom-center.");
             return true;
         }

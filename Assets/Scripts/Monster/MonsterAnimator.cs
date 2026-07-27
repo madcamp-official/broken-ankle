@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Morrow.Monster
+namespace Ashburn.Monster
 {
     /// <summary>
     /// Drives the monster's Animator from how it is actually moving.

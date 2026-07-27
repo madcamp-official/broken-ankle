@@ -1,8 +1,8 @@
 using System;
-using Morrow.Interaction;
+using Ashburn.Interaction;
 using UnityEngine;
 
-namespace Morrow.Monster
+namespace Ashburn.Monster
 {
     /// <summary>
     /// Sits on a player and handles being caught: control is taken away, the body is dragged along

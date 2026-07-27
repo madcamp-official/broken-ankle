@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Morrow.Player
+namespace Ashburn.Player
 {
     /// <summary>
     /// Top-down eight-way movement for the player character.
@@ -42,7 +42,7 @@ namespace Morrow.Player
 
         /// <summary>
         /// Last direction the player actually moved in, snapped to one of the four cardinals and
-        /// never zero. Animation and <see cref="Morrow.Interaction.PlayerInteractor"/> both need a
+        /// never zero. Animation and <see cref="Ashburn.Interaction.PlayerInteractor"/> both need a
         /// facing even while the player stands still, which is why this survives a released stick.
         /// </summary>
         public Vector2 FacingDirection { get; private set; } = Vector2.down;

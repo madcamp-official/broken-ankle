@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Morrow.Noise
+namespace Ashburn.Noise
 {
     /// <summary>
     /// Draws the ring of hearing around the player: a circle that ripples toward whatever just made

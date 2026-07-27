@@ -126,7 +126,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 435c9366f9a466e46bad98eaa48f7cdd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Core.PixelSnap
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Core.PixelSnap
   pixelsPerUnit: 32
   snap: 1
 --- !u!1 &7388136391222354942
@@ -242,7 +242,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a83952cbdf314e748ac9fab680aeb488, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Noise.NoiseEars
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Noise.NoiseEars
   hearSelf: 1
   hearAlly: 1
   hearMonster: 0
@@ -259,7 +259,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a550e2645cf495c498dc7d1b42701102, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Monster.MonsterAI
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Monster.MonsterAI
   suspicionPerNoise: 0.55
   suspicionDecay: 0.22
   chaseThreshold: 0.75
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9dc6172883d18b84798072fa5ba073db, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Monster.MonsterGrab
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Monster.MonsterGrab
   grabRadius: 0.55
   nest: {fileID: 0}
   dragSpeed: 1.9
@@ -304,7 +304,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a40dedc1acd59f241b13924ea9c7d5ef, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Monster.MonsterAnimator
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Monster.MonsterAnimator
   referenceSpeed: 1.6
   minPlaybackSpeed: 0.6
   maxPlaybackSpeed: 2.2

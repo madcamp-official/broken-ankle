@@ -1,7 +1,7 @@
-using Morrow.Noise;
+using Ashburn.Noise;
 using UnityEngine;
 
-namespace Morrow.Monster
+namespace Ashburn.Monster
 {
     public enum MonsterState
     {

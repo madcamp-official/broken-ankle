@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Morrow.Noise
+namespace Ashburn.Noise
 {
     /// <summary>
     /// The listening half of the noise system. Filters the bus down to sounds this object could

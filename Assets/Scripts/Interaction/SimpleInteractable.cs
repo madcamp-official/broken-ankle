@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Morrow.Interaction
+namespace Ashburn.Interaction
 {
     /// <summary>
     /// A ready-made <see cref="IInteractable"/> that just raises a UnityEvent, so level building

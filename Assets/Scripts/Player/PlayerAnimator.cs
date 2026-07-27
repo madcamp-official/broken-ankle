@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Morrow.Player
+namespace Ashburn.Player
 {
     /// <summary>
     /// Feeds the Animator from <see cref="PlayerController"/> so the character faces the way it

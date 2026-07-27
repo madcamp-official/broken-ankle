@@ -152,7 +152,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: df9e71112685b3849b2152fc9135d438, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Core.CinemachinePlayerBinder
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Core.CinemachinePlayerBinder
   targetTag: Player
   bindLookAt: 0
 --- !u!1 &8883790069762459595

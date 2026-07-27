@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Morrow.Monster
+namespace Ashburn.Monster
 {
     /// <summary>
     /// Grabs a player on contact and hauls them back to the nest.

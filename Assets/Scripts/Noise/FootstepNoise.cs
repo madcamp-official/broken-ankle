@@ -1,7 +1,7 @@
-using Morrow.Player;
+using Ashburn.Player;
 using UnityEngine;
 
-namespace Morrow.Noise
+namespace Ashburn.Noise
 {
     /// <summary>
     /// Turns walking into sound. Every so many steps the character announces itself on the

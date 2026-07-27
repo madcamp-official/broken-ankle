@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Morrow.Noise
+namespace Ashburn.Noise
 {
     /// <summary>
     /// Emits a sound on a timer from wherever it sits. Stands in for anything that makes noise on

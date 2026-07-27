@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace Morrow.EditorTools
+namespace Ashburn.EditorTools
 {
     /// <summary>
     /// Applies the project's pixel-art import standard to any texture whose file name ends in a
@@ -13,7 +13,7 @@ namespace Morrow.EditorTools
     /// Textures without the suffix are left completely alone, so this never touches UI art,
     /// photos or anything else that is not on the tile grid.
     /// </summary>
-    class MorrowPixelArtPostprocessor : AssetPostprocessor
+    class AshburnPixelArtPostprocessor : AssetPostprocessor
     {
         static readonly Regex CellSuffix = new Regex(@"_(\d+)x(\d+)$");
 

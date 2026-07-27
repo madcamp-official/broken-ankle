@@ -1,7 +1,7 @@
 using Unity.Cinemachine;
 using UnityEngine;
 
-namespace Morrow.Core
+namespace Ashburn.Core
 {
     /// <summary>
     /// Points a <see cref="CinemachineCamera"/> at whichever object is tagged Player once the

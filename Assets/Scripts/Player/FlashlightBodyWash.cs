@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-namespace Morrow.Player
+namespace Ashburn.Player
 {
     /// <summary>
     /// Lets the beam spill over the character's own body, but only when it is pointed toward the

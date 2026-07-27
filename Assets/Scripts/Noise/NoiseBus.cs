@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Morrow.Noise
+namespace Ashburn.Noise
 {
     /// <summary>
     /// Who made a sound. The player's own footsteps are not shown back to them, but a partner's

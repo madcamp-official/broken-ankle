@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Morrow.Core
+namespace Ashburn.Core
 {
     /// <summary>
     /// Rounds this object's position onto the pixel grid every frame, so the sprite it carries

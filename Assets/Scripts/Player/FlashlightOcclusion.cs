@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-namespace Morrow.Player
+namespace Ashburn.Player
 {
     /// <summary>
     /// Cuts the flashlight's beam off wherever it meets a wall, so the light stops at the surface

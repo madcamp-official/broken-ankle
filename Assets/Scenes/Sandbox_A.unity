@@ -447,7 +447,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 456208d8ef61c454b9525ae4d037aa22, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Core.ControlsOverlay
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Core.ControlsOverlay
   inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   maps:
   - Player
@@ -2589,7 +2589,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90bb65a84fcfbd444baa40cd2cc66911, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Player.PlayerSpawner
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Player.PlayerSpawner
   playerPrefab: {fileID: 240766376676415943, guid: f19fe290c8848d64da6302bd6dc0fc7f, type: 3}
   spawnPoints:
   - {fileID: 25668099}
@@ -2647,7 +2647,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9189eb131d7c77541a5e2d82330e5787, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Morrow.Runtime::Morrow.Interaction.SimpleInteractable
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Interaction.SimpleInteractable
   prompt: "\uBC30\uC804\uBC18 \uC218\uB9AC"
   interactable: 1
   singleUse: 1

@@ -1,6 +1,6 @@
 {
-    "name": "Morrow.Runtime",
-    "rootNamespace": "Morrow",
+    "name": "Ashburn.Runtime",
+    "rootNamespace": "Ashburn",
     "references": [
         "Unity.InputSystem",
         "Unity.Cinemachine",

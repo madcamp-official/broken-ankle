@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Morrow.Player
+namespace Ashburn.Player
 {
     /// <summary>
     /// Points the flashlight, and decides what "forward" means for the beam.

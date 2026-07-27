@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Morrow.Player
+namespace Ashburn.Player
 {
     /// <summary>
     /// Puts characters into the level.

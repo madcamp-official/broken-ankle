@@ -1,8 +1,8 @@
-using Morrow.Noise;
+using Ashburn.Noise;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-namespace Morrow.Player
+namespace Ashburn.Player
 {
     /// <summary>
     /// Decides what a spawned player is: the one at this keyboard, or somebody else's character

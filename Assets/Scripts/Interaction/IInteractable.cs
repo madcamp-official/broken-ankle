@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Morrow.Interaction
+namespace Ashburn.Interaction
 {
     /// <summary>
     /// Anything the player can walk up to and use: breaker boxes, doors, note pickups.

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Morrow.Player
+namespace Ashburn.Player
 {
     /// <summary>
     /// Switches the flashlight on and off, and tells anything that cares.
