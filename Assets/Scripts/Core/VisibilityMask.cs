@@ -52,6 +52,12 @@ namespace Morrow.Core
         [Tooltip("Width of the fade between seen and unseen, in world units.")]
         [SerializeField, Range(0f, 2f)] float edgeSoftness = 0.6f;
 
+        [Header("Room light")]
+        [Tooltip("While this is active the mask stops drawing, so repairing the power means seeing " +
+                 "the whole room without a flashlight. Leave empty to always mask.")]
+        [SerializeField] GameObject roomLight;
+
+        MeshRenderer _renderer;
         Mesh _mesh;
         Vector3[] _vertices;
         Color[] _colours;
@@ -61,6 +67,7 @@ namespace Morrow.Core
         void Awake()
         {
             _self = transform;
+            _renderer = GetComponent<MeshRenderer>();
             Build();
         }
 
@@ -105,6 +112,14 @@ namespace Morrow.Core
 
         void LateUpdate()
         {
+            // With the room lit there is nothing to hide, and skipping the fan saves the rays too.
+            var lit = roomLight != null && roomLight.activeInHierarchy;
+            if (_renderer != null)
+                _renderer.enabled = !lit;
+
+            if (lit)
+                return;
+
             CastFan();
             Redraw();
         }
