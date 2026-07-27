@@ -33,6 +33,7 @@ namespace Ashburn.Player
         public bool IsOn { get; private set; }
 
         InputAction _toggleAction;
+        InputActionAsset _ownedActions;
 
         void Awake()
         {
@@ -42,9 +43,20 @@ namespace Ashburn.Player
                 return;
             }
 
+            // Private copy per character. Actions belong to the asset, so this component switching
+            // off — which it does on every character that is not the viewer — would otherwise
+            // disable the shared action and take the viewer's flashlight key with it.
+            inputActions = _ownedActions = Instantiate(inputActions);
+
             _toggleAction = inputActions.FindAction("Player/ToggleFlashlight", throwIfNotFound: false);
             if (_toggleAction == null)
                 Debug.LogError("Could not find the 'Player/ToggleFlashlight' action in the assigned asset.", this);
+        }
+
+        void OnDestroy()
+        {
+            if (_ownedActions != null)
+                Destroy(_ownedActions);
         }
 
         void Start() => Apply(startOn);

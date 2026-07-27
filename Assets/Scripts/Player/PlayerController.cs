@@ -35,6 +35,7 @@ namespace Ashburn.Player
         [SerializeField] float acceleration = 0.08f;
 
         Rigidbody2D _body;
+        InputActionAsset _ownedActions;
         InputAction _moveAction;
         InputAction _sprintAction;
         InputAction _crouchAction;
@@ -82,7 +83,21 @@ namespace Ashburn.Player
                 return;
             }
 
+            // An InputAction belongs to the asset, not to the component reading it, so enabling or
+            // disabling one is felt by every character pointed at the same asset. Two local players
+            // share this prefab: the second one starts on the prefab's default map, enables
+            // Player/Move, and then switches to Player2 — and the switch disables Player/Move on
+            // its way out, from under the first player, who is already running and never finds out.
+            // A private copy per character keeps one character's bookkeeping off another's.
+            inputActions = _ownedActions = Instantiate(inputActions);
+
             Resolve();
+        }
+
+        void OnDestroy()
+        {
+            if (_ownedActions != null)
+                Destroy(_ownedActions);
         }
 
         /// <summary>Points this character at a different action map, even after it has started.</summary>
