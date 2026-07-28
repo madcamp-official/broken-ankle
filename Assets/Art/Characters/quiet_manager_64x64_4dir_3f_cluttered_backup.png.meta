@@ -1,43 +1,43 @@
 fileFormatVersion: 2
-guid: f5ba6d76e50d89041828d9dd5cedd639
+guid: dcead8d5dca567440b5889aa4db497fe
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3947367374779482934
-    second: quiet_manager_32x32_4dir_3f_0
+      213: 5077682134416905357
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_0
   - first:
-      213: 1514035063593419545
-    second: quiet_manager_32x32_4dir_3f_1
+      213: -4237561505613009489
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_1
   - first:
-      213: 493330306826645552
-    second: quiet_manager_32x32_4dir_3f_2
+      213: -3664097866239193781
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_2
   - first:
-      213: 5362324258446498763
-    second: quiet_manager_32x32_4dir_3f_3
+      213: 7612948846894021597
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_3
   - first:
-      213: 1303971242325780815
-    second: quiet_manager_32x32_4dir_3f_4
+      213: -8439643405507816606
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_4
   - first:
-      213: -5898565905868652685
-    second: quiet_manager_32x32_4dir_3f_5
+      213: -1841857352377345722
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_5
   - first:
-      213: 1645838335404718677
-    second: quiet_manager_32x32_4dir_3f_6
+      213: 5586893187409139044
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_6
   - first:
-      213: 2021762222894301237
-    second: quiet_manager_32x32_4dir_3f_7
+      213: 7068139338017019717
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_7
   - first:
-      213: 333019709758967698
-    second: quiet_manager_32x32_4dir_3f_8
+      213: -8214698032510494700
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_8
   - first:
-      213: 4061088303425753709
-    second: quiet_manager_32x32_4dir_3f_9
+      213: 7243254305156810838
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_9
   - first:
-      213: -2549780694154985770
-    second: quiet_manager_32x32_4dir_3f_10
+      213: -2346253240345290839
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_10
   - first:
-      213: -6156847108331634754
-    second: quiet_manager_32x32_4dir_3f_11
+      213: -8872966759530381914
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_11
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -133,13 +133,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: quiet_manager_32x32_4dir_3f_0
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_0
       rect:
         serializedVersion: 2
-        x: 3
-        y: 95
-        width: 25
-        height: 29
+        x: 0
+        y: 191
+        width: 59
+        height: 57
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -148,20 +148,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: acc7d4469422839c0800000000000000
-      internalID: -3947367374779482934
+      spriteID: d845440affc877640800000000000000
+      internalID: 5077682134416905357
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: quiet_manager_32x32_4dir_3f_1
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_1
       rect:
         serializedVersion: 2
-        x: 36
-        y: 95
-        width: 25
-        height: 28
+        x: 70
+        y: 191
+        width: 55
+        height: 55
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -170,20 +170,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 913c8fe5edee20510800000000000000
-      internalID: 1514035063593419545
+      spriteID: fad211023482135c0800000000000000
+      internalID: -4237561505613009489
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: quiet_manager_32x32_4dir_3f_2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_2
       rect:
         serializedVersion: 2
-        x: 69
-        y: 95
-        width: 25
-        height: 29
+        x: 136
+        y: 191
+        width: 55
+        height: 57
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -192,20 +192,86 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 030365fdc49a8d600800000000000000
-      internalID: 493330306826645552
+      spriteID: b4dcb846762862dc0800000000000000
+      internalID: -3664097866239193781
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: quiet_manager_32x32_4dir_3f_3
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_3
       rect:
         serializedVersion: 2
-        x: 3
+        x: 0
+        y: 127
+        width: 59
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddb765024a0a6a960800000000000000
+      internalID: 7612948846894021597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_4
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 127
+        width: 55
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2631dbfa90d50ea80800000000000000
+      internalID: -8439643405507816606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_5
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 127
+        width: 55
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6495b902f786076e0800000000000000
+      internalID: -1841857352377345722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_6
+      rect:
+        serializedVersion: 2
+        x: 0
         y: 63
-        width: 25
-        height: 29
+        width: 59
+        height: 57
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -214,20 +280,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bcbd923908dca6a40800000000000000
-      internalID: 5362324258446498763
+      spriteID: 4655299d0c1a88d40800000000000000
+      internalID: 5586893187409139044
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: quiet_manager_32x32_4dir_3f_4
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_7
       rect:
         serializedVersion: 2
-        x: 36
+        x: 70
         y: 63
-        width: 25
-        height: 28
+        width: 55
+        height: 55
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -236,20 +302,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f492728afe2a81210800000000000000
-      internalID: 1303971242325780815
+      spriteID: 54718718743171260800000000000000
+      internalID: 7068139338017019717
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: quiet_manager_32x32_4dir_3f_5
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_8
       rect:
         serializedVersion: 2
-        x: 69
+        x: 136
         y: 63
-        width: 25
-        height: 29
+        width: 55
+        height: 57
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -258,86 +324,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 37ff7708f85142ea0800000000000000
-      internalID: -5898565905868652685
+      spriteID: 4189c1ba9a78ffd80800000000000000
+      internalID: -8214698032510494700
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: quiet_manager_32x32_4dir_3f_6
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_9
       rect:
         serializedVersion: 2
-        x: 4
-        y: 31
-        width: 25
-        height: 29
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 55ab48bfe3137d610800000000000000
-      internalID: 1645838335404718677
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: quiet_manager_32x32_4dir_3f_7
-      rect:
-        serializedVersion: 2
-        x: 37
-        y: 31
-        width: 24
-        height: 28
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5304beba70ebe0c10800000000000000
-      internalID: 2021762222894301237
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: quiet_manager_32x32_4dir_3f_8
-      rect:
-        serializedVersion: 2
-        x: 69
-        y: 31
-        width: 25
-        height: 29
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 29f036f59af1f9400800000000000000
-      internalID: 333019709758967698
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: quiet_manager_32x32_4dir_3f_9
-      rect:
-        serializedVersion: 2
-        x: 4
+        x: 0
         y: 0
-        width: 24
-        height: 28
+        width: 59
+        height: 56
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -346,20 +346,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d629f2f9b42eb5830800000000000000
-      internalID: 4061088303425753709
+      spriteID: 658c0b40a65358460800000000000000
+      internalID: 7243254305156810838
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: quiet_manager_32x32_4dir_3f_10
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_10
       rect:
         serializedVersion: 2
-        x: 36
+        x: 65
         y: 0
-        width: 25
-        height: 27
+        width: 60
+        height: 54
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -368,20 +368,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6de3ebdc7fb5d9cd0800000000000000
-      internalID: -2549780694154985770
+      spriteID: 9a71c10eb1f607fd0800000000000000
+      internalID: -2346253240345290839
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: quiet_manager_32x32_4dir_3f_11
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_11
       rect:
         serializedVersion: 2
-        x: 68
+        x: 128
         y: 0
-        width: 26
-        height: 28
+        width: 63
+        height: 56
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -390,8 +390,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ebf7083ec2c7e8aa0800000000000000
-      internalID: -6156847108331634754
+      spriteID: 6adb7524eb3ecd480800000000000000
+      internalID: -8872966759530381914
       vertices: []
       indices: 
       edges: []
@@ -410,18 +410,18 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      quiet_manager_32x32_4dir_3f_0: -3947367374779482934
-      quiet_manager_32x32_4dir_3f_1: 1514035063593419545
-      quiet_manager_32x32_4dir_3f_10: -2549780694154985770
-      quiet_manager_32x32_4dir_3f_11: -6156847108331634754
-      quiet_manager_32x32_4dir_3f_2: 493330306826645552
-      quiet_manager_32x32_4dir_3f_3: 5362324258446498763
-      quiet_manager_32x32_4dir_3f_4: 1303971242325780815
-      quiet_manager_32x32_4dir_3f_5: -5898565905868652685
-      quiet_manager_32x32_4dir_3f_6: 1645838335404718677
-      quiet_manager_32x32_4dir_3f_7: 2021762222894301237
-      quiet_manager_32x32_4dir_3f_8: 333019709758967698
-      quiet_manager_32x32_4dir_3f_9: 4061088303425753709
+      quiet_manager_64x64_4dir_3f_cluttered_backup_0: 5077682134416905357
+      quiet_manager_64x64_4dir_3f_cluttered_backup_1: -4237561505613009489
+      quiet_manager_64x64_4dir_3f_cluttered_backup_10: -2346253240345290839
+      quiet_manager_64x64_4dir_3f_cluttered_backup_11: -8872966759530381914
+      quiet_manager_64x64_4dir_3f_cluttered_backup_2: -3664097866239193781
+      quiet_manager_64x64_4dir_3f_cluttered_backup_3: 7612948846894021597
+      quiet_manager_64x64_4dir_3f_cluttered_backup_4: -8439643405507816606
+      quiet_manager_64x64_4dir_3f_cluttered_backup_5: -1841857352377345722
+      quiet_manager_64x64_4dir_3f_cluttered_backup_6: 5586893187409139044
+      quiet_manager_64x64_4dir_3f_cluttered_backup_7: 7068139338017019717
+      quiet_manager_64x64_4dir_3f_cluttered_backup_8: -8214698032510494700
+      quiet_manager_64x64_4dir_3f_cluttered_backup_9: 7243254305156810838
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

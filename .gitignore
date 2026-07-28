@@ -127,3 +127,13 @@ InitTestScene*.unity*
 # RPCs as indices into that list, so it has to stay identical on both machines.
 /[Aa]ssets/[Rr]esources/[Pp]hoton[Aa]pp[Ii]ds.asset
 /[Aa]ssets/[Rr]esources/[Pp]hoton[Aa]pp[Ii]ds.asset.meta
+
+# Paid third-party source assets. Keep these local and out of the public repo.
+/[Aa]rt[Ss]ource/[Ll]ime[Zz]u/
+
+# Paid LimeZu Unity assets. Keep the imported tiles, palettes, and generated
+# tile assets local because this repository is public.
+/[Aa]ssets/[Aa]rt/[Tt]iles/[Ll]ime[Zz]u/
+/[Aa]ssets/[Aa]rt/[Tt]iles/[Ll]ime[Zz]u.meta
+/[Aa]ssets/[Aa]rt/[Pp]rops/[Ll]ime[Zz]u/
+/[Aa]ssets/[Aa]rt/[Pp]rops/[Ll]ime[Zz]u.meta

@@ -13,7 +13,7 @@ namespace Ashburn.Core
     /// what lets the camera ship as a drop-in prefab alongside Player.prefab.
     ///
     /// It keeps looking rather than checking once, because the character it is looking for does
-    /// not exist yet when the scene starts — PlayerSpawner creates it, and two components' Start
+    /// not exist yet when the scene starts. PlayerSpawner creates it, and two components' Start
     /// methods run in no particular order. Looking once meant the camera followed nothing whenever
     /// it happened to win that race, which changed every time the scene was rearranged. Waiting
     /// also covers a networked spawn, where the character arrives some frames after the level.
