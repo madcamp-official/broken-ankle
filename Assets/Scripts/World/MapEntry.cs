@@ -33,13 +33,19 @@ namespace Ashburn.World
             return transform.position + Vector3.right * (step * side);
         }
 
-        /// <summary>Finds an entry by name in the loaded scene, or null.</summary>
-        public static MapEntry Find(string id)
+        /// <summary>
+        /// Finds an entry by name inside one map.
+        ///
+        /// Scoped to the map on purpose. Several maps are loaded at once now, and 'Default' is the
+        /// name most of them use for their way in — a search across all of them would find whichever
+        /// map happened to load first and put arrivals in the wrong building.
+        /// </summary>
+        public static MapEntry Find(string id, MapZone zone)
         {
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id) || zone == null)
                 return null;
 
-            foreach (var entry in FindObjectsByType<MapEntry>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var entry in zone.GetComponentsInChildren<MapEntry>(true))
                 if (entry.id == id)
                     return entry;
 

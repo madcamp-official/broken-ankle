@@ -51,7 +51,13 @@ namespace Ashburn.World
                 if (locked)
                     return false;
 
-                return !needsPower || (PowerGrid.Current != null && PowerGrid.Current.IsPowered);
+                if (!needsPower)
+                    return true;
+
+                // The map this door is in, not the one it leads to: a front door is unlocked by
+                // the power in the street, not by the house behind it.
+                var grid = PowerGrid.Of(this);
+                return grid != null && grid.IsPowered;
             }
         }
 
@@ -59,15 +65,19 @@ namespace Ashburn.World
         public void SetLocked(bool value) => locked = value;
 
         // The prompt still shows while locked, so the player learns the door exists and that it is
-        // the door stopping them rather than the level having no way on.
-        public bool CanInteract(GameObject interactor) => !MapTravel.IsTravelling;
+        // the door stopping them rather than the level having no way on. Asked per interactor:
+        // one player being mid-travel is no reason the other cannot open a door of their own.
+        public bool CanInteract(GameObject interactor) => !MapTravel.IsTravelling(interactor);
 
         public void Interact(GameObject interactor)
         {
-            if (MapTravel.IsTravelling)
+            if (MapTravel.IsTravelling(interactor))
                 return;
 
-            NoiseBus.Emit(transform.position, noiseRange, NoiseKind.Self);
+            // Loud, and heard by whoever is still in the map being left. Tagged with the door's map
+            // rather than the traveller's, because the door is what made the sound and it is not
+            // going anywhere.
+            NoiseBus.Emit(transform.position, noiseRange, NoiseKind.Self, MapZone.IdOf(this));
 
             if (!IsOpenable)
                 return;
@@ -78,7 +88,7 @@ namespace Ashburn.World
                 return;
             }
 
-            MapTravel.Go(targetMap, targetEntry);
+            MapTravel.Go(interactor, targetMap, targetEntry);
         }
 
         void OnDrawGizmos()
