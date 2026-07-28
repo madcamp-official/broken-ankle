@@ -1,3 +1,4 @@
+using System.Collections;
 using Ashburn.World;
 using UnityEngine;
 
@@ -19,11 +20,16 @@ namespace Ashburn.Player
         [Header("What to spawn")]
         [SerializeField] GameObject playerPrefab;
 
-        [Tooltip("One per player, in order. Running out of points reuses the last one.")]
-        [SerializeField] Transform[] spawnPoints;
-
         [Tooltip("Action map per player, in order. The second entry is the split-keyboard player.")]
         [SerializeField] string[] actionMaps = { "Player", "Player2" };
+
+        [Header("Where the game starts")]
+        [Tooltip("Scene name of the map both players open in. It is loaded before anyone is " +
+                 "created, and must be in File > Build Profiles > Scene List.")]
+        [SerializeField] string startingMap = "Street";
+
+        [Tooltip("MapEntry in that map to start at. Empty uses the map's own spawn points.")]
+        [SerializeField] string startingEntry = "";
 
         [Header("Offline")]
         [Tooltip("Characters to create when nothing else does it. Two runs the local co-op test; " +
@@ -33,19 +39,23 @@ namespace Ashburn.Player
         [Tooltip("Which of them the screen follows.")]
         [SerializeField] int offlineViewerIndex;
 
-        MapEntry _arrival;
+        MapZone _zone;
 
-        void Start()
+        /// <summary>The map players are put into. Set once the starting map is up.</summary>
+        public MapZone Zone => _zone;
+
+        IEnumerator Start()
         {
-            // Asked for once, at the top: whoever walked through the door named an entry to come
-            // out of, and it stops being true the moment it has been used.
-            var entryId = MapTravel.TakeEntry();
-            if (!string.IsNullOrEmpty(entryId))
+            // This object lives in the systems scene, which holds no level at all. Nobody can be
+            // created until there is a map for them to stand in.
+            yield return MapLoader.Acquire(startingMap);
+
+            _zone = MapZone.Find(startingMap);
+            if (_zone == null)
             {
-                _arrival = MapEntry.Find(entryId);
-                if (_arrival == null)
-                    Debug.LogWarning($"Arrived asking for the '{entryId}' entry, which this scene " +
-                                     "does not have. Falling back to the spawn points.", this);
+                Debug.LogError($"{nameof(PlayerSpawner)} could not open the starting map " +
+                               $"'{startingMap}', so there is nowhere to put anybody.", this);
+                yield break;
             }
 
             // Says so rather than doing nothing quietly. An empty level used to look identical
@@ -55,8 +65,13 @@ namespace Ashburn.Player
                 Debug.LogWarning($"{nameof(PlayerSpawner)} on '{name}' has Offline Players set to " +
                                  $"{offlinePlayers}, so it creates nobody. Set it to 2 for the " +
                                  "local two-player test.", this);
-                return;
+                yield break;
             }
+
+            // One hold for the map itself, then one per player, so the map is only let go of once
+            // the last of them has walked out of it.
+            for (var i = 1; i < offlinePlayers; i++)
+                yield return MapLoader.Acquire(startingMap);
 
             for (var i = 0; i < offlinePlayers; i++)
                 Spawn(i, viewer: i == offlineViewerIndex, controlled: true);
@@ -79,6 +94,15 @@ namespace Ashburn.Player
             var character = Instantiate(playerPrefab, PositionFor(index), Quaternion.identity);
             character.name = viewer ? "Player" : $"Player {index + 1}";
 
+            // Which map this character is in, told rather than worked out. Everything that must not
+            // cross a map — the noise bus, the power, the darkness — reads it from here.
+            var presence = character.GetComponent<MapPresence>();
+            if (presence != null)
+                presence.Enter(_zone);
+            else
+                Debug.LogError($"'{playerPrefab.name}' has no {nameof(MapPresence)}, so it will " +
+                               "neither hear anything nor be heard.", character);
+
             // Before the rig, because switching maps disables and re-enables the input components
             // and the rig decides whether they should be on at all.
             if (index < actionMaps.Length)
@@ -95,36 +119,34 @@ namespace Ashburn.Player
         }
 
         /// <summary>
-        /// Where character <paramref name="index"/> starts. Arriving from another map overrides the
-        /// scene's own spawn points: a player who walked in the front door should be at the front
-        /// door, not wherever the level happens to begin.
+        /// Where character <paramref name="index"/> starts.
+        ///
+        /// The points come from the map, not from here: this object outlives every map and cannot
+        /// hold a reference into one. A named entry wins when there is one, so a game can open on
+        /// the players walking in through a particular door.
         /// </summary>
         Vector3 PositionFor(int index)
         {
-            if (_arrival != null)
-                return _arrival.PointFor(index);
-
-            if (spawnPoints == null || spawnPoints.Length == 0)
-                return transform.position;
-
-            var point = spawnPoints[Mathf.Clamp(index, 0, spawnPoints.Length - 1)];
-            return point != null ? point.position : transform.position;
-        }
-
-        void OnDrawGizmos()
-        {
-            if (spawnPoints == null)
-                return;
-
-            Gizmos.color = new Color(0.4f, 0.8f, 1f, 0.8f);
-            for (var i = 0; i < spawnPoints.Length; i++)
+            if (!string.IsNullOrEmpty(startingEntry))
             {
-                if (spawnPoints[i] == null)
-                    continue;
+                var entry = MapEntry.Find(startingEntry, _zone);
+                if (entry != null)
+                    return entry.PointFor(index);
 
-                Gizmos.DrawWireSphere(spawnPoints[i].position, 0.4f);
-                Gizmos.DrawLine(spawnPoints[i].position, spawnPoints[i].position + Vector3.up * 0.8f);
+                Debug.LogWarning($"Map '{startingMap}' has no entry called '{startingEntry}'. " +
+                                 "Using its spawn points instead.", this);
             }
+
+            var points = _zone != null ? _zone.GetComponentsInChildren<SpawnPoint>(true) : null;
+            if (points == null || points.Length == 0)
+            {
+                Debug.LogWarning($"Map '{startingMap}' has no {nameof(SpawnPoint)} in it, so " +
+                                 "everybody starts on its origin, most likely inside a wall.", this);
+                return _zone != null ? _zone.transform.position : transform.position;
+            }
+
+            return points[Mathf.Clamp(index, 0, points.Length - 1)].transform.position;
         }
+
     }
 }

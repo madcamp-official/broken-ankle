@@ -36,8 +36,8 @@ namespace Ashburn.Player
         [SerializeField] GameObject[] viewerOnlyObjects;
 
         [Tooltip("Components that belong to the point of view rather than to the character. The " +
-                 "flashlight switch lives here: left enabled on a partner it would turn their beam " +
-                 "and ring back on the moment it starts.")]
+                 "flashlight and hearing-ring switches live here: left enabled on a partner they " +
+                 "would turn that partner's beam and ring back on the moment they start.")]
         [SerializeField] MonoBehaviour[] viewerOnlyComponents;
 
         [Header("Rendering")]

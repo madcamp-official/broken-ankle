@@ -56,6 +56,12 @@ namespace Ashburn.World
                  "instead, and stops at its edges.")]
         [SerializeField] float maxSize = 6f;
 
+        [Tooltip("In a room too large to frame whole, keep the view inside the room's walls. On by " +
+                 "default, and it is what makes a room read as a room: without it a room that is " +
+                 "merely a little too wide for the screen stops being framed at all and the view " +
+                 "just trails the player around inside it.")]
+        [SerializeField] bool clampToRoom = true;
+
         [Tooltip("Aspect to assume before a camera exists to ask. Only used on the first frame.")]
         [SerializeField] float fallbackAspect = 16f / 9f;
 
@@ -216,18 +222,24 @@ namespace Ashburn.World
             if (viewer == null)
                 return centre;
 
-            // On an axis the room is smaller than the view, there is nothing to track along:
-            // clamping would fight itself, so stay centred.
+            // On an axis the room is smaller than the view there is nothing to track along, so the
+            // room stays centred. On an axis it is larger — a corridor's length — the view follows
+            // the player, and by default it follows them the whole way: clamped, it stops half a
+            // screen from each end and leaves the player walking out to the edge of their own
+            // view, which is exactly where the darkness stops being able to cover the screen.
             var x = area.size.x <= halfWidth * 2f
                 ? area.center.x
-                : Mathf.Clamp(viewer.position.x, area.min.x + halfWidth, area.max.x - halfWidth);
+                : Track(viewer.position.x, area.min.x, area.max.x, halfWidth);
 
             var y = area.size.y <= halfHeight * 2f
                 ? area.center.y
-                : Mathf.Clamp(viewer.position.y, area.min.y + halfHeight, area.max.y - halfHeight);
+                : Track(viewer.position.y, area.min.y, area.max.y, halfHeight);
 
             return new Vector3(x, y, z);
         }
+
+        float Track(float viewer, float min, float max, float half) =>
+            clampToRoom ? Mathf.Clamp(viewer, min + half, max - half) : viewer;
 
         Transform Viewer()
         {
