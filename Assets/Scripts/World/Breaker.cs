@@ -1,3 +1,4 @@
+using Ashburn.World;
 using Ashburn.Interaction;
 using Ashburn.Noise;
 using UnityEngine;
@@ -33,7 +34,7 @@ namespace Ashburn.World
 
         public bool CanInteract(GameObject interactor)
         {
-            var grid = PowerGrid.Current;
+            var grid = PowerGrid.Of(this);
             if (grid == null)
                 return false;
 
@@ -45,12 +46,12 @@ namespace Ashburn.World
             if (!CanInteract(interactor))
                 return;
 
-            var grid = PowerGrid.Current;
+            var grid = PowerGrid.Of(this);
             grid.SetPowered(reusable ? !grid.IsPowered : true);
 
             // Whoever threw it hears their own noise as Self; a partner across the building hears
             // it as something happening in a room they are not in.
-            NoiseBus.Emit(transform.position, noiseRange, NoiseKind.Self);
+            NoiseBus.Emit(transform.position, noiseRange, NoiseKind.Self, MapZone.IdOf(this));
         }
     }
 }

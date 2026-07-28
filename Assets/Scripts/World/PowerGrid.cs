@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Ashburn.World
@@ -28,10 +29,32 @@ namespace Ashburn.World
         [SerializeField] bool startPowered;
 
         /// <summary>
-        /// The grid in the current scene. Found this way so a prop can throw the switch without
-        /// holding a reference to it, which is what let the breaker ship as a prefab.
+        /// The grid belonging to one map.
+        ///
+        /// Per map rather than one for the game: several maps are loaded at once, and the house
+        /// having its power back has nothing to do with the street outside. It was a singleton
+        /// while only one map could exist, and the day a second one loaded the two would have
+        /// fought over which was <c>Current</c> — silently, since a dark map and a map whose switch
+        /// went to the wrong building look the same.
+        ///
+        /// Found by map rather than held as a reference so a prop can throw the switch without
+        /// knowing anything, which is what let the breaker ship as a prefab.
         /// </summary>
-        public static PowerGrid Current { get; private set; }
+        public static PowerGrid For(MapZone zone)
+        {
+            if (zone == null)
+                return null;
+
+            _grids.TryGetValue(zone, out var grid);
+            return grid;
+        }
+
+        /// <summary>The grid of the map this object is in, or null.</summary>
+        public static PowerGrid Of(Component component) => For(MapZone.Of(component));
+
+        static readonly Dictionary<MapZone, PowerGrid> _grids = new();
+
+        MapZone _zone;
 
         /// <summary>True while the building has power.</summary>
         public bool IsPowered { get; private set; }
@@ -41,18 +64,27 @@ namespace Ashburn.World
 
         void Awake()
         {
-            if (Current != null && Current != this)
-                Debug.LogWarning($"A second {nameof(PowerGrid)} on '{name}'. The last one wins.", this);
+            _zone = MapZone.Of(this);
+            if (_zone == null)
+            {
+                Debug.LogError($"{nameof(PowerGrid)} on '{name}' is outside every " +
+                               $"{nameof(MapZone)}, so no breaker can find it.", this);
+                return;
+            }
 
-            Current = this;
+            if (_grids.TryGetValue(_zone, out var existing) && existing != this)
+                Debug.LogWarning($"A second {nameof(PowerGrid)} in map '{_zone.Id}'. The last " +
+                                 "one wins.", this);
+
+            _grids[_zone] = this;
         }
 
         void Start() => Apply(startPowered);
 
         void OnDestroy()
         {
-            if (Current == this)
-                Current = null;
+            if (_zone != null && _grids.TryGetValue(_zone, out var registered) && registered == this)
+                _grids.Remove(_zone);
         }
 
         /// <summary>Switches the power. Safe to call with the state it is already in.</summary>
@@ -83,8 +115,8 @@ namespace Ashburn.World
         }
 
         // A static outlives a play session when the editor skips its domain reload, which would
-        // leave the next run pointing at a grid from the previous one.
+        // leave the next run pointing at grids from the previous one.
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetOnLoad() => Current = null;
+        static void ResetOnLoad() => _grids.Clear();
     }
 }
