@@ -148,6 +148,8 @@ GameObject:
   - component: {fileID: 6369505412604317244}
   - component: {fileID: 1427195640078385707}
   - component: {fileID: 9096929615804728950}
+  - component: {fileID: 2103446981574230118}
+  - component: {fileID: 7418003625901477310}
   - component: {fileID: 411529039634923077}
   - component: {fileID: 740498217874627470}
   m_Layer: 8
@@ -341,6 +343,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Player.FlashlightToggle
   inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   beam: {fileID: 5462522140775758744}
+  startOn: 1
+--- !u!114 &2103446981574230118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b7c19d2e8a05f34aa1c6d3b0e97f582, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Player.HearingRingToggle
+  inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   hearingRing: {fileID: 3743583923798362931}
   startOn: 1
 --- !u!114 &1427195640078385707
@@ -364,6 +380,18 @@ MonoBehaviour:
   - {fileID: 5462522140775758744}
   - {fileID: 3743583923798362931}
   rescuePrompt: "\uAD6C\uCD9C\uD558\uAE30"
+--- !u!114 &7418003625901477310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afdd259ec3976fc45962186ab97c3edb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapPresence
 --- !u!114 &9096929615804728950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,6 +416,7 @@ MonoBehaviour:
   - {fileID: 6331766093216544031}
   viewerOnlyComponents:
   - {fileID: 6369505412604317244}
+  - {fileID: 2103446981574230118}
   - {fileID: 7763660687779653444}
   body: {fileID: 7209351696308771934}
   localBodyLayer: Character
@@ -621,7 +650,7 @@ MonoBehaviour:
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.45
   m_Color: {r: 1, g: 0.96, b: 0.85, a: 1}
-  m_Intensity: 1.3
+  m_Intensity: 2.4
   m_LightVolumeIntensity: 0.35
   m_LightVolumeEnabled: 1
   m_ApplyToSortingLayers: 00000000
@@ -817,9 +846,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 55
   wallBleed: 0.25
+  eyeOffset: {x: 0, y: 0.15}
   darkness: {r: 0, g: 0, b: 0, a: 0.95}
   outerRadius: 26
+  outerMargin: 4
   edgeSoftness: 0.6
+  liftWhenPowered: 1
   roomLight: {fileID: 0}
 --- !u!1 &8304847542237617635
 GameObject:
