@@ -26,6 +26,10 @@ namespace Ashburn.EditorTools
                 return;
 
             var cellWidth = int.Parse(match.Groups[1].Value);
+            var cellHeight = int.Parse(match.Groups[2].Value);
+            if (cellWidth < 16 || cellHeight < 16)
+                return;
+
             var importer = (TextureImporter)assetImporter;
 
             // TextureImporterSettings and TextureImporter expose overlapping fields, so write the

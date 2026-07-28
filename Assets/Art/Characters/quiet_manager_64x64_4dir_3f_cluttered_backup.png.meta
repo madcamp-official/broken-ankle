@@ -1,0 +1,429 @@
+fileFormatVersion: 2
+guid: dcead8d5dca567440b5889aa4db497fe
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5077682134416905357
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_0
+  - first:
+      213: -4237561505613009489
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_1
+  - first:
+      213: -3664097866239193781
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_2
+  - first:
+      213: 7612948846894021597
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_3
+  - first:
+      213: -8439643405507816606
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_4
+  - first:
+      213: -1841857352377345722
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_5
+  - first:
+      213: 5586893187409139044
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_6
+  - first:
+      213: 7068139338017019717
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_7
+  - first:
+      213: -8214698032510494700
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_8
+  - first:
+      213: 7243254305156810838
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_9
+  - first:
+      213: -2346253240345290839
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_10
+  - first:
+      213: -8872966759530381914
+    second: quiet_manager_64x64_4dir_3f_cluttered_backup_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 191
+        width: 59
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d845440affc877640800000000000000
+      internalID: 5077682134416905357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_1
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 191
+        width: 55
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fad211023482135c0800000000000000
+      internalID: -4237561505613009489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_2
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 191
+        width: 55
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4dcb846762862dc0800000000000000
+      internalID: -3664097866239193781
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 127
+        width: 59
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddb765024a0a6a960800000000000000
+      internalID: 7612948846894021597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_4
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 127
+        width: 55
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2631dbfa90d50ea80800000000000000
+      internalID: -8439643405507816606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_5
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 127
+        width: 55
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6495b902f786076e0800000000000000
+      internalID: -1841857352377345722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_6
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 63
+        width: 59
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4655299d0c1a88d40800000000000000
+      internalID: 5586893187409139044
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_7
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 63
+        width: 55
+        height: 55
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54718718743171260800000000000000
+      internalID: 7068139338017019717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_8
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 63
+        width: 55
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4189c1ba9a78ffd80800000000000000
+      internalID: -8214698032510494700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 59
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 658c0b40a65358460800000000000000
+      internalID: 7243254305156810838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_10
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 0
+        width: 60
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a71c10eb1f607fd0800000000000000
+      internalID: -2346253240345290839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: quiet_manager_64x64_4dir_3f_cluttered_backup_11
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 63
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6adb7524eb3ecd480800000000000000
+      internalID: -8872966759530381914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      quiet_manager_64x64_4dir_3f_cluttered_backup_0: 5077682134416905357
+      quiet_manager_64x64_4dir_3f_cluttered_backup_1: -4237561505613009489
+      quiet_manager_64x64_4dir_3f_cluttered_backup_10: -2346253240345290839
+      quiet_manager_64x64_4dir_3f_cluttered_backup_11: -8872966759530381914
+      quiet_manager_64x64_4dir_3f_cluttered_backup_2: -3664097866239193781
+      quiet_manager_64x64_4dir_3f_cluttered_backup_3: 7612948846894021597
+      quiet_manager_64x64_4dir_3f_cluttered_backup_4: -8439643405507816606
+      quiet_manager_64x64_4dir_3f_cluttered_backup_5: -1841857352377345722
+      quiet_manager_64x64_4dir_3f_cluttered_backup_6: 5586893187409139044
+      quiet_manager_64x64_4dir_3f_cluttered_backup_7: 7068139338017019717
+      quiet_manager_64x64_4dir_3f_cluttered_backup_8: -8214698032510494700
+      quiet_manager_64x64_4dir_3f_cluttered_backup_9: 7243254305156810838
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
