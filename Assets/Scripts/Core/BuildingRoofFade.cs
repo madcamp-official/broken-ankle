@@ -8,10 +8,7 @@ namespace Ashburn.Core
     {
         [SerializeField, Range(0.1f, 1f)] float fadedAlpha = 0.45f;
         [SerializeField] float fadeSpeed = 12f;
-        [SerializeField] float fadePadding = 5f;
-
         SpriteRenderer _renderer;
-        Transform _player;
         int _overlappingPlayers;
         float _normalAlpha = 1f;
 
@@ -46,21 +43,7 @@ namespace Ashburn.Core
 
         bool ShouldFade()
         {
-            if (_overlappingPlayers > 0)
-                return true;
-
-            if (_player == null)
-            {
-                var playerObject = GameObject.FindGameObjectWithTag("Player");
-                _player = playerObject != null ? playerObject.transform : null;
-            }
-
-            if (_player == null)
-                return false;
-
-            var bounds = _renderer.bounds;
-            bounds.Expand(fadePadding * 2f);
-            return bounds.Contains(_player.position);
+            return _overlappingPlayers > 0;
         }
 
         static bool IsPlayer(Collider2D other)

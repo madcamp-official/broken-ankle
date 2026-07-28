@@ -63,11 +63,19 @@ namespace Ashburn.Core
         Color[] _colours;
         Transform _self;
         float[] _reach;
+        ContactFilter2D _filter;
+        readonly RaycastHit2D[] _hits = new RaycastHit2D[8];
 
         void Awake()
         {
             _self = transform;
             _renderer = GetComponent<MeshRenderer>();
+            _filter = new ContactFilter2D
+            {
+                useLayerMask = true,
+                layerMask = blockers,
+                useTriggers = false,
+            };
             Build();
         }
 
@@ -142,8 +150,15 @@ namespace Ashburn.Core
                 if (haveBeam && Mathf.Abs(Mathf.DeltaAngle(beamAngle, degrees)) <= beamHalfAngle)
                     want = Mathf.Max(want, beamRange);
 
-                var hit = Physics2D.Raycast(origin, direction, want, blockers);
-                _reach[i] = hit.collider == null ? want : Mathf.Min(want, hit.distance + wallBleed);
+                var nearest = want;
+                var hitCount = Physics2D.Raycast(origin, direction, _filter, _hits, want);
+                for (var h = 0; h < hitCount; h++)
+                {
+                    if (_hits[h].distance < nearest)
+                        nearest = _hits[h].distance;
+                }
+
+                _reach[i] = nearest >= want ? want : Mathf.Min(want, nearest + wallBleed);
             }
         }
 
