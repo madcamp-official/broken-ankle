@@ -1,4 +1,5 @@
 using System;
+using Ashburn.World;
 using UnityEngine;
 
 namespace Ashburn.Noise
@@ -34,6 +35,30 @@ namespace Ashburn.Noise
         public float LastHeardStrength { get; private set; }
 
         float _lastHeardTime = float.NegativeInfinity;
+        MapPresence _presence;
+        MapZone _fixedZone;
+        bool _warnedUnzoned;
+
+        void Awake()
+        {
+            // A character carries its map with it; a listener bolted to something that does not
+            // move belongs to whichever map it was built into.
+            _presence = GetComponentInParent<MapPresence>();
+            if (_presence == null)
+                _fixedZone = MapZone.Of(this);
+        }
+
+        /// <summary>The map this listener is in, or <see cref="MapZone.Unzoned"/>.</summary>
+        int MapId
+        {
+            get
+            {
+                if (_presence != null)
+                    return _presence.MapId;
+
+                return _fixedZone != null ? _fixedZone.MapId : MapZone.Unzoned;
+            }
+        }
 
         void OnEnable() => NoiseBus.Heard += OnNoise;
 
@@ -49,6 +74,23 @@ namespace Ashburn.Noise
         {
             if (!Accepts(noise.Kind))
                 return;
+
+            // Before the distance check, and deliberately: this is a rule about which world the
+            // sound happened in, not about how far away it was. Two maps pushed close together, or
+            // a range tuned up, must not be able to open a hole between them.
+            var here = MapId;
+            if (noise.Map != here)
+            {
+                if (noise.Map == MapZone.Unzoned && !_warnedUnzoned)
+                {
+                    _warnedUnzoned = true;
+                    Debug.LogWarning($"'{name}' dropped a sound that belongs to no map. Whatever " +
+                                     $"emitted it is outside every {nameof(MapZone)}, so it can " +
+                                     "never be heard. Move it under the map's root.", this);
+                }
+
+                return;
+            }
 
             var reach = noise.Range * sensitivity;
             if (reach <= 0f)

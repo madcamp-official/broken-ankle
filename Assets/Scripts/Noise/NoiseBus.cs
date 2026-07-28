@@ -17,6 +17,9 @@ namespace Ashburn.Noise
     /// <summary>One sound, at the moment it happened.</summary>
     public readonly struct NoiseEvent
     {
+        /// <summary>A sound belonging to no map. Nothing in a map will hear it.</summary>
+        public const int Unzoned = -1;
+
         /// <summary>Where the sound came from, in world space.</summary>
         public readonly Vector2 Position;
 
@@ -25,11 +28,21 @@ namespace Ashburn.Noise
 
         public readonly NoiseKind Kind;
 
-        public NoiseEvent(Vector2 position, float range, NoiseKind kind)
+        /// <summary>
+        /// Which map it happened in. Carried explicitly rather than inferred from
+        /// <see cref="Position"/>: maps are far enough apart that distance alone keeps them
+        /// separate, but that is an accident of how they are laid out, and a sound leaking into the
+        /// next map is not the kind of bug that announces itself. Listeners drop anything from
+        /// another map before they even measure the distance.
+        /// </summary>
+        public readonly int Map;
+
+        public NoiseEvent(Vector2 position, float range, NoiseKind kind, int map = Unzoned)
         {
             Position = position;
             Range = range;
             Kind = kind;
+            Map = map;
         }
     }
 
@@ -47,8 +60,9 @@ namespace Ashburn.Noise
 
         public static void Emit(NoiseEvent noise) => Heard?.Invoke(noise);
 
-        public static void Emit(Vector2 position, float range, NoiseKind kind) =>
-            Emit(new NoiseEvent(position, range, kind));
+        public static void Emit(Vector2 position, float range, NoiseKind kind,
+                                int map = NoiseEvent.Unzoned) =>
+            Emit(new NoiseEvent(position, range, kind, map));
 
         // Static events survive a play session when the editor skips its domain reload, which
         // would otherwise leave listeners from the previous run wired to destroyed objects.

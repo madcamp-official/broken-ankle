@@ -1,3 +1,4 @@
+using Ashburn.World;
 using System;
 using Ashburn.Noise;
 using Ashburn.Player;
@@ -125,7 +126,7 @@ namespace Ashburn.Radio
             // Read per emission rather than cached: a spawner may settle which character this is
             // after Awake has already run.
             var kind = _rig != null && !_rig.IsViewer ? NoiseKind.Ally : NoiseKind.Self;
-            NoiseBus.Emit(transform.position, range, kind);
+            NoiseBus.Emit(transform.position, range, kind, MapZone.IdOf(this));
         }
     }
 }

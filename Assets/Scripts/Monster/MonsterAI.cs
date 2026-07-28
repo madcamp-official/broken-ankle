@@ -1,3 +1,4 @@
+using Ashburn.World;
 using Ashburn.Noise;
 using UnityEngine;
 
@@ -231,7 +232,7 @@ namespace Ashburn.Monster
             // to arriving than a wandering one.
             var pace = footstepInterval * (patrolSpeed / Mathf.Max(_body.linearVelocity.magnitude, 0.01f));
             _nextFootstepAt = Time.time + Mathf.Clamp(pace, 0.15f, footstepInterval);
-            NoiseBus.Emit(_body.position, footstepRange, NoiseKind.Monster);
+            NoiseBus.Emit(_body.position, footstepRange, NoiseKind.Monster, MapZone.IdOf(this));
         }
     }
 }

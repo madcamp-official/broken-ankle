@@ -1,3 +1,4 @@
+using Ashburn.World;
 using UnityEngine;
 
 namespace Ashburn.Noise
@@ -29,7 +30,7 @@ namespace Ashburn.Noise
                 return;
 
             _nextTime = Time.time + interval * (1f + Random.Range(-intervalJitter, intervalJitter));
-            NoiseBus.Emit(transform.position, range, kind);
+            NoiseBus.Emit(transform.position, range, kind, MapZone.IdOf(this));
         }
     }
 }

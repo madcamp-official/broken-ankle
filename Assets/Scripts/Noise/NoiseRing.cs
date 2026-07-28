@@ -116,9 +116,14 @@ namespace Ashburn.Noise
         void OnHeard(NoiseEvent noise, float strength) => AddRipple(noise, strength);
 
         // Without ears of its own the ring falls back to raw bus traffic, so it still works when
-        // dropped onto something that is not a listener.
+        // dropped onto something that is not a listener. The map rule applies here too: this path
+        // skips NoiseEars, and skipping the filter with it would leave one way for a sound to cross
+        // between maps.
         void OnNoiseDirect(NoiseEvent noise)
         {
+            if (noise.Map != Ashburn.World.MapZone.IdOf(this))
+                return;
+
             var distance = Vector2.Distance(noise.Position, transform.position);
             if (distance > noise.Range)
                 return;

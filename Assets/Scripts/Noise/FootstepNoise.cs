@@ -1,3 +1,4 @@
+using Ashburn.World;
 using Ashburn.Player;
 using UnityEngine;
 
@@ -56,7 +57,7 @@ namespace Ashburn.Noise
 
             var mode = _controller.Mode;
             _nextStepTime = Time.time + IntervalFor(mode);
-            NoiseBus.Emit(transform.position, RangeFor(mode), kind);
+            NoiseBus.Emit(transform.position, RangeFor(mode), kind, MapZone.IdOf(this));
         }
 
         float RangeFor(MovementMode mode)
