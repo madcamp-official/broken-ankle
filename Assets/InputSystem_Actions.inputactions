@@ -106,6 +106,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "ToggleHearing",
+                    "type": "Button",
+                    "id": "4d1e6b27-9c30-4f58-8a6e-2b7d05e91c34",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "PushToTalk",
                     "type": "Button",
                     "id": "1c4e0f0a-7b3d-4a91-9f26-5d8c2e7b4a10",
@@ -487,6 +496,28 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "ToggleFlashlight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7f3a5c81-6e42-4b09-9d17-3c85a0f6e2b7",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ToggleHearing",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b62d4790-1a8f-45c3-86be-9e04d7f1c5a3",
+                    "path": "<Gamepad>/dpad/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "ToggleHearing",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

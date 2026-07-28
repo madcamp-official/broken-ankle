@@ -7,10 +7,10 @@ namespace Ashburn.Player
     /// <summary>
     /// Switches the flashlight on and off, and tells anything that cares.
     ///
-    /// The switch is what puts the player into the game's core state: the beam shows one narrow
-    /// wedge while sound still arrives from every direction, so the hearing ring is only worth
-    /// drawing once the light is on. Rather than have the ring poll for that, the toggle announces
-    /// it and the ring listens.
+    /// The switch is what puts the player into the game's core state: running dark, seeing nothing,
+    /// and giving away nothing. It used to carry the hearing ring with it, which meant going dark
+    /// also blinded the player to sound — see <see cref="HearingRingToggle"/>, which owns the ring
+    /// on its own key now.
     /// </summary>
     public class FlashlightToggle : MonoBehaviour
     {
@@ -21,9 +21,6 @@ namespace Ashburn.Player
         [Header("Targets")]
         [Tooltip("The beam. Switched off with the flashlight.")]
         [SerializeField] GameObject beam;
-
-        [Tooltip("Shown only while the flashlight is on, because that is when sound is all the player has.")]
-        [SerializeField] GameObject hearingRing;
 
         [SerializeField] bool startOn = true;
 
@@ -88,9 +85,6 @@ namespace Ashburn.Player
 
             if (beam != null)
                 beam.SetActive(on);
-
-            if (hearingRing != null)
-                hearingRing.SetActive(on);
 
             Switched?.Invoke(on);
         }

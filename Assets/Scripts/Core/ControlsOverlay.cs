@@ -25,10 +25,10 @@ namespace Ashburn.Core
         [SerializeField] string[] mapTitles = { "1P", "2P (더미 동료)" };
 
         [Tooltip("Actions to list, in order. Anything else in the map is skipped.")]
-        [SerializeField] string[] actions = { "Move", "Sprint", "Crouch", "Interact", "ToggleFlashlight" };
+        [SerializeField] string[] actions = { "Move", "Sprint", "Crouch", "Interact", "ToggleFlashlight", "ToggleHearing" };
 
         [Tooltip("Labels for those actions, in the same order.")]
-        [SerializeField] string[] labels = { "이동", "달리기", "웅크리기", "상호작용", "손전등" };
+        [SerializeField] string[] labels = { "이동", "달리기", "웅크리기", "상호작용", "손전등", "소음 링" };
 
         [Header("Look")]
         [SerializeField] Vector2 margin = new(12f, 12f);
