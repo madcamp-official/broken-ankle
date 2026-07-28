@@ -25,16 +25,30 @@ namespace Ashburn.EditorTools
 
         static string[] OnWillSaveAssets(string[] paths)
         {
-            // In play mode the IDs are supposed to be in there — that is the injection doing its
-            // job — and a save at that moment would be writing a running value, not an authored one.
-            if (EditorApplication.isPlaying)
-                return paths;
-
             foreach (var path in paths)
                 if (path == SettingsPath)
                     Blank(path);
 
             return paths;
+        }
+
+        /// <summary>
+        /// Blanks the file whenever the editor changes what it is doing.
+        ///
+        /// <see cref="OnWillSaveAssets"/> alone was not enough, and the IDs came back a third time.
+        /// They are injected into the settings object in memory when the game starts, and anything
+        /// that writes the asset while that is true — entering or leaving play mode, an auto-save,
+        /// a domain reload — puts them on disk without ever passing through a save this can see.
+        ///
+        /// Blanking the file does not disturb the running game: the injection wrote to the object,
+        /// not to the file, and it runs again on the next start.
+        /// </summary>
+        [InitializeOnLoadMethod]
+        static void Watch()
+        {
+            EditorApplication.playModeStateChanged += _ => Blank(SettingsPath);
+            AssemblyReloadEvents.afterAssemblyReload += () => Blank(SettingsPath);
+            Blank(SettingsPath);
         }
 
         static void Blank(string path)
