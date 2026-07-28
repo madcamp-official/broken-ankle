@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Street.unity
     guid: 3718b85a159363b4a82368c95882e7ac
+  - enabled: 1
+    path: Assets/Scenes/TestRoom.unity
+    guid: 9ab97fc50c361c64b9b896b13e90a99c
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

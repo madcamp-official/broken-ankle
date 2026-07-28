@@ -341,18 +341,21 @@ namespace Ashburn.EditorTools
                     $"Build {map.name} here", "Cancel"))
                 return;
 
-            var existing = scene.GetRootGameObjects();
-            foreach (var go in existing)
-                if (go.name == s.rootName)
-                    Undo.DestroyObjectImmediate(go);
+            // Two roots, and the difference between them matters the moment anybody starts
+            // decorating. The map root is the map's identity — it carries the zone, it is what
+            // moves to its slot, and it survives every rebuild along with everything hand-placed
+            // under it. The generated root holds only what this tool made, and is thrown away and
+            // remade each time. Putting the zone on the generated one, as it was, meant one press
+            // of Build Map deleted the entire map including a week of art.
+            var mapRoot = MapRoot(scene, s);
+
+            for (var i = mapRoot.childCount - 1; i >= 0; i--)
+                if (mapRoot.GetChild(i).name == s.rootName)
+                    Undo.DestroyObjectImmediate(mapRoot.GetChild(i).gameObject);
 
             var root = new GameObject(s.rootName);
             Undo.RegisterCreatedObjectUndo(root, "Build Greybox");
-
-            // Everything the map owns hangs off this, and the zone is what moves the whole lot to
-            // its slot when several maps are loaded side by side. Anything left outside it stays
-            // behind at the origin, under whichever map happens to be in slot zero.
-            root.AddComponent<MapZone>();
+            root.transform.SetParent(mapRoot, false);
 
             var walls = new GameObject("Walls").transform;
             var floors = new GameObject("Floors").transform;
@@ -436,7 +439,9 @@ namespace Ashburn.EditorTools
             if (s.stripSystems)
                 StripSystems();
 
-            AdoptStrays(root);
+            // Into the map root, never the generated one: a stray adopted into the geometry
+            // would be deleted by the next rebuild along with it.
+            AdoptStrays(mapRoot.gameObject);
 
             if (s.addToBuildList)
                 EnsureInBuildList(scene);
@@ -673,6 +678,7 @@ namespace Ashburn.EditorTools
             light.intensity = s.lampIntensity;
             light.color = s.lampColour;
             light.falloffIntensity = 0.5f;
+            LightEveryLayer(light, includeCharacter: true);
 
             return lamp;
         }
@@ -810,8 +816,36 @@ namespace Ashburn.EditorTools
             light.intensity = intensity;
             light.color = colour;
             light.falloffIntensity = 0f;
+            LightEveryLayer(light, includeCharacter: true);
 
             return host;
+        }
+
+        /// <summary>
+        /// Points a light at every sorting layer except the viewer's own body.
+        ///
+        /// A Light2D lights the sorting layers it is told to and no others, and the default is
+        /// Default alone. That was invisible while every sprite in the game sat on Default; the
+        /// moment the tilemaps arrived on Background, Floor, Wall and Object, the lights stopped
+        /// reaching any of them and the map simply rendered black.
+        ///
+        /// Character is left out on purpose: it is the layer the viewer's own sprite is moved to,
+        /// so that their own torch does not light the body it comes from.
+        /// </summary>
+        static void LightEveryLayer(Light2D light, bool includeCharacter = false)
+        {
+            var layers = new List<int>();
+            foreach (var layer in SortingLayer.layers)
+                if (includeCharacter || layer.name != "Character")
+                    layers.Add(layer.id);
+
+            var serialized = new SerializedObject(light);
+            var array = serialized.FindProperty("m_ApplyToSortingLayers");
+            array.arraySize = layers.Count;
+            for (var i = 0; i < layers.Count; i++)
+                array.GetArrayElementAtIndex(i).intValue = layers[i];
+
+            serialized.ApplyModifiedProperties();
         }
 
         static void Fill(SerializedProperty array, List<GameObject> values)
@@ -857,6 +891,38 @@ namespace Ashburn.EditorTools
         /// would bring a second camera, a second spawner and a second fade with it — and two
         /// spawners means the game quietly creating another pair of players.
         /// </summary>
+        /// <summary>
+        /// The map's own root, made once and kept.
+        ///
+        /// Named after the scene, because that is what a door asks for. An older map has the zone
+        /// on the generated root instead; that one is adopted rather than replaced, so a rebuild
+        /// upgrades the scene in place instead of orphaning whatever is already in it.
+        /// </summary>
+        static Transform MapRoot(Scene scene, GreyboxSettings s)
+        {
+            var zone = Object.FindFirstObjectByType<MapZone>(FindObjectsInactive.Include);
+
+            if (zone != null && zone.name == s.rootName)
+            {
+                // The old shape: zone and generated geometry on the same object. Lift the zone onto
+                // a root of its own so the geometry underneath becomes disposable again.
+                var lifted = new GameObject(scene.name);
+                Undo.RegisterCreatedObjectUndo(lifted, "Build Greybox");
+                Undo.SetTransformParent(zone.transform, lifted.transform, "Build Greybox");
+                Undo.DestroyObjectImmediate(zone);
+                zone = lifted.AddComponent<MapZone>();
+            }
+
+            if (zone == null)
+            {
+                var host = new GameObject(scene.name);
+                Undo.RegisterCreatedObjectUndo(host, "Build Greybox");
+                zone = host.AddComponent<MapZone>();
+            }
+
+            return zone.transform;
+        }
+
         /// <summary>
         /// Puts everything left at the scene's root under the map.
         ///
