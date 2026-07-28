@@ -14,187 +14,6 @@ using UnityEngine.SceneManagement;
 namespace Ashburn.EditorTools
 {
     /// <summary>
-    /// A greybox map, written as text.
-    ///
-    /// Kept as an asset so the layout is versioned with the scene it produces, and because the
-    /// layout is the thing that gets edited twenty times in an evening — moving a wall should be
-    /// retyping one character, not dragging a cube and then remembering which of its three
-    /// components needed setting.
-    /// </summary>
-    class GreyboxSettings : ScriptableObject
-    {
-        /// <summary>
-        /// One map's shape. Kept as a list rather than a single field because a house and the
-        /// street it stands on are two scenes, and building one used to mean pasting the other
-        /// one's text somewhere safe first.
-        /// </summary>
-        [System.Serializable]
-        public class Map
-        {
-            [Tooltip("What this map is called here. Matches its scene name if you like.")]
-            public string name = "Map";
-
-            [Tooltip("Rows may be ragged; short ones are treated as empty on the right.\n\n" +
-                     "#  wall        .  floor       (space) nothing\n" +
-                     "+  doorway     O  pillar      B  breaker box\n" +
-                     "N  nest        L  lamp        1 2  spawn points\n" +
-                     "D  way to another map (set its target in the inspector)\n" +
-                     "E  where arrivals from another map come out")]
-            [TextArea(14, 40)]
-            public string layout = "";
-
-            [Tooltip("Scene name every D in this layout leads to. Set here rather than per door, " +
-                     "because a map usually has one way out and filling it in by hand after every " +
-                     "rebuild is how it ends up empty.")]
-            public string doorTarget = "";
-
-            [Tooltip("Id of the MapEntry to arrive at over there. 'Default' matches a generated E.")]
-            public string doorEntry = "Default";
-        }
-
-        [Tooltip("Every map this project builds. Build acts on the one picked above the button.")]
-        public Map[] maps =
-        {
-            new Map { name = "House", layout = HouseLayout, doorTarget = "Street" },
-            new Map { name = "Street", layout = StreetLayout, doorTarget = "House" },
-        };
-
-        [Tooltip("Index of the map to build. Set from the dropdown, not by hand.")]
-        public int selected;
-
-        /// <summary>The map the build button acts on, or null when the list is empty.</summary>
-        public Map Selected => maps != null && maps.Length > 0
-            ? maps[Mathf.Clamp(selected, 0, maps.Length - 1)]
-            : null;
-
-        /// <summary>
-        /// Inside the house: three rooms off one corridor, with the front door at the bottom left
-        /// and the mark beside it where somebody coming in from the street arrives.
-        /// </summary>
-        const string HouseLayout =
-            "###########################################\n" +
-            "#.............#.............#.............#\n" +
-            "#.............#.............#.............#\n" +
-            "#....O........#......B......#......N......#\n" +
-            "#.............#.............#.............#\n" +
-            "#.............#.............#.............#\n" +
-            "#.............#.............#.............#\n" +
-            "#.............#.............#.............#\n" +
-            "#######+#############+#############+#######\n" +
-            "#.........................................#\n" +
-            "#..1..2..............L....................#\n" +
-            "#..E......................................#\n" +
-            "###D#######################################\n";
-
-        /// <summary>
-        /// The estate outside. Two terraces facing each other across the road, the middle one on
-        /// the south side being the house the interior belongs to — its door is the D.
-        ///
-        /// The neighbours are solid: they are shapes to walk around and to lose sight of each
-        /// other behind, not places. Ashburn.MD opens on the players arriving from the south, so
-        /// the spawn marks sit on the access road at the bottom.
-        /// </summary>
-        const string StreetLayout =
-            "##############################################################################\n" +
-            "#............................................................................#\n" +
-            "#............................................................................#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#............................................................................#\n" +
-            "#.......................O.........................O..........................#\n" +
-            "#............................................................................#\n" +
-            "#............................................................................#\n" +
-            "#.........L...............L...............L...............L...........L......#\n" +
-            "#...................................................................B........#\n" +
-            "#............................................................................#\n" +
-            "#.......................O.........................O..........................#\n" +
-            "#.....................................E......................................#\n" +
-            "#....################..........#######D########..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#....################..........################..........################....#\n" +
-            "#............................................................................#\n" +
-            "#............................................................................#\n" +
-            "#.............O......................1..2.......................O............#\n" +
-            "#............................................................................#\n" +
-            "#............................................................................#\n" +
-            "##############################################################################\n";
-
-        [Tooltip("World units per character. The player is about one unit across, so 1 gives " +
-                 "corridors you can read the width of by counting.")]
-        public float cellSize = 1f;
-
-        [Header("Templates")]
-        [Tooltip("Instanced for every wall run. Scaled, so its sprite should be one unit at scale 1.")]
-        public GameObject wall;
-
-        [Tooltip("Instanced per floor rectangle. Needs a Tiled sprite renderer; its size is set, " +
-                 "not its scale, so the grid does not stretch.")]
-        public GameObject floor;
-
-        public GameObject pillar;
-        public GameObject breakerBox;
-        public GameObject nest;
-        public GameObject lamp;
-
-        [Tooltip("Character to spawn. Used when a fresh scene has no PlayerSpawner yet, so a new " +
-                 "map is playable the moment it is built.")]
-        public GameObject playerPrefab;
-
-        [Tooltip("Camera rig dropped into a scene that has none. Assets/Prefabs/CameraRig.")]
-        public GameObject cameraRig;
-
-        [Header("Lamp")]
-        [Tooltip("Used when there is no lamp template. With no global light in a horror scene the " +
-                 "lamps are the only fixed light there is, so L has to work without one.")]
-        public float lampRadius = 4.5f;
-
-        [Tooltip("Radius of the fully lit core. The gap out to lampRadius is the falloff.")]
-        public float lampInnerRadius = 0.6f;
-
-        public float lampIntensity = 0.85f;
-
-        [Tooltip("Sodium street lighting is warm and slightly sick, which suits the place.")]
-        public Color lampColour = new Color(1f, 0.86f, 0.66f);
-
-        [Header("Output")]
-        [Tooltip("Everything generated goes under one object with this name, and rebuilding " +
-                 "replaces it. Nothing outside it is touched.")]
-        public string rootName = "Level (generated)";
-
-        [Tooltip("Point the scene's PlayerSpawner at the generated spawn points. Without this a " +
-                 "rebuild leaves it holding references to objects that no longer exist.")]
-        public bool rewireSpawner = true;
-
-        [Tooltip("Create a PowerGrid if the scene has none and point it at the lights, so the " +
-                 "breaker works. Rebuilding used to lose this wiring silently.")]
-        public bool wirePower = true;
-
-        [Tooltip("Put a RoomCamera on the scene's Cinemachine camera, so walking into a room " +
-                 "frames it instead of trailing the player.")]
-        public bool wireRoomCamera = true;
-
-        [Tooltip("Floor regions smaller than this are cupboards, not rooms, and get no camera of " +
-                 "their own.")]
-        public int minRoomCells = 12;
-
-        [Tooltip("Add the scene being built to the build's scene list. A map missing from it cannot " +
-                 "be loaded at runtime, and the door leading to it fails with nothing on screen to " +
-                 "say why.")]
-        public bool addToBuildList = true;
-    }
-
-    /// <summary>
     /// Builds the level geometry from <see cref="GreyboxSettings.layout"/>.
     ///
     /// A wall here is three components that all have to agree — a collider for movement, the same
@@ -221,7 +40,9 @@ namespace Ashburn.EditorTools
         [MenuItem("Ashburn/Greybox Map Builder")]
         static void Open() => GetWindow<AshburnGreyboxBuilder>("Greybox").Show();
 
-        void OnEnable()
+        void OnEnable() => Load();
+
+        void Load()
         {
             _settings = AssetDatabase.LoadAssetAtPath<GreyboxSettings>(SettingsPath);
             if (_settings == null)
@@ -232,11 +53,29 @@ namespace Ashburn.EditorTools
                 AssetDatabase.SaveAssets();
             }
 
-            _serialized = new SerializedObject(_settings);
+            _serialized = _settings != null ? new SerializedObject(_settings) : null;
         }
 
         void OnGUI()
         {
+            // A throw out of OnGUI takes the rest of the window with it — every button below the
+            // line it failed on simply is not drawn, and a tool that has lost its settings looks
+            // like a tool whose buttons were never written. Say so instead.
+            if (_serialized == null || _settings == null)
+                Load();
+
+            if (_serialized == null || _settings == null)
+            {
+                EditorGUILayout.HelpBox(
+                    $"Could not load {SettingsPath}. If it exists, its script reference is broken " +
+                    "— select it and check the Inspector shows Greybox Settings.", MessageType.Error);
+
+                if (GUILayout.Button("Try again"))
+                    Load();
+
+                return;
+            }
+
             _scroll = EditorGUILayout.BeginScrollView(_scroll);
             _serialized.Update();
 
@@ -298,10 +137,84 @@ namespace Ashburn.EditorTools
                     Build(_settings);
             }
 
+            EditorGUILayout.Space();
+            EditorGUILayout.HelpBox(
+                "Maps hold nothing but the map. The spawner, the camera, the fade and the controls " +
+                "overlay live in the systems scene, which is the one you press Play in — it opens " +
+                "the starting map itself and loads the others as the players walk into them.",
+                MessageType.None);
+
+            if (GUILayout.Button("Build Systems Scene", GUILayout.Height(24f)))
+                BuildSystemsScene(_settings);
+
             if (!string.IsNullOrEmpty(_status))
                 EditorGUILayout.HelpBox(_status, MessageType.None);
 
             EditorGUILayout.EndScrollView();
+        }
+
+        /// <summary>
+        /// Builds the scene the game is actually started from.
+        ///
+        /// It holds no level at all. Everything in it outlives every map — the camera the players
+        /// are watched through, the fade that covers a map change, the spawner that decides who
+        /// exists — and all of it used to be duplicated into every map scene, which was harmless
+        /// only while exactly one map could be loaded.
+        /// </summary>
+        void BuildSystemsScene(GreyboxSettings s)
+        {
+            const string path = SystemsScenePath;
+
+            if (File.Exists(path) &&
+                !EditorUtility.DisplayDialog("Rebuild the systems scene?",
+                    $"{path} already exists and will be replaced. Anything you added to it by hand " +
+                    "is lost.", "Replace", "Cancel"))
+                return;
+
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                return;
+
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+            if (s.cameraRig != null)
+            {
+                var rig = (GameObject)PrefabUtility.InstantiatePrefab(s.cameraRig);
+                var camera = rig.GetComponentInChildren<CinemachineCamera>(true);
+                if (camera != null && camera.GetComponent<RoomCamera>() == null)
+                    camera.gameObject.AddComponent<RoomCamera>();
+            }
+            else
+            {
+                Debug.LogWarning("No camera rig set on the builder, so the systems scene has no " +
+                                 "camera. Set Assets/Prefabs/CameraRig on the builder and rebuild.");
+            }
+
+            var spawner = new GameObject(nameof(PlayerSpawner)).AddComponent<PlayerSpawner>();
+            var serialized = new SerializedObject(spawner);
+            serialized.FindProperty("playerPrefab").objectReferenceValue = s.playerPrefab;
+
+            // The first map in the list, which is the one whose spawn marks a new project has.
+            var start = s.maps != null && s.maps.Length > 0 ? s.maps[0].name : string.Empty;
+            serialized.FindProperty("startingMap").stringValue = start;
+            serialized.ApplyModifiedProperties();
+
+            // On its own object, never shared: it survives every map change, and anything sitting
+            // with it would be dragged along too.
+            new GameObject(nameof(ScreenFade)).AddComponent<ScreenFade>();
+            new GameObject(nameof(ControlsOverlay)).AddComponent<ControlsOverlay>();
+
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            EditorSceneManager.SaveScene(scene, path);
+
+            // First in the list: this is what a build starts on, and the maps are only ever
+            // reached from it.
+            var scenes = new List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);
+            scenes.RemoveAll(entry => entry.path == path);
+            scenes.Insert(0, new EditorBuildSettingsScene(path, true));
+            EditorBuildSettings.scenes = scenes.ToArray();
+
+            _status = $"Built {path}. Press Play from here; it opens '{start}' itself.";
+            Debug.Log(_status);
         }
 
         /// <summary>
@@ -379,6 +292,12 @@ namespace Ashburn.EditorTools
             return prefab;
         }
 
+        /// <summary>
+        /// The scene the game is started from. Named here because two things need to agree on it:
+        /// the button that builds it, and the guard that stops a map being built on top of it.
+        /// </summary>
+        const string SystemsScenePath = "Assets/Scenes/Systems.unity";
+
         static void Build(GreyboxSettings s)
         {
             var map = s.Selected;
@@ -397,6 +316,31 @@ namespace Ashburn.EditorTools
 
             var scene = SceneManager.GetActiveScene();
 
+            // Building a map into the systems scene destroys it: the level goes in, and then
+            // StripSystems takes the camera, the spawner and the fade straight back out again,
+            // because from in here they look exactly like the leftovers it exists to remove. The
+            // result is a scene with no camera at all, and the reason is three steps back.
+            if (scene.path == SystemsScenePath)
+            {
+                EditorUtility.DisplayDialog(
+                    "That is the systems scene",
+                    $"{scene.name} holds the camera, the spawner and the fade — not a map.\n\n" +
+                    "Open the map's own scene and build there. Building here would strip the very " +
+                    "things this scene exists to hold.", "OK");
+                return;
+            }
+
+            // Not fatal, only easy to do by accident: the dropdown and the open scene are two
+            // separate choices and nothing has ever tied them together.
+            if (!string.IsNullOrEmpty(scene.name) && !string.Equals(scene.name, map.name,
+                    System.StringComparison.OrdinalIgnoreCase) &&
+                !EditorUtility.DisplayDialog(
+                    "Build into this scene?",
+                    $"The open scene is '{scene.name}' but the map selected is '{map.name}'.\n\n" +
+                    $"Its level will be replaced with '{map.name}'.",
+                    $"Build {map.name} here", "Cancel"))
+                return;
+
             var existing = scene.GetRootGameObjects();
             foreach (var go in existing)
                 if (go.name == s.rootName)
@@ -404,6 +348,11 @@ namespace Ashburn.EditorTools
 
             var root = new GameObject(s.rootName);
             Undo.RegisterCreatedObjectUndo(root, "Build Greybox");
+
+            // Everything the map owns hangs off this, and the zone is what moves the whole lot to
+            // its slot when several maps are loaded side by side. Anything left outside it stays
+            // behind at the origin, under whichever map happens to be in slot zero.
+            root.AddComponent<MapZone>();
 
             var walls = new GameObject("Walls").transform;
             var floors = new GameObject("Floors").transform;
@@ -423,8 +372,21 @@ namespace Ashburn.EditorTools
             foreach (var rect in Merge(grid, cols, rows, c => c == '#'))
                 Place(s.wall, walls, s, rect, cols, rows, scaled: true);
 
-            foreach (var rect in Merge(grid, cols, rows, c => System.Array.IndexOf(walkable, c) >= 0))
-                Place(s.floor, floors, s, rect, cols, rows, scaled: false);
+            // The floor is flat colour with no collider on it, and the walls cover it, so the only
+            // thing a dozen separate rectangles buys is a dozen lines in the hierarchy. One tiled
+            // sprite across the whole map draws the same picture — as long as the map has no holes,
+            // because a hole is somewhere the floor is meant to be missing rather than hidden.
+            if (s.singleFloor && !HasHoles(grid, cols, rows))
+            {
+                var whole = Place(s.floor, floors, s, new RectInt(0, 0, cols, rows), cols, rows, scaled: false);
+                if (whole != null)
+                    whole.name = "Floor";
+            }
+            else
+            {
+                foreach (var rect in Merge(grid, cols, rows, c => System.Array.IndexOf(walkable, c) >= 0))
+                    Place(s.floor, floors, s, rect, cols, rows, scaled: false);
+            }
 
             var spawnPoints = new List<Transform>();
             var lamps = new List<GameObject>();
@@ -451,6 +413,11 @@ namespace Ashburn.EditorTools
                             var point = new GameObject($"SpawnPoint {grid[x, y]}");
                             point.transform.SetParent(spawns, false);
                             point.transform.position = WorldOf(cell, cols, rows, s.cellSize);
+
+                            // Marked rather than listed on the spawner. The spawner lives in the
+                            // systems scene now and outlives every map, so it cannot hold a
+                            // reference into one — it asks the map it is opening instead.
+                            point.AddComponent<SpawnPoint>();
                             spawnPoints.Add(point.transform);
                             break;
                     }
@@ -463,14 +430,13 @@ namespace Ashburn.EditorTools
             for (var i = 0; i < roomRects.Count; i++)
                 MakeRoom(roomRects[i], rooms, s, cols, rows, i);
 
-            if (s.rewireSpawner && spawnPoints.Count > 0)
-                Rewire(spawnPoints, s.playerPrefab);
-
             if (s.wirePower)
-                WirePower(root.transform, lamps);
+                WirePower(root.transform, lamps, s, cols, rows);
 
-            if (s.wireRoomCamera && roomRects.Count > 0)
-                WireRoomCamera(s.cameraRig);
+            if (s.stripSystems)
+                StripSystems();
+
+            AdoptStrays(root);
 
             if (s.addToBuildList)
                 EnsureInBuildList(scene);
@@ -551,6 +517,20 @@ namespace Ashburn.EditorTools
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Whether the layout has any cell that is neither wall nor floor. Those are the gaps a
+        /// single floor piece cannot cover: everywhere else the walls sit on top of it.
+        /// </summary>
+        static bool HasHoles(char[,] grid, int cols, int rows)
+        {
+            for (var y = 0; y < rows; y++)
+                for (var x = 0; x < cols; x++)
+                    if (grid[x, y] == ' ')
+                        return true;
+
+            return false;
         }
 
         static GameObject Place(GameObject template, Transform parent, GreyboxSettings s, RectInt rect,
@@ -749,34 +729,89 @@ namespace Ashburn.EditorTools
         /// Makes sure a <see cref="PowerGrid"/> exists and knows which lights it owns. The lights
         /// live in the scene and are not regenerated, so this only ever has to find them.
         /// </summary>
-        static void WirePower(Transform root, List<GameObject> lamps)
+        static void WirePower(Transform root, List<GameObject> lamps, GreyboxSettings s,
+                              int cols, int rows)
         {
-            var grid = Object.FindFirstObjectByType<PowerGrid>(FindObjectsInactive.Include);
-            if (grid == null)
-            {
-                var host = new GameObject("PowerGrid");
-                Undo.RegisterCreatedObjectUndo(host, "Build Greybox");
-                grid = host.AddComponent<PowerGrid>();
-            }
+            // Under the map root, like everything else the map owns. Left as a root object of its
+            // own it would stay at the origin while the map moved to its slot, and the map would
+            // find no grid at all.
+            var host = new GameObject("PowerGrid");
+            host.transform.SetParent(root, false);
+            var grid = host.AddComponent<PowerGrid>();
 
-            var powered = new List<GameObject>(lamps);
-            var lit = FindInScene("Light_Global_PowerOn");
-            if (lit != null)
-                powered.Add(lit);
+            // Two lights covering this map and nothing else. They used to be Global type, which in
+            // URP 2D means the whole scene — and with the house and the street both loaded, one
+            // map's breaker lit the other map as well. A point light with no falloff inside its
+            // radius is a global light with a boundary, and the boundary is what makes it the
+            // map's own.
+            var lit = MakeMapLight(root, "Light_Map_PowerOn", s, cols, rows,
+                                   s.poweredIntensity, s.poweredColour);
+            var gloom = MakeMapLight(root, "Light_Map_Dark", s, cols, rows,
+                                     s.darkIntensity, s.darkColour);
 
-            var dark = new List<GameObject>();
-            var gloom = FindInScene("Light_Global_Dark");
-            if (gloom != null)
-                dark.Add(gloom);
+            var powered = new List<GameObject>(lamps) { lit };
+
+            // The dark state keeps a light, dim, and it is not optional. The visibility mask only
+            // ever hides: it cuts a hole the shape of the beam, and something still has to be
+            // lighting what shows through the hole. Take it away and the flashlight turns into a
+            // hole onto black — the cone technically working and the player unable to see a thing.
+            var dark = new List<GameObject> { gloom };
 
             var serialized = new SerializedObject(grid);
             Fill(serialized.FindProperty("whenPowered"), powered);
             Fill(serialized.FindProperty("whenDark"), dark);
+
+            var startPowered = serialized.FindProperty("startPowered").boolValue;
             serialized.ApplyModifiedProperties();
 
-            if (lit == null && dark.Count == 0)
-                Debug.LogWarning("No Light_Global_PowerOn or Light_Global_Dark in the scene, so " +
-                                 "the breaker has nothing to switch.");
+            // Leave the scene looking the way it will play. PowerGrid does this at Start anyway, so
+            // the difference is only visible in the editor — which is exactly where a map lit by
+            // lamps that will be off in play gets built wrong.
+            foreach (var go in powered)
+                if (go != null)
+                    go.SetActive(startPowered);
+
+            gloom.SetActive(!startPowered);
+
+            // The hand-placed globals these replace, so a rebuild does not leave the map lit twice.
+            foreach (var stale in new[] { "Light_Global_PowerOn", "Light_Global_Dark" })
+            {
+                var found = FindInScene(stale);
+                if (found != null)
+                    Undo.DestroyObjectImmediate(found);
+            }
+        }
+
+        /// <summary>
+        /// A light that covers this map and stops at its edge.
+        ///
+        /// Inner radius equal to outer means no falloff at all: flat inside, nothing outside. That
+        /// is a global light with a boundary, which is what a map needs once several of them are
+        /// loaded at the same time.
+        /// </summary>
+        static GameObject MakeMapLight(Transform root, string name, GreyboxSettings s,
+                                       int cols, int rows, float intensity, Color colour)
+        {
+            var host = new GameObject(name);
+            host.transform.SetParent(root, false);
+            host.transform.localPosition = Vector3.zero;
+
+            // Half the diagonal reaches the corners; the margin covers the camera seeing a little
+            // past the outer wall.
+            var half = new Vector2(cols, rows) * (s.cellSize * 0.5f);
+            var radius = half.magnitude + s.cellSize * 4f;
+
+            var light = host.AddComponent<Light2D>();
+            light.lightType = Light2D.LightType.Point;
+            light.pointLightOuterRadius = radius;
+            light.pointLightInnerRadius = radius;
+            light.pointLightInnerAngle = 360f;
+            light.pointLightOuterAngle = 360f;
+            light.intensity = intensity;
+            light.color = colour;
+            light.falloffIntensity = 0f;
+
+            return host;
         }
 
         static void Fill(SerializedProperty array, List<GameObject> values)
@@ -814,36 +849,119 @@ namespace Ashburn.EditorTools
             Debug.Log($"Added '{scene.path}' to the build's scene list.");
         }
 
-        /// <summary>Puts a <see cref="RoomCamera"/> on the scene's Cinemachine camera.</summary>
-        static void WireRoomCamera(GameObject cameraRig)
+        /// <summary>
+        /// Takes everything out of a map scene that is not the map.
+        ///
+        /// These all used to be built into every map, which was right while a map change swapped
+        /// the whole scene. Now that maps are loaded alongside each other, walking into a house
+        /// would bring a second camera, a second spawner and a second fade with it — and two
+        /// spawners means the game quietly creating another pair of players.
+        /// </summary>
+        /// <summary>
+        /// Puts everything left at the scene's root under the map.
+        ///
+        /// A map scene has one root now, and things left beside it do not travel: the zone moves
+        /// the map to its slot and they stay behind at the origin, on their own, in the middle of
+        /// whichever map is in slot zero. Nothing about that looks like a parenting mistake — the
+        /// monster simply stops being heard, because it is not in any map to be heard from.
+        ///
+        /// Parenting keeps world position, and in the editor the root is at the origin, so nothing
+        /// visibly moves.
+        /// </summary>
+        static void AdoptStrays(GameObject root)
         {
-            var camera = Object.FindFirstObjectByType<CinemachineCamera>(FindObjectsInactive.Include);
+            var moved = new List<string>();
 
-            if (camera == null && cameraRig != null)
+            foreach (var go in root.scene.GetRootGameObjects())
             {
-                var rig = (GameObject)PrefabUtility.InstantiatePrefab(cameraRig);
-                Undo.RegisterCreatedObjectUndo(rig, "Build Greybox");
-                camera = rig.GetComponentInChildren<CinemachineCamera>(true);
+                if (go == root)
+                    continue;
+
+                // A grid out here is one the old builder left behind. The map builds its own,
+                // under the root, and two of them fight over which one the breaker finds.
+                if (go.GetComponent<PowerGrid>() != null)
+                {
+                    Debug.Log($"Removed the old '{go.name}'. The map builds its own PowerGrid " +
+                              "under its root now.");
+                    Undo.DestroyObjectImmediate(go);
+                    continue;
+                }
+
+                Undo.SetTransformParent(go.transform, root.transform, "Build Greybox");
+                moved.Add(go.name);
             }
 
-            if (camera == null)
-            {
-                Debug.LogWarning("No CinemachineCamera in the scene and no camera rig set on the " +
-                                 "builder, so rooms will not frame themselves.");
-                return;
-            }
+            if (moved.Count > 0)
+                Debug.Log($"Moved under '{root.name}': {string.Join(", ", moved)}. Anything left " +
+                          "beside the map stays at the origin when the map moves to its slot.");
+        }
 
-            if (camera.GetComponent<RoomCamera>() == null)
-                Undo.AddComponent<RoomCamera>(camera.gameObject);
+        static void StripSystems()
+        {
+            var removed = new List<string>();
 
-            // On its own object, never on the camera: the fade survives a map change, and anything
-            // sharing its object would be dragged into the next scene with it.
-            if (Object.FindFirstObjectByType<ScreenFade>(FindObjectsInactive.Include) == null)
+            Take<PlayerSpawner>(removed);
+            Take<ScreenFade>(removed);
+            Take<ControlsOverlay>(removed);
+            Take<RoomCamera>(removed);
+            Take<CinemachineCamera>(removed);
+            Take<CinemachineBrain>(removed);
+            Take<Camera>(removed);
+            Take<AudioListener>(removed);
+
+            if (removed.Count > 0)
+                Debug.Log($"Taken out of the map scene: {string.Join(", ", removed)}. They live in " +
+                          "the systems scene, which Ashburn > Greybox Map Builder builds.");
+        }
+
+        /// <summary>
+        /// Takes a system out of a map scene, object and all.
+        ///
+        /// The whole object, and for a prefab the whole instance. Deleting only the component was
+        /// the first attempt and it left the camera rig standing there minus its brain: the rig is
+        /// a small hierarchy, so the camera and the brain live on different objects and neither
+        /// looked like something worth deleting on its own. The leftover carried a second
+        /// <see cref="RoomCamera"/> into play, which then won the race to be <c>Current</c> and
+        /// framed rooms on a camera nobody was looking through.
+        /// </summary>
+        static void Take<T>(List<string> removed) where T : Component
+        {
+            foreach (var found in Object.FindObjectsByType<T>(FindObjectsInactive.Include,
+                                                              FindObjectsSortMode.None))
             {
-                var host = new GameObject(nameof(ScreenFade));
-                Undo.RegisterCreatedObjectUndo(host, "Build Greybox");
-                host.AddComponent<ScreenFade>();
+                if (found == null)
+                    continue;
+
+                var host = found.gameObject;
+
+                // Anything inside the map belongs to the map. Taking the object would take level
+                // geometry with it, so that one loses the component only — and is worth saying out
+                // loud, because a camera built into a map is a mistake either way.
+                if (MapZone.Of(found) != null)
+                {
+                    Debug.LogWarning($"'{host.name}' carries a {typeof(T).Name} inside the map " +
+                                     "itself. Removing the component and leaving the object.", host);
+                    Undo.DestroyObjectImmediate(found);
+                    removed.Add(typeof(T).Name);
+                    continue;
+                }
+
+                var target = PrefabUtility.IsPartOfPrefabInstance(host)
+                    ? PrefabUtility.GetOutermostPrefabInstanceRoot(host)
+                    : Root(host);
+
+                removed.Add(target.name);
+                Undo.DestroyObjectImmediate(target);
             }
+        }
+
+        static GameObject Root(GameObject go)
+        {
+            var transform = go.transform;
+            while (transform.parent != null)
+                transform = transform.parent;
+
+            return transform.gameObject;
         }
 
         /// <summary>
@@ -865,42 +983,5 @@ namespace Ashburn.EditorTools
             return null;
         }
 
-        /// <summary>
-        /// Points the scene's spawner at the new points. The field is private, so it is reached
-        /// the way the inspector reaches it rather than by widening the runtime API for a tool.
-        /// </summary>
-        static void Rewire(List<Transform> points, GameObject playerPrefab)
-        {
-            var spawner = Object.FindFirstObjectByType<PlayerSpawner>(FindObjectsInactive.Include);
-            if (spawner == null)
-            {
-                // A scene made for a new map has none yet, and building the level but leaving it
-                // unplayable until somebody remembers this component is a trap worth closing.
-                var host = new GameObject(nameof(PlayerSpawner));
-                Undo.RegisterCreatedObjectUndo(host, "Build Greybox");
-                spawner = host.AddComponent<PlayerSpawner>();
-            }
-
-            var serialized = new SerializedObject(spawner);
-
-            var array = serialized.FindProperty("spawnPoints");
-            if (array != null)
-            {
-                array.arraySize = points.Count;
-                for (var i = 0; i < points.Count; i++)
-                    array.GetArrayElementAtIndex(i).objectReferenceValue = points[i];
-            }
-
-            // Only filled when empty, so a scene that deliberately spawns something else keeps it.
-            var prefab = serialized.FindProperty("playerPrefab");
-            if (prefab != null && prefab.objectReferenceValue == null && playerPrefab != null)
-                prefab.objectReferenceValue = playerPrefab;
-
-            serialized.ApplyModifiedProperties();
-
-            if (prefab != null && prefab.objectReferenceValue == null)
-                Debug.LogWarning($"{nameof(PlayerSpawner)} has no player prefab. Set one on the " +
-                                 "builder so new maps come out playable.");
-        }
     }
 }

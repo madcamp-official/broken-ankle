@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 6e1f84c07d3b2a94ab5c0f27d91e6b38, type: 3}
   m_Name: GreyboxMap
   m_EditorClassIdentifier: Assembly-CSharp-Editor:Ashburn.EditorTools:GreyboxSettings
   maps:
@@ -115,7 +115,7 @@ MonoBehaviour:
 '
     doorTarget: House
     doorEntry: Default
-  selected: 1
+  selected: 0
   cellSize: 1
   wall: {fileID: 4136755959636209050, guid: 09b508f970c0cb2409f81441c4070fcb, type: 3}
   floor: {fileID: 8323003306373764176, guid: b7ce6b0430763c64ba65a150ce251afc, type: 3}
@@ -129,9 +129,13 @@ MonoBehaviour:
   lampInnerRadius: 0.6
   lampIntensity: 0.85
   lampColour: {r: 1, g: 0.86, b: 0.66, a: 1}
+  darkIntensity: 0.25
+  darkColour: {r: 1, g: 1, b: 1, a: 1}
+  poweredIntensity: 3
+  poweredColour: {r: 1, g: 1, b: 1, a: 1}
   rootName: Level (generated)
-  rewireSpawner: 1
+  singleFloor: 1
+  stripSystems: 1
   wirePower: 1
-  wireRoomCamera: 1
   minRoomCells: 12
   addToBuildList: 1
