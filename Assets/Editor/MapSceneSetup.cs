@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Ashburn.Core;
+using Ashburn.Interaction;
 using Ashburn.Player;
 using Ashburn.World;
 using Unity.Cinemachine;
@@ -23,7 +24,7 @@ namespace Ashburn.EditorTools
     /// a light that stops at the map's edge instead of covering the whole game, somewhere to stand,
     /// and an entry for a door in another map to aim at.
     /// </summary>
-    static class MapSceneSetup
+    public static class MapSceneSetup
     {
         const string SystemsScenePath = "Assets/Scenes/Systems.unity";
 
@@ -59,7 +60,23 @@ namespace Ashburn.EditorTools
                     "Nothing you built is moved or deleted.", "Convert", "Cancel"))
                 return;
 
+            var report = Apply(scene);
+            Debug.Log(report);
+        }
+
+        /// <summary>
+        /// The conversion itself, with nothing to click.
+        ///
+        /// Split out from the menu item so a scene can be converted without a person present. The
+        /// dialogs above are the whole difference: they are there to stop somebody running this on
+        /// the systems scene by accident, which is a question about intent rather than a step of the
+        /// work. Returns what it did, for whoever wants to log it.
+        /// </summary>
+        public static string Apply(Scene scene)
+        {
             var removed = Strip();
+            var entries = ConvertArrivalMarks();
+            var doors = ConvertTransitions();
             var root = Adopt(scene);
             var bounds = Extent(root);
             var lights = LocaliseLights(root, bounds);
@@ -69,10 +86,11 @@ namespace Ashburn.EditorTools
             EditorSceneManager.MarkSceneDirty(scene);
             Selection.activeGameObject = root.gameObject;
 
-            Debug.Log($"'{scene.name}' is a map now. Removed: " +
-                      $"{(removed.Count > 0 ? string.Join(", ", removed) : "nothing")}. " +
-                      $"Localised {lights} light(s). Check the SpawnPoints and MapEntry under " +
-                      $"{root.name} — they are at the map's centre until you move them.");
+            return $"'{scene.name}' is a map now. Removed: " +
+                   $"{(removed.Count > 0 ? string.Join(", ", removed) : "nothing")}. " +
+                   $"Converted {doors} door(s) and {entries} arrival mark(s). " +
+                   $"Localised {lights} light(s). Check the SpawnPoints and MapEntry under " +
+                   $"{root.name} — they are at the map's centre until you move them.";
         }
 
         /// <summary>
@@ -218,6 +236,98 @@ namespace Ashburn.EditorTools
                 t = t.parent;
 
             return t.gameObject;
+        }
+
+        /// <summary>
+        /// Turns the markers a scene built before the split arrived at into <see cref="MapEntry"/>.
+        ///
+        /// Those scenes placed an empty called Spawn_FromSomewhere and had the departing side name
+        /// it in a string, which is the same idea as an entry and reached it by <c>GameObject.Find</c>
+        /// — a search of every loaded scene at once. With the maps side by side that finds whichever
+        /// one loaded first, so the name has to become something scoped to a map, and the name itself
+        /// is kept as the id so the doors pointing at it still line up.
+        ///
+        /// Objects carrying a <see cref="SpawnPoint"/> are left alone. Those say where a map starts,
+        /// not where an arrival lands, and the two are different marks that happen to look alike.
+        /// </summary>
+        static int ConvertArrivalMarks()
+        {
+            var converted = 0;
+
+            foreach (var scene in new[] { SceneManager.GetActiveScene() })
+            foreach (var root in scene.GetRootGameObjects())
+            foreach (var transform in root.GetComponentsInChildren<Transform>(true))
+            {
+                var go = transform.gameObject;
+                if (!go.name.StartsWith("Spawn_"))
+                    continue;
+
+                if (go.GetComponent<SpawnPoint>() != null || go.GetComponent<MapEntry>() != null)
+                    continue;
+
+                var entry = Undo.AddComponent<MapEntry>(go);
+                var serialized = new SerializedObject(entry);
+                serialized.FindProperty("id").stringValue = go.name;
+                serialized.ApplyModifiedProperties();
+                converted++;
+            }
+
+            return converted;
+        }
+
+        /// <summary>
+        /// Replaces every <see cref="SceneTransition"/> with a <see cref="MapDoor"/>.
+        ///
+        /// They read as the same thing and are not. A transition loads its destination over the top
+        /// of everything — <see cref="LoadSceneMode.Single"/>, then it deletes every other object
+        /// tagged Player so the arrival is alone. In a game where two people walk around together
+        /// that is not a door, it is the other player being destroyed because somebody used the
+        /// stairs. A door hands the traveller to <see cref="MapTravel"/>, which loads the map
+        /// alongside the one being left and leaves whoever stayed behind standing in it.
+        ///
+        /// Everything the transition knew survives: the same destination, the same arrival mark,
+        /// the same prompt, and locked stays locked.
+        /// </summary>
+        static int ConvertTransitions()
+        {
+            var converted = 0;
+
+            foreach (var old in Object.FindObjectsByType<SceneTransition>(FindObjectsInactive.Include,
+                                                                         FindObjectsSortMode.None))
+            {
+                var from = new SerializedObject(old);
+                var map = from.FindProperty("sceneName").stringValue;
+                var arrival = from.FindProperty("destinationSpawnName").stringValue;
+                var prompt = from.FindProperty("prompt").stringValue;
+                var locked = from.FindProperty("locked").boolValue;
+                var barrier = from.FindProperty("lockBarrier").objectReferenceValue;
+
+                var host = old.gameObject;
+                Undo.DestroyObjectImmediate(old);
+
+                var door = Undo.AddComponent<MapDoor>(host);
+                var to = new SerializedObject(door);
+                to.FindProperty("targetMap").stringValue = map;
+                to.FindProperty("targetEntry").stringValue =
+                    string.IsNullOrWhiteSpace(arrival) ? "Default" : arrival;
+                if (!string.IsNullOrWhiteSpace(prompt))
+                    to.FindProperty("prompt").stringValue = prompt;
+                to.FindProperty("locked").boolValue = locked;
+                to.ApplyModifiedProperties();
+
+                converted++;
+
+                // A transition switched its barrier's collider on and off to match the lock. A door
+                // has no such wire, so the barrier is now a plain collider somebody has to deal with
+                // when the door is opened — worth saying out loud rather than leaving to be found by
+                // walking into it.
+                if (barrier != null)
+                    Debug.LogWarning($"'{host.name}' had a lock barrier ({barrier.name}) that the " +
+                                     "transition enabled and disabled for itself. MapDoor does not " +
+                                     "do that. Drive it from whatever unlocks the door.", host);
+            }
+
+            return converted;
         }
 
         /// <summary>
