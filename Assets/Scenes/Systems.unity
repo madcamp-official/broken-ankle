@@ -226,7 +226,7 @@ MonoBehaviour:
   actionMaps:
   - Player
   - Player2
-  startingMap: House
+  startingMap: Corp_Lobby
   startingEntry: 
   offlinePlayers: 2
   offlineViewerIndex: 0
