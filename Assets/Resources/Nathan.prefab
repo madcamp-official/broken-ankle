@@ -155,6 +155,7 @@ GameObject:
   - component: {fileID: 2573521815655910729}
   - component: {fileID: 7332499401990226577}
   - component: {fileID: 717210449169272632}
+  - component: {fileID: 8955386978868582016}
   m_Layer: 8
   m_Name: Nathan
   m_TagString: Player
@@ -500,7 +501,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 8955386978868582016}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -572,6 +574,24 @@ MonoBehaviour:
   - {fileID: -496705583, guid: c6cca1f6282d96047ae17bf69c7e113f, type: 3}
   - {fileID: 1610658399, guid: c6cca1f6282d96047ae17bf69c7e113f, type: 3}
   - {fileID: -1244825033, guid: c6cca1f6282d96047ae17bf69c7e113f, type: 3}
+--- !u!114 &8955386978868582016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a6eebe0b861b544080e067af6aba5f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Net.PlayerSync
+  controller: {fileID: 4619516547538424807}
+  flashlight: {fileID: 6369505412604317244}
+  headset: {fileID: 2103446981574230118}
+  beam: {fileID: 3378130258239158657}
+  catchUpSeconds: 0.08
+  teleportOver: 4
 --- !u!1 &3743583923798362931
 GameObject:
   m_ObjectHideFlags: 0

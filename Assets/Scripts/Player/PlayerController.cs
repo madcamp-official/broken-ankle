@@ -66,6 +66,27 @@ namespace Ashburn.Player
         /// </summary>
         public MovementMode Mode { get; private set; } = MovementMode.Walk;
 
+        /// <summary>
+        /// Reports what somebody else's character is doing, for a copy of it driven from the network
+        /// rather than from this keyboard.
+        ///
+        /// Everything downstream of movement — the animator, the footsteps, the interactor's reach —
+        /// reads the three values above and does not care where they came from. So a partner is
+        /// simply this component with its Update switched off and these values written in, rather
+        /// than a second set of look-alike fields for everything to check.
+        ///
+        /// Movement itself is not applied here. The position arrives already decided, because the
+        /// machine that owns the character has already collided with its walls.
+        /// </summary>
+        public void Drive(Vector2 moveInput, MovementMode mode)
+        {
+            _moveInput = moveInput;
+            Mode = mode;
+
+            if (IsMoving)
+                FacingDirection = SnapToCardinal(_moveInput);
+        }
+
         void Awake()
         {
             _body = GetComponent<Rigidbody2D>();
