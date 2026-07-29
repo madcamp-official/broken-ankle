@@ -232,9 +232,11 @@ namespace Ashburn.EditorTools
             _settings.nest = Capture("Nest", "Nest");
             _settings.lamp = Capture("Light_Lamp", "Lamp");
 
-            // Already prefabs, so they only need finding once.
+            // Already prefabs, so they only need finding once. The characters sit in Resources
+            // rather than beside the others because PhotonNetwork.Instantiate takes a name and
+            // looks there. Nathan is player A; the greybox only ever needs one of them.
             if (_settings.playerPrefab == null)
-                _settings.playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Player.prefab");
+                _settings.playerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Nathan.prefab");
 
             if (_settings.cameraRig == null)
                 _settings.cameraRig = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/CameraRig.prefab");
