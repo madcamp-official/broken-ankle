@@ -175,6 +175,13 @@ namespace Ashburn.EditorTools
             var removed = new List<string>();
 
             Take<PlayerSpawner>(removed);
+
+            // A character dropped into the scene to walk around while building it. Left in, the map
+            // brings its own second player along every time it is loaded: two viewers, two beams,
+            // and two darkness masks stacked one over the other, so everything one of them can see
+            // is still blacked out by the other.
+            Take<PlayerRig>(removed);
+
             Take<ScreenFade>(removed);
             Take<ControlsOverlay>(removed);
             Take<RoomCamera>(removed);
