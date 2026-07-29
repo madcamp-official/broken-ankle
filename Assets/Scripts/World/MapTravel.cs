@@ -86,8 +86,12 @@ namespace Ashburn.World
             var zone = MapZone.Find(mapName);
             if (zone == null)
             {
-                Debug.LogError($"The map '{mapName}' is not loaded, so '{traveller.name}' has " +
-                               "nowhere to arrive.", traveller);
+                // Nearly always the scene loaded fine and simply is not a map yet: without a
+                // MapZone it has no slot of its own, so it comes up on top of whatever else is
+                // loaded and there is no destination to hand a traveller.
+                Debug.LogError($"'{mapName}' has no {nameof(MapZone)}, so '{traveller.name}' has " +
+                               "nowhere to arrive. Open that scene and run " +
+                               "Ashburn > Make This Scene A Map.", traveller);
                 _travelling.Remove(traveller);
 
                 if (fade != null)
