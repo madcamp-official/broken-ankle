@@ -129,7 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 22264617}
   - component: {fileID: 22264616}
-  - component: {fileID: 22264615}
+  - component: {fileID: 22264618}
   m_Layer: 0
   m_Name: Trigger_MovetoOut
   m_TagString: Untagged
@@ -137,24 +137,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &22264615
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 22264614}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88ab63a258a47cb47935740af0a4513d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Interaction.SceneTransition
-  prompt: Go outside
-  sceneName: Village Map
-  destinationSpawnName: Spawn_FromCityHall
-  interactable: 1
-  locked: 0
-  lockBarrier: {fileID: 0}
 --- !u!61 &22264616
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -209,13 +191,32 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 22264614}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 301034251}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &22264618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22264614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03e88b95d4448094cbe855274c9e0f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapDoor
+  targetMap: Village Map
+  targetEntry: Spawn_FromCityHall
+  prompt: Go outside
+  lockedPrompt: Locked
+  locked: 0
+  needsPower: 0
+  noiseRange: 9
 --- !u!1 &34719901
 GameObject:
   m_ObjectHideFlags: 0
@@ -1862,6 +1863,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 137110451}
+  - component: {fileID: 137110452}
   m_Layer: 0
   m_Name: Spawn_From2FStairs
   m_TagString: Untagged
@@ -1877,13 +1879,27 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 137110450}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -13.5, y: -10.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 301034251}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &137110452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137110450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55e9e235f89eab34fb91e0bc96be3d25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapEntry
+  id: Spawn_From2FStairs
+  spread: 0.6
 --- !u!1001 &144779572
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2381,6 +2397,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 169967767}
+  - component: {fileID: 169967768}
   m_Layer: 0
   m_Name: Spawn_FromVillageMap
   m_TagString: Untagged
@@ -2396,13 +2413,27 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 169967766}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 301034251}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &169967768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 169967766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55e9e235f89eab34fb91e0bc96be3d25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapEntry
+  id: Spawn_FromVillageMap
+  spread: 0.6
 --- !u!1001 &177293119
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3862,7 +3893,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 290421368}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3871,6 +3902,62 @@ Transform:
   - {fileID: 34719902}
   - {fileID: 278600379}
   - {fileID: 2076062157}
+  m_Father: {fileID: 301034251}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &301034249
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 301034251}
+  - component: {fileID: 301034250}
+  m_Layer: 0
+  m_Name: Greybox_CityHall_1F
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &301034250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 301034249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45dea9062f5cdd342bcbeedf9ecc6760, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapZone
+  id: 
+  slotSpacing: 1000
+--- !u!4 &301034251
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 301034249}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1735078889}
+  - {fileID: 290421369}
+  - {fileID: 1433161963}
+  - {fileID: 169967767}
+  - {fileID: 22264617}
+  - {fileID: 600113097}
+  - {fileID: 137110451}
+  - {fileID: 1376715897}
+  - {fileID: 1029106484}
+  - {fileID: 669345254}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &311004448
@@ -7101,7 +7188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 600113097}
   - component: {fileID: 600113096}
-  - component: {fileID: 600113095}
+  - component: {fileID: 600113098}
   m_Layer: 0
   m_Name: Trigger_Moveto2F
   m_TagString: Untagged
@@ -7109,24 +7196,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &600113095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 600113094}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88ab63a258a47cb47935740af0a4513d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Interaction.SceneTransition
-  prompt: Go upstairs
-  sceneName: Greybox_CityHall_2F
-  destinationSpawnName: Spawn_From1FStairs
-  interactable: 1
-  locked: 0
-  lockBarrier: {fileID: 0}
 --- !u!61 &600113096
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -7181,13 +7250,32 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 600113094}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -17, y: -10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 301034251}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &600113098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 600113094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03e88b95d4448094cbe855274c9e0f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapDoor
+  targetMap: Greybox_CityHall_2F
+  targetEntry: Spawn_From1FStairs
+  prompt: Go upstairs
+  lockedPrompt: Locked
+  locked: 0
+  needsPower: 0
+  noiseRange: 9
 --- !u!43 &607347752
 Mesh:
   m_ObjectHideFlags: 0
@@ -8586,6 +8674,39 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &669345253
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 669345254}
+  m_Layer: 0
+  m_Name: SpawnPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &669345254
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 669345253}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1963658599}
+  - {fileID: 1439129137}
+  m_Father: {fileID: 301034251}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &674040474
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10182,159 +10303,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8316549900258936485, guid: 31976ce921501084c96fe1c3c3d99f9f, type: 3}
   m_PrefabInstance: {fileID: 793133710}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &805333617
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1509865112791867625, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 1509865112791867625, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -35
-      objectReference: {fileID: 0}
-    - target: {fileID: 1509865112791867625, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -10
-      objectReference: {fileID: 0}
-    - target: {fileID: 1509865112791867625, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1509865112791867625, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1509865112791867625, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1509865112791867625, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1509865112791867625, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1509865112791867625, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1509865112791867625, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6590432312405063483, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_NormalizedViewPortRect.height
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6760334470966235200, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_Name
-      value: Main Camera
-      objectReference: {fileID: 0}
-    - target: {fileID: 6760334470966235200, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 04fc2daed36bcca47880fd38ea26a6f7, type: 3}
---- !u!1001 &818183368
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 258333947405432265, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: m_Name
-      value: CameraRig
-      objectReference: {fileID: 0}
-    - target: {fileID: 5023086963746126023, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: Target.CustomLookAtTarget
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5852655519456710498, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5852655519456710498, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5852655519456710498, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5852655519456710498, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5852655519456710498, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5852655519456710498, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5852655519456710498, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5852655519456710498, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5852655519456710498, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5852655519456710498, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6889145033776460536, guid: b942509f0f472a0438900957046669eb, type: 3}
-      propertyPath: m_NormalizedViewPortRect.height
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7074881551454486739, guid: b942509f0f472a0438900957046669eb, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 818183370}
-  m_SourcePrefab: {fileID: 100100000, guid: b942509f0f472a0438900957046669eb, type: 3}
---- !u!1 &818183369 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7074881551454486739, guid: b942509f0f472a0438900957046669eb, type: 3}
-  m_PrefabInstance: {fileID: 818183368}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &818183370
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 818183369}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df9e71112685b3849b2152fc9135d438, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Core.CinemachinePlayerBinder
-  targetTag: Player
-  bindLookAt: 0
-  giveUpAfter: 10
 --- !u!43 &820154666
 Mesh:
   m_ObjectHideFlags: 0
@@ -13251,6 +13219,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8148666120217663898, guid: 09b508f970c0cb2409f81441c4070fcb, type: 3}
   m_PrefabInstance: {fileID: 1000695323}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1029106483
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1029106484}
+  - component: {fileID: 1029106485}
+  m_Layer: 0
+  m_Name: PowerGrid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1029106484
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1029106483}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 301034251}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1029106485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1029106483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a65878220f766249ba4c0a3d7f50719, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.PowerGrid
+  whenPowered:
+  - {fileID: 1376715895}
+  whenDark:
+  - {fileID: 1735078888}
+  startPowered: 0
 --- !u!1001 &1032333430
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19396,6 +19413,90 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &1376715895
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1376715897}
+  - component: {fileID: 1376715896}
+  m_Layer: 0
+  m_Name: Light_Map_PowerOn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1376715896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376715895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.Light2D
+  m_ComponentVersion: 3
+  m_LightType: 3
+  m_BlendStyleIndex: 0
+  m_FalloffIntensity: 0
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 6
+  m_LightVolumeIntensity: 1
+  m_LightVolumeEnabled: 0
+  m_ApplyToSortingLayers: 00000000018eb6fad7746f941907849b23d159bf010000004f4b8c7b35935a86
+  m_LightCookieSprite: {fileID: 0}
+  m_DeprecatedPointLightCookieSprite: {fileID: 0}
+  m_LightOrder: 0
+  m_AlphaBlendOnOverlap: 0
+  m_OverlapOperation: 0
+  m_NormalMapDistance: 3
+  m_NormalMapQuality: 2
+  m_UseNormalMap: 0
+  m_ShadowsEnabled: 1
+  m_ShadowIntensity: 0.75
+  m_ShadowSoftness: 0.3
+  m_ShadowSoftnessFalloffIntensity: 0.5
+  m_ShadowVolumeIntensityEnabled: 0
+  m_ShadowVolumeIntensity: 0.75
+  m_LocalBounds:
+    m_Center: {x: 0, y: -0.00000011920929, z: 0}
+    m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
+  m_PointLightInnerAngle: 360
+  m_PointLightOuterAngle: 360
+  m_PointLightInnerRadius: 30.627241
+  m_PointLightOuterRadius: 30.627241
+  m_ShapeLightParametricSides: 5
+  m_ShapeLightParametricAngleOffset: 0
+  m_ShapeLightParametricRadius: 1
+  m_ShapeLightFalloffSize: 0.5
+  m_ShapeLightFalloffOffset: {x: 0, y: 0}
+  m_ShapePath:
+  - {x: -0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: -0.5, z: 0}
+  - {x: 0.5, y: 0.5, z: 0}
+  - {x: -0.5, y: 0.5, z: 0}
+--- !u!4 &1376715897
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376715895}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 301034251}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &1387107744
 Mesh:
   m_ObjectHideFlags: 0
@@ -19817,7 +19918,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1433161961}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -19828,8 +19929,52 @@ Transform:
   - {fileID: 1444788048}
   - {fileID: 1821438165}
   - {fileID: 1328049236}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 301034251}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1439129136
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1439129137}
+  - component: {fileID: 1439129138}
+  m_Layer: 0
+  m_Name: SpawnPoint 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1439129137
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1439129136}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.6, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 669345254}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1439129138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1439129136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 357081463d4c3ed4297153ad00b13fa4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.SpawnPoint
 --- !u!1001 &1439607217
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27649,11 +27794,27 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 301034251}
     m_Modifications:
+    - target: {fileID: 4651003696117234349, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
+      propertyPath: m_LightType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4651003696117234349, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
+      propertyPath: m_FalloffIntensity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4651003696117234349, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
+      propertyPath: m_PointLightInnerRadius
+      value: 30.627241
+      objectReference: {fileID: 0}
+    - target: {fileID: 4651003696117234349, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
+      propertyPath: m_PointLightOuterRadius
+      value: 30.627241
+      objectReference: {fileID: 0}
     - target: {fileID: 5527515705231022830, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
       propertyPath: m_Name
-      value: Global Light 2D
+      value: Light_Map_Dark
       objectReference: {fileID: 0}
     - target: {fileID: 8346197088302676324, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -27673,15 +27834,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8346197088302676324, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8346197088302676324, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8346197088302676324, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8346197088302676324, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -27700,6 +27861,16 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
+--- !u!1 &1735078888 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5527515705231022830, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
+  m_PrefabInstance: {fileID: 1735078887}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1735078889 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8346197088302676324, guid: 8dffddad8a2505a40bcf0305d4ae5ac0, type: 3}
+  m_PrefabInstance: {fileID: 1735078887}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1739712234
 Mesh:
   m_ObjectHideFlags: 0
@@ -38715,7 +38886,7 @@ GameObject:
   - component: {fileID: 1821438167}
   - component: {fileID: 1821438166}
   - component: {fileID: 1821438169}
-  - component: {fileID: 1821438168}
+  - component: {fileID: 1821438170}
   m_Layer: 0
   m_Name: Tilemap_MovetoOut
   m_TagString: Untagged
@@ -38964,24 +39135,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!114 &1821438168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1821438164}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88ab63a258a47cb47935740af0a4513d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Interaction.SceneTransition
-  prompt: Go outside
-  sceneName: Village Map
-  destinationSpawnName: Spawn_FromCityHall
-  interactable: 1
-  locked: 0
-  lockBarrier: {fileID: 0}
 --- !u!19719996 &1821438169
 TilemapCollider2D:
   m_ObjectHideFlags: 0
@@ -39020,6 +39173,25 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
+--- !u!114 &1821438170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1821438164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03e88b95d4448094cbe855274c9e0f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapDoor
+  targetMap: Village Map
+  targetEntry: Spawn_FromCityHall
+  prompt: Go outside
+  lockedPrompt: Locked
+  locked: 0
+  needsPower: 0
+  noiseRange: 9
 --- !u!43 &1823859934
 Mesh:
   m_ObjectHideFlags: 0
@@ -43700,6 +43872,50 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &1963658598
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1963658599}
+  - component: {fileID: 1963658600}
+  m_Layer: 0
+  m_Name: SpawnPoint 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1963658599
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1963658598}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.6, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 669345254}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1963658600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1963658598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 357081463d4c3ed4297153ad00b13fa4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.SpawnPoint
 --- !u!1001 &1985102513
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -45269,12 +45485,4 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 805333617}
-  - {fileID: 818183368}
-  - {fileID: 1735078887}
-  - {fileID: 290421369}
-  - {fileID: 1433161963}
-  - {fileID: 169967767}
-  - {fileID: 22264617}
-  - {fileID: 600113097}
-  - {fileID: 137110451}
+  - {fileID: 301034251}
