@@ -42,7 +42,7 @@
 
 | | 헤드셋 쓴 시트 | 벗은 시트 | 애니메이터 |
 |---|---|---|---|
-| `Nathan` | `Art/Characters/Player1_off` | `Player1_on` | `Animations/Nathan/Nathan.controller` |
+| `Nathan` | `Art/Characters/Player1_on` | `Player1_off` | `Animations/Nathan/Nathan.controller` |
 | `Grant` | `Art/Characters/Player2_on` | `Player2_off` | `Animations/Grant/Grant.controller` |
 
 시트 배치는 전부 같다. 160×128 안에 32픽셀 20칸이고, 행이 방향
@@ -61,21 +61,14 @@
 
 ### 헤드셋 착용
 
-> **`_on` / `_off` 는 헤드셋 착용을 가리키지만, 두 시트의 방향이 서로 반대다.**
->
-> | | 헤드셋 |
-> |---|---|
-> | `Player1_off` | **쓰고 있음** |
-> | `Player1_on` | 벗음 |
-> | `Player2_off` | 벗음 |
-> | `Player2_on` | **쓰고 있음** |
->
-> 이름을 믿고 같은 규칙을 적용하면 한쪽이 정확히 반대로 나온다. 네 방향 모두
-> 확대해서 눈으로 확인한 결과다. 픽셀 수로는 판별되지 않는다 — `Player1` 은
-> 헤드셋을 쓴 쪽이 오히려 400픽셀 적다. 머리카락을 덮기 때문이다.
->
-> 언젠가 그림 파일 이름을 한쪽으로 맞추는 편이 낫다. 맞추면 `HeadsetSprites`
-> 의 두 목록만 서로 바꾸면 된다.
+**`_on` 은 헤드셋을 쓴 그림, `_off` 는 벗은 그림이다.** 두 캐릭터 모두 그렇다.
+
+한동안 `Player1` 만 반대로 그려져 있었다. 파일 이름을 바꾸면 서브 스프라이트
+이름과 fileID 까지 손대야 하므로, **두 png 의 내용을 맞바꿨다.** 슬라이싱과
+임포트 설정이 완전히 같아서 GUID, 스프라이트 이름, 참조가 전부 그대로 남는다.
+
+픽셀 수로 판별하려 들지 말 것. 헤드셋을 쓰면 머리카락이 가려져서, 쓴 쪽이
+오히려 픽셀이 적을 수 있다. 실제로 `Player1` 이 그랬다.
 
 `HeadsetSprites` 가 `HearingRingToggle.Switched` 를 듣고, 애니메이터가 방금 쓴
 스프라이트를 `LateUpdate` 에서 짝으로 바꿔치기한다. 매 프레임 하는 이유는
