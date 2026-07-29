@@ -32,6 +32,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Hospital.unity
     guid: 4ae75a1bad35f8241beec4b623d8b13b
+  - enabled: 1
+    path: Assets/Scenes/Police.unity
+    guid: 42cd0184d8b90b543b5261a39788f171
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
