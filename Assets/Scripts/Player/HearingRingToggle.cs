@@ -37,6 +37,12 @@ namespace Ashburn.Player
 
         void Awake()
         {
+            // Here rather than in Start, because Start does not run on a component that is switched
+            // off — which this one is on every character but the viewer's. Anything asking a
+            // partner whether their headset is on would otherwise be told no, whatever startOn
+            // says, and a partner would stand there with their headset apparently in their hand.
+            IsOn = startOn;
+
             if (inputActions == null)
             {
                 Debug.LogError($"{nameof(HearingRingToggle)} on '{name}' has no Input Actions asset assigned.", this);
