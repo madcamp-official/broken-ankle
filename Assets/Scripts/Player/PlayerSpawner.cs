@@ -1,4 +1,5 @@
 using UnityEngine;
+using Ashburn.Interaction;
 
 namespace Ashburn.Player
 {
@@ -44,8 +45,9 @@ namespace Ashburn.Player
                 return;
             }
 
+            var requestedPoint = ResolveRequestedSpawnPoint();
             for (var i = 0; i < offlinePlayers; i++)
-                Spawn(i, viewer: i == offlineViewerIndex, controlled: true);
+                Spawn(i, viewer: i == offlineViewerIndex, controlled: true, overridePoint: requestedPoint);
         }
 
         /// <summary>
@@ -55,6 +57,9 @@ namespace Ashburn.Player
         /// <paramref name="controlled"/> both set from ownership.
         /// </summary>
         public GameObject Spawn(int index, bool viewer, bool controlled)
+            => Spawn(index, viewer, controlled, null);
+
+        GameObject Spawn(int index, bool viewer, bool controlled, Transform overridePoint)
         {
             if (playerPrefab == null)
             {
@@ -62,7 +67,7 @@ namespace Ashburn.Player
                 return null;
             }
 
-            var point = PointFor(index);
+            var point = overridePoint != null ? overridePoint : PointFor(index);
             var character = Instantiate(playerPrefab, point.position, Quaternion.identity);
             character.name = viewer ? "Player" : $"Player {index + 1}";
 
@@ -79,6 +84,19 @@ namespace Ashburn.Player
                 Debug.LogError($"'{playerPrefab.name}' has no {nameof(PlayerRig)}.", character);
 
             return character;
+        }
+
+        Transform ResolveRequestedSpawnPoint()
+        {
+            if (!SceneSpawnRequest.TryConsume(out var spawnName))
+                return null;
+
+            var spawnObject = GameObject.Find(spawnName);
+            if (spawnObject != null)
+                return spawnObject.transform;
+
+            Debug.LogWarning($"Requested spawn point '{spawnName}' was not found in scene '{gameObject.scene.name}'.", this);
+            return null;
         }
 
         Transform PointFor(int index)
