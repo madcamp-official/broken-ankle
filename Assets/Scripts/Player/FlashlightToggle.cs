@@ -34,6 +34,12 @@ namespace Ashburn.Player
 
         void Awake()
         {
+            // Here rather than in Start, because Start does not run on a component that is switched
+            // off — which this one is on every character but the viewer's. A partner's beam is now
+            // drawn, so something does read this on a character whose switch never runs, and it
+            // would be told the light is off while the beam is plainly lit.
+            IsOn = startOn;
+
             if (inputActions == null)
             {
                 Debug.LogError($"{nameof(FlashlightToggle)} on '{name}' has no Input Actions asset assigned.", this);

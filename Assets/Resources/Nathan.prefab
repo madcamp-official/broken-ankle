@@ -387,7 +387,6 @@ MonoBehaviour:
   - {fileID: 4619516547538424807}
   - {fileID: 5971796654612665053}
   viewerOnlyObjects:
-  - {fileID: 5462522140775758744}
   - {fileID: 8304847542237617635}
   - {fileID: 3743583923798362931}
   - {fileID: 6331766093216544031}
@@ -395,6 +394,7 @@ MonoBehaviour:
   - {fileID: 6369505412604317244}
   - {fileID: 2103446981574230118}
   - {fileID: 7763660687779653444}
+  - {fileID: 3425006476537733219}
   body: {fileID: 7209351696308771934}
   localBodyLayer: Character
   remoteBodyLayer: Default
