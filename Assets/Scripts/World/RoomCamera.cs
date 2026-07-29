@@ -73,6 +73,8 @@ namespace Ashburn.World
 
         CinemachinePlayerBinder _binder;
         Transform _viewer;
+        MapPresence _viewerPresence;
+        float _restingSize;
         Coroutine _fade;
         Vector3 _targetPosition;
         float _targetSize;
@@ -96,6 +98,9 @@ namespace Ashburn.World
             }
 
             _binder = cinemachineCamera.GetComponent<CinemachinePlayerBinder>();
+
+            // What the camera was authored at, kept for the maps that have no rooms to frame.
+            _restingSize = cinemachineCamera.Lens.OrthographicSize;
         }
 
         void OnDestroy()
@@ -178,6 +183,16 @@ namespace Ashburn.World
             if (!_framed)
                 return;
 
+            // The room being framed can end up in a map the viewer has left. Travelling does not
+            // walk out through a trigger, and the map arrived in may have no RoomBounds at all —
+            // the village has none — so nothing calls Frame to correct it. Left alone the camera
+            // stays in the building the player walked out of.
+            if (HasLeftItsMap())
+            {
+                Release();
+                return;
+            }
+
             // While this drives the camera, Follow must stay empty. A body component with a target
             // moves the camera itself, after this has already placed it, so anything that sets
             // Follow behind our back does not fight for the camera — it simply wins.
@@ -247,6 +262,53 @@ namespace Ashburn.World
         float Track(float viewer, float min, float max, float half) =>
             clampToRoom ? Mathf.Clamp(viewer, min + half, max - half) : viewer;
 
+        /// <summary>
+        /// Whether the room on screen belongs to a map the viewer is no longer standing in.
+        ///
+        /// Deliberately narrow. "The viewer is outside the room's box" would also be true of
+        /// somebody standing in a doorway, which is between two rooms and inside neither, and
+        /// releasing there would drop the framing every time anybody crossed one.
+        /// </summary>
+        bool HasLeftItsMap()
+        {
+            if (Room == null)
+                return true;
+
+            var presence = ViewerPresence();
+            if (presence == null || presence.Zone == null)
+                return false;
+
+            return MapZone.Of(Room) != presence.Zone;
+        }
+
+        /// <summary>
+        /// Hands the camera back to <see cref="CinemachinePlayerBinder"/>, which is where it starts
+        /// and where it belongs whenever there is no room to show. Puts the lens back to what the
+        /// camera was authored at, so an outdoor map is not framed at the size of the last cupboard
+        /// the player stood in.
+        /// </summary>
+        void Release()
+        {
+            Room = null;
+            _framed = false;
+
+            if (_fade != null)
+            {
+                StopCoroutine(_fade);
+                _fade = null;
+            }
+
+            _fading = false;
+            cinemachineCamera.Lens.OrthographicSize = _restingSize;
+
+            var viewer = Viewer();
+            if (viewer != null)
+                cinemachineCamera.Follow = viewer;
+
+            if (_binder != null)
+                _binder.enabled = true;
+        }
+
         Transform Viewer()
         {
             if (_viewer != null)
@@ -254,7 +316,18 @@ namespace Ashburn.World
 
             var tagged = GameObject.FindGameObjectWithTag("Player");
             _viewer = tagged != null ? tagged.transform : null;
+            _viewerPresence = null;
             return _viewer;
+        }
+
+        MapPresence ViewerPresence()
+        {
+            if (_viewerPresence != null)
+                return _viewerPresence;
+
+            var viewer = Viewer();
+            _viewerPresence = viewer != null ? viewer.GetComponentInParent<MapPresence>() : null;
+            return _viewerPresence;
         }
 
         /// <summary>
