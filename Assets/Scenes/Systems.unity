@@ -226,7 +226,7 @@ MonoBehaviour:
   actionMaps:
   - Player
   - Player2
-  startingMap: Corp_Lobby
+  startingMap: TestRoom
   startingEntry: 
   offlinePlayers: 2
   offlineViewerIndex: 0
