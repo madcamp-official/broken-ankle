@@ -133,6 +133,19 @@ InitTestScene*.unity*
 
 # Paid LimeZu Unity assets. Keep the imported tiles, palettes, and generated
 # tile assets local because this repository is public.
+#
+# Do not try to carve out the pixel-free parts. Committing Tiles/ and Tile Palettes/
+# on their own looks tempting — they are small YAML holding a sprite reference and a
+# collider type, no art — but a Tile points at a sprite inside a PNG whose GUID lives
+# in that PNG's .meta, and those GUIDs are assigned per project, not by the package:
+# the same 1_Generic_32x32.png is fe2ee8b0… in one member's project and 2a20aee0… in
+# another's. Tile assets alone would resolve to nothing. Committing the .meta files
+# instead fails differently — Unity deletes a .meta whose asset is missing, so the
+# first clone without the art silently wipes them.
+#
+# So the whole folder travels out of band: zip it and hand it over. Whoever joins
+# takes an existing member's copy rather than importing LimeZu themselves, because a
+# fresh import re-slices every sheet and mints new GUIDs and sprite ids for all of it.
 /[Aa]ssets/[Aa]rt/[Tt]iles/[Ll]ime[Zz]u/
 /[Aa]ssets/[Aa]rt/[Tt]iles/[Ll]ime[Zz]u.meta
 /[Aa]ssets/[Aa]rt/[Pp]rops/[Ll]ime[Zz]u/
