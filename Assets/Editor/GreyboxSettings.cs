@@ -39,6 +39,11 @@ namespace Ashburn.EditorTools
 
             [Tooltip("Id of the MapEntry to arrive at over there. 'Default' matches a generated E.")]
             public string doorEntry = "Default";
+
+            [Tooltip("Moves the generated layout in world space. Half-cell offsets are what line " +
+                     "an odd map dimension up with Unity Tilemap cell centres, which is the " +
+                     "difference between greybox walls sitting on the tiles and between them.")]
+            public Vector2 layoutOffset;
         }
 
         [Tooltip("Every map this project builds. Build acts on the one picked above the button.")]

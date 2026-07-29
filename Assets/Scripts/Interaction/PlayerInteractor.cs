@@ -143,11 +143,26 @@ namespace Ashburn.Interaction
 
         IInteractable FindBestTarget()
         {
-            var origin = SearchOrigin();
-            Physics2D.OverlapCircle(origin, radius, _filter, _hits);
-
             IInteractable best = null;
             var bestDistance = float.MaxValue;
+            var bestPriority = int.MinValue;
+
+            FindBestTargetAt(SearchOrigin(), ref best, ref bestDistance, ref bestPriority);
+
+            // Floor triggers such as room transitions sit under the player instead of in front
+            // of them. Checking both positions keeps prop interactions directional while making
+            // "stand on the tile and press E" reliable regardless of facing.
+            FindBestTargetAt(transform.position, ref best, ref bestDistance, ref bestPriority);
+            return best;
+        }
+
+        void FindBestTargetAt(
+            Vector2 origin,
+            ref IInteractable best,
+            ref float bestDistance,
+            ref int bestPriority)
+        {
+            Physics2D.OverlapCircle(origin, radius, _filter, _hits);
 
             foreach (var hit in _hits)
             {
@@ -162,15 +177,18 @@ namespace Ashburn.Interaction
                 if (!candidate.CanInteract(gameObject))
                     continue;
 
-                var distance = ((Vector2)hit.transform.position - origin).sqrMagnitude;
-                if (distance >= bestDistance)
+                // A floor transition can overlap scenery interactions in compact door and stair
+                // layouts. Once it is unlocked, entering/leaving the room is the intended action.
+                var priority = candidate is SceneTransition ? 1 : 0;
+                var distance = (hit.ClosestPoint(origin) - origin).sqrMagnitude;
+                if (priority < bestPriority ||
+                    (priority == bestPriority && distance >= bestDistance))
                     continue;
 
+                bestPriority = priority;
                 bestDistance = distance;
                 best = candidate;
             }
-
-            return best;
         }
 
         Vector2 SearchOrigin()

@@ -359,6 +359,11 @@ namespace Ashburn.EditorTools
             Undo.RegisterCreatedObjectUndo(root, "Build Greybox");
             root.transform.SetParent(mapRoot, false);
 
+            // Nudged as a whole rather than per object. A greybox laid over a tilemap has to line
+            // up with the tiles, and an odd map dimension puts its centre on a cell edge — half a
+            // cell here is the difference between walls on the tiles and walls between them.
+            root.transform.localPosition = map.layoutOffset;
+
             var walls = new GameObject("Walls").transform;
             var floors = new GameObject("Floors").transform;
             var props = new GameObject("Props").transform;
