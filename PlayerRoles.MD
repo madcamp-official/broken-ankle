@@ -40,33 +40,50 @@
 
 ### 그림
 
-| | 스프라이트 | 애니메이터 |
-|---|---|---|
-| `Nathan` | `Art/Characters/morrow_playerA_audio_32x32` | `Animations/Player/Player.controller` |
-| `Grant` | `Art/Characters/Player2_on` (+ `Player2_off`) | `Animations/Grant/Grant.controller` |
+| | 헤드셋 쓴 시트 | 벗은 시트 | 애니메이터 |
+|---|---|---|---|
+| `Nathan` | `Art/Characters/Player1_off` | `Player1_on` | `Animations/Nathan/Nathan.controller` |
+| `Grant` | `Art/Characters/Player2_on` | `Player2_off` | `Animations/Grant/Grant.controller` |
 
 시트 배치는 전부 같다. 160×128 안에 32픽셀 20칸이고, 행이 방향
 (아래·위·왼쪽·오른쪽), 각 행의 첫 칸이 정지, 나머지 넷이 걷기다. 그래서 다른
 캐릭터로 갈아끼우는 일은 **인덱스 그대로의 교체**이지 클립을 다시 만드는 일이
 아니다.
 
-애니메이터를 통째로 복사한 이유는 클립이 스프라이트를 프레임마다 직접 들고
-있기 때문이다. 컨트롤러 하나를 공유하면서 그림만 바꿀 방법은 2D Animation
+캐릭터마다 컨트롤러를 따로 두는 이유는 클립이 스프라이트를 프레임마다 직접
+들고 있기 때문이다. 컨트롤러 하나를 공유하면서 그림만 바꿀 방법은 2D Animation
 패키지의 Sprite Library 가 필요하고, 캐릭터가 둘뿐인 지금은 클립 여덟 개를
 복사하는 쪽이 싸다.
 
-`Nathan` 은 손대지 않았다. 아직 옛 `morrow_playerA_audio` 시트를 쓰고 있고,
-짝이 되는 `Player1_off/on` 이 같은 폴더에 있으므로 같은 방식으로 바꿀 수 있다.
-그쪽 시트에도 `morrow_playerA_audio_no` 라는 헤드셋 벗은 짝이 이미 있다.
+`Animations/Nathan` 은 예전 `Animations/Player` 를 이름만 바꾼 것이다. 그
+컨트롤러를 쓰는 것이 `Nathan.prefab` 하나뿐이라 복사하지 않았고, 그래서 쓰이지
+않는 폴더가 남지 않았다.
 
 ### 헤드셋 착용
 
-`_on` 과 `_off` 는 **헤드셋을 쓰고 있는지**를 가른다. 차이가 32픽셀 칸의 위쪽
-절반에만 있고 불투명 픽셀이 250개 더 많은 쪽이 `_on` 이다.
+> **`_on` / `_off` 는 헤드셋 착용을 가리키지만, 두 시트의 방향이 서로 반대다.**
+>
+> | | 헤드셋 |
+> |---|---|
+> | `Player1_off` | **쓰고 있음** |
+> | `Player1_on` | 벗음 |
+> | `Player2_off` | 벗음 |
+> | `Player2_on` | **쓰고 있음** |
+>
+> 이름을 믿고 같은 규칙을 적용하면 한쪽이 정확히 반대로 나온다. 네 방향 모두
+> 확대해서 눈으로 확인한 결과다. 픽셀 수로는 판별되지 않는다 — `Player1` 은
+> 헤드셋을 쓴 쪽이 오히려 400픽셀 적다. 머리카락을 덮기 때문이다.
+>
+> 언젠가 그림 파일 이름을 한쪽으로 맞추는 편이 낫다. 맞추면 `HeadsetSprites`
+> 의 두 목록만 서로 바꾸면 된다.
 
 `HeadsetSprites` 가 `HearingRingToggle.Switched` 를 듣고, 애니메이터가 방금 쓴
 스프라이트를 `LateUpdate` 에서 짝으로 바꿔치기한다. 매 프레임 하는 이유는
 애니메이터가 매 프레임 다시 쓰기 때문이다.
+
+컴포넌트는 `Nathan` 에 붙어 있고 `Grant` 는 물려받아 두 목록만 자기 시트로
+덮어쓴다. 배리언트를 둔 값이 여기서 나온다 — 붙이는 자리와 배선은 한 번만
+정하고, 다른 것은 그림뿐이다.
 
 클립을 한 벌 더 만들어 컨트롤러를 갈아끼우는 방법도 있었지만, 캐릭터마다 클립이
 여덟 개씩 늘고 **키를 누를 때마다 걷기 사이클이 처음으로 되감긴다.** 두 시트가
@@ -175,8 +192,8 @@ PUN 은 참조가 아니라 **이름**을 받는다. 그래서 두 프리팹 모
 | 대상 | 상태 |
 |---|---|
 | `Assets/Resources/Nathan.prefab` | 옛 `Assets/Prefabs/Player.prefab`. 옮기고 이름을 바꿨다. GUID 가 유지되어 참조는 그대로다 |
-| `Assets/Resources/Grant.prefab` | `Nathan` 의 배리언트로 새로 만들었다. 지금은 내용이 원본과 같다 |
-| 프리팹의 `PhotonView`, `NetworkPlayerBinder` | `Nathan` 에 추가. `Grant` 가 물려받는다 |
+| `Assets/Resources/Grant.prefab` | `Nathan` 의 배리언트. 그림과 애니메이터만 다르다 |
+| 프리팹의 `PhotonView`, `NetworkPlayerBinder`, `HeadsetSprites` | `Nathan` 에 추가. `Grant` 가 물려받는다 |
 | `PlayerSpawner.playerPrefabs` | `[Nathan, Grant]` |
 | `Systems.unity` 의 `NetworkGame` | 추가. **기본값은 비활성** |
 | `Offline Players` | 2 그대로 |
