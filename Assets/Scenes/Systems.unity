@@ -430,6 +430,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2099118211}
   - component: {fileID: 2099118210}
+  - component: {fileID: 2099118212}
   m_Layer: 0
   m_Name: NetworkGame
   m_TagString: Untagged
@@ -467,6 +468,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2099118212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2099118209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f16776b2d1b718c42ba24e4b18da2451, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Net.WorldStateSync
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
