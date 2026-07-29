@@ -178,6 +178,12 @@ namespace Ashburn.World
             if (!_framed)
                 return;
 
+            // While this drives the camera, Follow must stay empty. A body component with a target
+            // moves the camera itself, after this has already placed it, so anything that sets
+            // Follow behind our back does not fight for the camera — it simply wins.
+            if (cinemachineCamera.Follow != null)
+                cinemachineCamera.Follow = null;
+
             // Recomputed rather than set once: a room too large to show whole tracks the player
             // across it, and a room that fits resolves to its centre every time anyway.
             _targetPosition = PositionFor(Room, _targetSize);

@@ -57,6 +57,14 @@ namespace Ashburn.Core
                 yield return null;
             }
 
+            // Switching this component off does not stop a coroutine it already started, and the
+            // wait above outlives the moment RoomCamera takes the camera over: it disables this and
+            // clears Follow, and a frame later the loop below would hand the camera straight back.
+            // The result is a camera that frames a room for one frame and then trails the player
+            // around inside it, which looks like the room framing never worked at all.
+            if (!enabled)
+                yield break;
+
             camera.Follow = target.transform;
             if (bindLookAt)
                 camera.LookAt = target.transform;
