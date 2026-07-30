@@ -6783,9 +6783,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapDoor
   targetMap: Greybox_CityHall_1F
   targetEntry: Spawn_From2FStairs
-  prompt: Go downstairs
-  lockedPrompt: Locked
+  prompt: "1\uCE35\uC73C\uB85C \uB0B4\uB824\uAC00\uAE30"
+  lockedPrompt: "\uC7A0\uACA8 \uC788\uB2E4"
   locked: 0
+  requiredKey: 
   needsPower: 0
   noiseRange: 9
 --- !u!1 &656850362

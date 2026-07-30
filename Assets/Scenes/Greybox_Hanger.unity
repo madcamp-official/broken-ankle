@@ -22838,9 +22838,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapDoor
   targetMap: Corp_Basement
   targetEntry: CorpTunnel
-  prompt: Go down
-  lockedPrompt: Locked
+  prompt: "\uC0AC\uB2E4\uB9AC\uB85C \uD68C\uC0AC \uC9C0\uD558\uB85C \uB0B4\uB824\uAC00\uAE30"
+  lockedPrompt: "\uC7A0\uACA8 \uC788\uB2E4"
   locked: 0
+  requiredKey: 
   needsPower: 0
   noiseRange: 9
 --- !u!61 &849565590
@@ -51664,9 +51665,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapDoor
   targetMap: Village Map
   targetEntry: Spawn_FromHangar
-  prompt: Leave Hangar
-  lockedPrompt: Locked
+  prompt: "\uB9C8\uC744\uB85C \uC774\uB3D9\uD558\uAE30"
+  lockedPrompt: "\uC7A0\uACA8 \uC788\uB2E4"
   locked: 1
+  requiredKey: 
   needsPower: 0
   noiseRange: 9
 --- !u!43 &1279834217

@@ -212,9 +212,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapDoor
   targetMap: Village Map
   targetEntry: Spawn_FromCityHall
-  prompt: Go outside
-  lockedPrompt: Locked
+  prompt: "\uB9C8\uC744\uB85C \uC774\uB3D9\uD558\uAE30"
+  lockedPrompt: "\uC7A0\uACA8 \uC788\uB2E4"
   locked: 0
+  requiredKey: 
   needsPower: 0
   noiseRange: 9
 --- !u!1 &34719901
@@ -7271,9 +7272,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapDoor
   targetMap: Greybox_CityHall_2F
   targetEntry: Spawn_From1FStairs
-  prompt: Go upstairs
-  lockedPrompt: Locked
+  prompt: "2\uCE35\uC73C\uB85C \uC62C\uB77C\uAC00\uAE30"
+  lockedPrompt: "\uC7A0\uACA8 \uC788\uB2E4"
   locked: 0
+  requiredKey: 
   needsPower: 0
   noiseRange: 9
 --- !u!43 &607347752
@@ -39187,9 +39189,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapDoor
   targetMap: Village Map
   targetEntry: Spawn_FromCityHall
-  prompt: Go outside
-  lockedPrompt: Locked
+  prompt: "\uB9C8\uC744\uB85C \uC774\uB3D9\uD558\uAE30"
+  lockedPrompt: "\uC7A0\uACA8 \uC788\uB2E4"
   locked: 0
+  requiredKey: 
   needsPower: 0
   noiseRange: 9
 --- !u!43 &1823859934
