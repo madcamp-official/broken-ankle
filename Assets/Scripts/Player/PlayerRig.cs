@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Ashburn.Noise;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -60,7 +61,27 @@ namespace Ashburn.Player
         /// <summary>True when input on this machine moves this character.</summary>
         public bool IsControlled => isControlled;
 
+        /// <summary>
+        /// Every character in the level, whoever is driving them.
+        ///
+        /// The darkness mask reads this. A partner carries light of their own, and it has to be let
+        /// through the viewer's mask or the two of them are invisible to each other from three
+        /// steps away — which is the same as not being in the same room at all.
+        /// </summary>
+        public static IReadOnlyList<PlayerRig> All => _all;
+
+        static readonly List<PlayerRig> _all = new();
+
         void Awake() => Apply(isViewer, isControlled);
+
+        void OnEnable() => _all.Add(this);
+
+        void OnDisable() => _all.Remove(this);
+
+        // A static list outlives a play session when the editor skips its domain reload, and the
+        // last run's characters would be carrying light through this run's darkness.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetOnLoad() => _all.Clear();
 
         /// <summary>
         /// Sets the character's role. Safe to call before or after spawn, so a networked spawner

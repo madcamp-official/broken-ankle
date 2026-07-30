@@ -388,7 +388,6 @@ MonoBehaviour:
   - {fileID: 4619516547538424807}
   - {fileID: 5971796654612665053}
   viewerOnlyObjects:
-  - {fileID: 8304847542237617635}
   - {fileID: 3743583923798362931}
   - {fileID: 6331766093216544031}
   viewerOnlyComponents:
