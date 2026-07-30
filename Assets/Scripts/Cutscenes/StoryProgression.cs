@@ -126,6 +126,11 @@ namespace Ashburn.Cutscenes
                 case "hangar_awakening_001":
                     WorldState.Raise(HangarComplete);
                     break;
+
+                case "ending_shutdown_001":
+                    WorldState.Raise("TruthBroadcastReady");
+                    WorldState.Raise("WardensShutdown");
+                    break;
             }
         }
 

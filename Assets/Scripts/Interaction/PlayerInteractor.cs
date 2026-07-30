@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ashburn.Cutscenes;
 using Ashburn.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -159,12 +160,22 @@ namespace Ashburn.Interaction
 
         void Update()
         {
+            if (DialogueManager.IsPlaying)
+            {
+                CancelHold();
+                SetTarget(null);
+                return;
+            }
+
             SetTarget(FindBestTarget());
             TickHold();
         }
 
         void OnInteractStarted(InputAction.CallbackContext _)
         {
+            if (DialogueManager.IsPlaying)
+                return;
+
             // Only a target that asks to be held starts a hold. Everything else runs on performed,
             // exactly as it did before holds existed.
             if (_current is IHoldInteractable hold && hold.HoldSeconds > 0f &&
@@ -178,6 +189,9 @@ namespace Ashburn.Interaction
 
         void OnInteractPerformed(InputAction.CallbackContext _)
         {
+            if (DialogueManager.IsPlaying)
+                return;
+
             // A hold is finished by the clock in TickHold, not by the button. Without this the
             // press that begins the hold would also complete the interaction immediately, because
             // an action with no interaction on it performs the moment it goes down.

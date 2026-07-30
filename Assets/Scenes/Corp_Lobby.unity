@@ -13065,8 +13065,8 @@ MonoBehaviour:
   targetEntry: Stairs
   prompt: "2\uCE35\uC73C\uB85C \uC62C\uB77C\uAC00\uAE30"
   lockedPrompt: "\uC7A0\uACA8 \uC788\uB2E4"
-  locked: 1
-  requiredFlag: 
+  locked: 0
+  requiredFlag: Story:GasStationComplete
   requiredKey: 
   needsPower: 0
   noiseRange: 9

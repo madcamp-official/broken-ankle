@@ -4,8 +4,10 @@ using Ashburn.Core;
 using Ashburn.Noise;
 using Ashburn.Player;
 using Ashburn.World;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Ashburn.Cutscenes
 {
@@ -15,8 +17,20 @@ namespace Ashburn.Cutscenes
     /// It intentionally draws with IMGUI like the existing menu/prompt screens, so story beats can
     /// be tested before a final Canvas, TMP font, portraits, and animation polish exist.
     /// </summary>
-    public class DialogueManager : MonoBehaviour
+    public class DialogueManager : MonoBehaviourPunCallbacks
     {
+        const string SharedEventKey = "shared-dialogue:event";
+        const string SharedSerialKey = "shared-dialogue:serial";
+        const string SharedAdvanceKey = "shared-dialogue:advance";
+        const string SharedDoneKey = "shared-dialogue:done";
+        const string SharedLockKey = "shared-dialogue:lock";
+        const string SharedNoiseKey = "shared-dialogue:noise";
+        const string SharedNoiseRangeKey = "shared-dialogue:noiseRange";
+        const string SharedNoiseXKey = "shared-dialogue:noiseX";
+        const string SharedNoiseYKey = "shared-dialogue:noiseY";
+        const string SharedMapKey = "shared-dialogue:map";
+        const string SharedRaiseKey = "shared-dialogue:raise";
+
         [Header("Input")]
         [SerializeField] Key advanceKey = Key.Space;
         [SerializeField] Key alternateAdvanceKey = Key.Enter;
@@ -53,6 +67,19 @@ namespace Ashburn.Cutscenes
         bool _advanceAfterReveal;
         Func<bool> _advanceSource;
 
+        bool _sharedNetworkPlaying;
+        bool _sharedStartPending;
+        int _sharedSerial = -1;
+        int _sharedAdvanceCounter;
+        int _sharedPendingAdvancePulses;
+        string _pendingSharedEventId;
+        bool _pendingSharedLockInput;
+        bool _pendingSharedEmitNoise;
+        float _pendingSharedNoiseRange;
+        Vector2 _pendingSharedNoisePosition;
+        int _pendingSharedMap;
+        string _pendingSharedRaiseFlag;
+
         void Awake()
         {
             if (Current != null && Current != this)
@@ -70,6 +97,36 @@ namespace Ashburn.Cutscenes
         {
             if (Current == this)
                 Current = null;
+        }
+
+        void Update()
+        {
+            TryStartPendingSharedDialogue();
+
+            if (_sharedNetworkPlaying && PhotonNetwork.InRoom && LocalAdvancePressed())
+                PublishSharedAdvance();
+        }
+
+        public override void OnJoinedRoom()
+        {
+            AdoptSharedRoomState();
+        }
+
+        public override void OnRoomPropertiesUpdate(Hashtable changedProperties)
+        {
+            AdoptSharedRoomState();
+        }
+
+        public override void OnLeftRoom()
+        {
+            _sharedStartPending = false;
+            _sharedNetworkPlaying = false;
+            _sharedPendingAdvancePulses = 0;
+
+            // A room disappearing halfway through a line should leave a playable solo dialogue,
+            // not one waiting forever for the next network pulse.
+            if (_playing && _advanceSource == NetworkAdvancePressed)
+                _advanceSource = null;
         }
 
         public static DialogueManager Ensure()
@@ -92,6 +149,41 @@ namespace Ashburn.Cutscenes
             Func<bool> advanceSource = null,
             float autoAdvanceSeconds = 0f)
         {
+            if (ShouldSynchronize(eventId, advanceSource))
+            {
+                return RequestSharedDialogue(
+                    eventId,
+                    lockInput,
+                    emitNoise,
+                    noiseRange,
+                    noisePosition,
+                    map,
+                    raiseFlagOnComplete);
+            }
+
+            return TryPlayLocal(
+                eventId,
+                lockInput,
+                emitNoise,
+                noiseRange,
+                noisePosition,
+                map,
+                raiseFlagOnComplete,
+                advanceSource,
+                autoAdvanceSeconds);
+        }
+
+        bool TryPlayLocal(
+            string eventId,
+            bool lockInput,
+            bool emitNoise,
+            float noiseRange,
+            Vector2 noisePosition,
+            int map,
+            string raiseFlagOnComplete,
+            Func<bool> advanceSource,
+            float autoAdvanceSeconds)
+        {
             if (_playing)
                 return false;
 
@@ -107,6 +199,188 @@ namespace Ashburn.Cutscenes
             _routine = StartCoroutine(Play(lines, lockInput, emitNoise, noiseRange, noisePosition,
                                            map, raiseFlagOnComplete, eventId, advanceSource,
                                            autoAdvanceSeconds));
+            return true;
+        }
+
+        static bool ShouldSynchronize(string eventId, Func<bool> advanceSource)
+        {
+            if (!PhotonNetwork.InRoom || advanceSource != null || string.IsNullOrEmpty(eventId))
+                return false;
+
+            // The company chase and split-role sequences already own a richer synchronized
+            // staging/auto-movement flow. Feeding those through this generic channel as well would
+            // start a second copy of the same beat.
+            return !eventId.StartsWith("corp_", StringComparison.Ordinal) &&
+                   !eventId.StartsWith("corp2_", StringComparison.Ordinal);
+        }
+
+        bool RequestSharedDialogue(
+            string eventId,
+            bool lockInput,
+            bool emitNoise,
+            float noiseRange,
+            Vector2 noisePosition,
+            int map,
+            string raiseFlagOnComplete)
+        {
+            if (_playing || _sharedStartPending || PhotonNetwork.CurrentRoom == null)
+                return false;
+
+            if (!StoryProgression.CanPlay(eventId))
+                return false;
+
+            if (!DialogueCatalog.TryGet(eventId, out var lines) || lines.Length == 0)
+            {
+                Debug.LogWarning($"No dialogue lines found for event id '{eventId}'.", this);
+                return false;
+            }
+
+            var room = PhotonNetwork.CurrentRoom;
+            var roomSerial = ReadInt(room.CustomProperties, SharedSerialKey, -1);
+            var serial = Mathf.Max(roomSerial, _sharedSerial) + 1;
+
+            room.SetCustomProperties(new Hashtable
+            {
+                { SharedEventKey, eventId },
+                { SharedSerialKey, serial },
+                { SharedAdvanceKey, 0 },
+                { SharedDoneKey, serial - 1 },
+                { SharedLockKey, lockInput },
+                { SharedNoiseKey, emitNoise },
+                { SharedNoiseRangeKey, noiseRange },
+                { SharedNoiseXKey, noisePosition.x },
+                { SharedNoiseYKey, noisePosition.y },
+                { SharedMapKey, map },
+                { SharedRaiseKey, raiseFlagOnComplete ?? string.Empty },
+            });
+
+            QueueSharedDialogue(serial, eventId, lockInput, emitNoise, noiseRange,
+                                noisePosition, map, raiseFlagOnComplete);
+            TryStartPendingSharedDialogue();
+            return true;
+        }
+
+        void AdoptSharedRoomState()
+        {
+            if (!PhotonNetwork.InRoom || PhotonNetwork.CurrentRoom == null)
+                return;
+
+            var properties = PhotonNetwork.CurrentRoom.CustomProperties;
+            var serial = ReadInt(properties, SharedSerialKey, -1);
+            if (serial < 0)
+                return;
+
+            var done = ReadInt(properties, SharedDoneKey, -1);
+            if (serial > _sharedSerial && done < serial)
+            {
+                var eventId = ReadString(properties, SharedEventKey);
+                if (!string.IsNullOrEmpty(eventId))
+                {
+                    QueueSharedDialogue(
+                        serial,
+                        eventId,
+                        ReadBool(properties, SharedLockKey, true),
+                        ReadBool(properties, SharedNoiseKey, false),
+                        ReadFloat(properties, SharedNoiseRangeKey),
+                        new Vector2(
+                            ReadFloat(properties, SharedNoiseXKey),
+                            ReadFloat(properties, SharedNoiseYKey)),
+                        ReadInt(properties, SharedMapKey, MapZone.Unzoned),
+                        ReadString(properties, SharedRaiseKey));
+                }
+            }
+
+            if (serial != _sharedSerial)
+                return;
+
+            if (done >= serial)
+                _sharedStartPending = false;
+
+            var advance = ReadInt(properties, SharedAdvanceKey, 0);
+            if (advance <= _sharedAdvanceCounter)
+                return;
+
+            _sharedPendingAdvancePulses += advance - _sharedAdvanceCounter;
+            _sharedAdvanceCounter = advance;
+        }
+
+        void QueueSharedDialogue(
+            int serial,
+            string eventId,
+            bool lockInput,
+            bool emitNoise,
+            float noiseRange,
+            Vector2 noisePosition,
+            int map,
+            string raiseFlagOnComplete)
+        {
+            if (serial < _sharedSerial ||
+                (serial == _sharedSerial && (_sharedStartPending || _sharedNetworkPlaying)))
+            {
+                return;
+            }
+
+            _sharedSerial = serial;
+            _sharedAdvanceCounter = 0;
+            _sharedPendingAdvancePulses = 0;
+            _pendingSharedEventId = eventId;
+            _pendingSharedLockInput = lockInput;
+            _pendingSharedEmitNoise = emitNoise;
+            _pendingSharedNoiseRange = noiseRange;
+            _pendingSharedNoisePosition = noisePosition;
+            _pendingSharedMap = map;
+            _pendingSharedRaiseFlag = raiseFlagOnComplete;
+            _sharedStartPending = true;
+        }
+
+        void TryStartPendingSharedDialogue()
+        {
+            if (!_sharedStartPending || _playing)
+                return;
+
+            // WorldState and the room dialogue packet are separate Photon properties. Retrying
+            // here lets the slower one arrive without losing a one-shot conversation.
+            if (!StoryProgression.CanPlay(_pendingSharedEventId))
+                return;
+
+            var emitHere = _pendingSharedEmitNoise &&
+                           (!PhotonNetwork.InRoom || PhotonNetwork.IsMasterClient);
+
+            if (!TryPlayLocal(
+                    _pendingSharedEventId,
+                    _pendingSharedLockInput,
+                    emitHere,
+                    _pendingSharedNoiseRange,
+                    _pendingSharedNoisePosition,
+                    _pendingSharedMap,
+                    _pendingSharedRaiseFlag,
+                    NetworkAdvancePressed,
+                    autoAdvanceSeconds: 0f))
+            {
+                return;
+            }
+
+            _sharedStartPending = false;
+            _sharedNetworkPlaying = true;
+        }
+
+        void PublishSharedAdvance()
+        {
+            if (PhotonNetwork.CurrentRoom == null)
+                return;
+
+            var expected = _sharedAdvanceCounter;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(
+                new Hashtable { { SharedAdvanceKey, expected + 1 } },
+                new Hashtable { { SharedAdvanceKey, expected } });
+        }
+
+        bool NetworkAdvancePressed()
+        {
+            if (_sharedPendingAdvancePulses <= 0)
+                return false;
+
+            _sharedPendingAdvancePulses--;
             return true;
         }
 
@@ -158,8 +432,12 @@ namespace Ashburn.Cutscenes
                 WorldState.Raise(raiseFlagOnComplete);
 
             StoryProgression.Complete(eventId);
+            var completedSharedDialogue = _sharedNetworkPlaying;
             Finished?.Invoke(eventId);
             Finish();
+
+            if (completedSharedDialogue)
+                CompleteSharedDialogue();
         }
 
         IEnumerator RevealLine(string text)
@@ -239,6 +517,7 @@ namespace Ashburn.Cutscenes
             _visibleCharacters = 0;
             _advanceAfterReveal = false;
             _advanceSource = null;
+            _sharedNetworkPlaying = false;
 
             if (_lockInput)
             {
@@ -247,6 +526,18 @@ namespace Ashburn.Cutscenes
             }
 
             _lockInput = false;
+        }
+
+        void CompleteSharedDialogue()
+        {
+            if (!PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient ||
+                PhotonNetwork.CurrentRoom == null)
+            {
+                return;
+            }
+
+            PhotonNetwork.CurrentRoom.SetCustomProperties(
+                new Hashtable { { SharedDoneKey, _sharedSerial } });
         }
 
         void SuspendPlayers(bool suspended)
@@ -261,6 +552,11 @@ namespace Ashburn.Cutscenes
             if (_advanceSource != null)
                 return _advanceSource();
 
+            return LocalAdvancePressed();
+        }
+
+        bool LocalAdvancePressed()
+        {
             var keyboard = Keyboard.current;
             if (keyboard != null &&
                 (keyboard[advanceKey].wasPressedThisFrame ||
@@ -269,6 +565,51 @@ namespace Ashburn.Cutscenes
 
             var mouse = Mouse.current;
             return mouse != null && mouse.leftButton.wasPressedThisFrame;
+        }
+
+        static int ReadInt(Hashtable properties, string key, int fallback)
+        {
+            if (properties == null || !properties.TryGetValue(key, out var value))
+                return fallback;
+
+            return value switch
+            {
+                int number => number,
+                byte number => number,
+                short number => number,
+                _ => fallback,
+            };
+        }
+
+        static float ReadFloat(Hashtable properties, string key)
+        {
+            if (properties == null || !properties.TryGetValue(key, out var value))
+                return 0f;
+
+            return value switch
+            {
+                float number => number,
+                double number => (float)number,
+                int number => number,
+                _ => 0f,
+            };
+        }
+
+        static bool ReadBool(Hashtable properties, string key, bool fallback)
+        {
+            return properties != null &&
+                   properties.TryGetValue(key, out var value) &&
+                   value is bool flag
+                ? flag
+                : fallback;
+        }
+
+        static string ReadString(Hashtable properties, string key)
+        {
+            return properties != null &&
+                   properties.TryGetValue(key, out var value)
+                ? value as string
+                : null;
         }
 
         void OnGUI()

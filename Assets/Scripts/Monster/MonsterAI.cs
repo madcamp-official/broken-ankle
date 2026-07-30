@@ -343,6 +343,18 @@ namespace Ashburn.Monster
             deactivationFlag = deactivatesOn;
         }
 
+        /// <summary>
+        /// Reduces synchronized path/noise spikes when a large outdoor crowd wakes at once.
+        /// Individual monsters remain fully reactive; their expensive work is merely staggered.
+        /// </summary>
+        public void ConfigureCrowdMode(int index)
+        {
+            repathInterval = Mathf.Max(repathInterval, 0.8f);
+            repathTolerance = Mathf.Max(repathTolerance, 1.1f);
+            _nextWanderAt = Time.time + 0.2f + index % 10 * 0.17f;
+            _nextNoiseAt = Time.time + 0.35f + index % 12 * 0.13f;
+        }
+
         /// <summary>Resets physics and navigation state after a runtime-authored placement.</summary>
         public void RefreshAfterPlacement()
         {

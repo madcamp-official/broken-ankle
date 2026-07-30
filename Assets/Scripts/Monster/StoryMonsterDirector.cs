@@ -1,7 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
 using Ashburn.Cutscenes;
 using Ashburn.World;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 namespace Ashburn.Monster
 {
@@ -17,13 +20,15 @@ namespace Ashburn.Monster
                 string name,
                 Vector2 localPosition,
                 string activationFlag = null,
-                string deactivationFlag = "TruthDevicePlayed")
+                string deactivationFlag = "TruthDevicePlayed",
+                string spawnFlag = null)
             {
                 Scene = scene;
                 Name = name;
                 LocalPosition = localPosition;
                 ActivationFlag = activationFlag;
                 DeactivationFlag = deactivationFlag;
+                SpawnFlag = spawnFlag;
             }
 
             public string Scene { get; }
@@ -31,6 +36,7 @@ namespace Ashburn.Monster
             public Vector2 LocalPosition { get; }
             public string ActivationFlag { get; }
             public string DeactivationFlag { get; }
+            public string SpawnFlag { get; }
         }
 
         static readonly Placement[] Placements =
@@ -41,6 +47,14 @@ namespace Ashburn.Monster
                 new Vector2(18f, 10.8f),
                 "Story:CorpFirstWardenAwake",
                 "Story:CorpFirstWardenEscaped"),
+
+            new(
+                "Village Map",
+                "Warden_GasStation_Bone",
+                new Vector2(72.5f, 8f),
+                activationFlag: "GasMonsterReleased",
+                deactivationFlag: "TruthDevicePlayed",
+                spawnFlag: StoryProgression.PoliceInvestigationComplete),
 
             new("Greybox_Hanger", "Warden_Hangar_A1", new Vector2(-13f, 5.5f),
                 StoryProgression.HangarComplete),
@@ -97,12 +111,19 @@ namespace Ashburn.Monster
         void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
+            WorldState.Set += OnWorldFlagSet;
             SpawnForLoadedScenes();
         }
 
-        void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
+        void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            WorldState.Set -= OnWorldFlagSet;
+        }
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode) => SpawnFor(scene);
+
+        void OnWorldFlagSet(string _) => SpawnForLoadedScenes();
 
         void SpawnForLoadedScenes()
         {
@@ -121,8 +142,13 @@ namespace Ashburn.Monster
 
             foreach (var placement in Placements)
             {
-                if (placement.Scene != scene.name || Contains(scene, placement.Name))
+                if (placement.Scene != scene.name ||
+                    Contains(scene, placement.Name) ||
+                    (!string.IsNullOrEmpty(placement.SpawnFlag) &&
+                     !WorldState.Has(placement.SpawnFlag)))
+                {
                     continue;
+                }
 
                 var monster = Instantiate(monsterPrefab, zone.transform, false);
                 monster.name = placement.Name;
@@ -138,6 +164,154 @@ namespace Ashburn.Monster
                     ai.RefreshAfterPlacement();
                 }
             }
+
+            if (scene.name != "Village Map")
+                return;
+
+            EnsureGasStationEncounter(scene, zone);
+
+            if (WorldState.Has(StoryProgression.HangarComplete) &&
+                !Contains(scene, "Warden_Village_Crowd"))
+            {
+                StartCoroutine(SpawnVillageCrowd(scene, zone));
+            }
+        }
+
+        void EnsureGasStationEncounter(Scene scene, MapZone zone)
+        {
+            if (Contains(scene, "EVENT_GasStationEncounter"))
+                return;
+
+            var monster = FindMonster(scene, "Warden_GasStation_Bone");
+            if (monster == null)
+                return;
+
+            var host = new GameObject("EVENT_GasStationEncounter");
+            host.transform.SetParent(zone.transform, worldPositionStays: false);
+            host.AddComponent<GasStationEncounter>().Configure(
+                monster,
+                zone,
+                zone.transform.TransformPoint(new Vector2(72.5f, 8f)));
+        }
+
+        IEnumerator SpawnVillageCrowd(Scene scene, MapZone zone)
+        {
+            var parent = new GameObject("Warden_Village_Crowd");
+            parent.transform.SetParent(zone.transform, worldPositionStays: false);
+
+            // Village maps keep their visual/collision children asleep while nobody is in them.
+            // Sampling before they wake would treat every building as open road.
+            while (scene.isLoaded && zone != null && !RoadGeometryReady(zone))
+                yield return null;
+
+            if (!scene.isLoaded || zone == null)
+                yield break;
+
+            Physics2D.SyncTransforms();
+            var candidates = RoadCandidates(zone);
+            candidates.Sort((a, b) => PositionHash(a).CompareTo(PositionHash(b)));
+
+            const int wanted = 36;
+            const float spacing = 3.25f;
+            var placed = new List<Vector2>(wanted);
+
+            foreach (var position in candidates)
+            {
+                if (placed.Count >= wanted)
+                    break;
+
+                if (Blocked(position) || TooClose(position, placed, spacing))
+                    continue;
+
+                var monster = Instantiate(monsterPrefab, parent.transform, false);
+                monster.name = $"Warden_Village_{placed.Count + 1:00}";
+                monster.transform.position = position;
+
+                var ai = monster.GetComponent<MonsterAI>();
+                if (ai != null)
+                {
+                    ai.ConfigureStoryState(null, "TruthDevicePlayed");
+                    ai.ConfigureCrowdMode(placed.Count);
+                    ai.RefreshAfterPlacement();
+                }
+
+                placed.Add(position);
+
+                // Instantiation, animator setup and rigidbody registration are spread out so the
+                // first frame back from the hangar does not pay for all 36 at once.
+                if (placed.Count % 2 == 0)
+                    yield return null;
+            }
+
+            if (placed.Count < wanted)
+            {
+                Debug.LogWarning(
+                    $"Village crowd placed {placed.Count}/{wanted} wardens on clear road cells.",
+                    zone);
+            }
+        }
+
+        static bool RoadGeometryReady(MapZone zone)
+        {
+            foreach (var tilemap in zone.GetComponentsInChildren<Tilemap>(true))
+                if (IsRoad(tilemap) && tilemap.isActiveAndEnabled)
+                    return true;
+
+            return false;
+        }
+
+        static List<Vector2> RoadCandidates(MapZone zone)
+        {
+            var candidates = new List<Vector2>();
+            var seen = new HashSet<Vector2Int>();
+
+            foreach (var tilemap in zone.GetComponentsInChildren<Tilemap>(true))
+            {
+                if (!IsRoad(tilemap))
+                    continue;
+
+                foreach (var cell in tilemap.cellBounds.allPositionsWithin)
+                {
+                    if (!tilemap.HasTile(cell))
+                        continue;
+
+                    var world = (Vector2)tilemap.GetCellCenterWorld(cell);
+                    var key = new Vector2Int(
+                        Mathf.RoundToInt(world.x * 2f),
+                        Mathf.RoundToInt(world.y * 2f));
+
+                    if (seen.Add(key))
+                        candidates.Add(world);
+                }
+            }
+
+            return candidates;
+        }
+
+        static bool IsRoad(Tilemap tilemap)
+        {
+            return tilemap != null &&
+                   (tilemap.name.Contains("Road") || tilemap.name.Contains("Asphalt"));
+        }
+
+        static int PositionHash(Vector2 position)
+        {
+            unchecked
+            {
+                var x = Mathf.RoundToInt(position.x * 2f);
+                var y = Mathf.RoundToInt(position.y * 2f);
+                return (x * 73856093) ^ (y * 19349663);
+            }
+        }
+
+        static bool TooClose(Vector2 position, List<Vector2> placed, float spacing)
+        {
+            var minimum = spacing * spacing;
+            foreach (var other in placed)
+                if ((other - position).sqrMagnitude < minimum)
+                    return true;
+
+            return false;
         }
 
         static MapZone FindZone(Scene scene)
@@ -160,6 +334,16 @@ namespace Ashburn.Monster
                     return true;
 
             return false;
+        }
+
+        static MonsterAI FindMonster(Scene scene, string objectName)
+        {
+            foreach (var root in scene.GetRootGameObjects())
+            foreach (var child in root.GetComponentsInChildren<Transform>(true))
+                if (child.name == objectName)
+                    return child.GetComponent<MonsterAI>();
+
+            return null;
         }
 
         static Vector2 FindClearPosition(Vector2 intended)
