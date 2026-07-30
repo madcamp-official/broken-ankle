@@ -20,7 +20,7 @@ namespace Ashburn.Monster
                 string name,
                 Vector2 localPosition,
                 string activationFlag = null,
-                string deactivationFlag = "TruthDevicePlayed",
+                string deactivationFlag = "WardensShutdown",
                 string spawnFlag = null,
                 string protectionStartFlag = null,
                 string protectionEndFlag = null)
@@ -241,7 +241,7 @@ namespace Ashburn.Monster
                 var ai = monster.GetComponent<MonsterAI>();
                 if (ai != null)
                 {
-                    ai.ConfigureStoryState(null, "TruthDevicePlayed");
+                    ai.ConfigureStoryState(null, "WardensShutdown");
                     ai.ConfigureCrowdMode(placed.Count);
                     ai.RefreshAfterPlacement();
                 }

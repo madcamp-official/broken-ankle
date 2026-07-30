@@ -1,3 +1,5 @@
+using System;
+using Ashburn.Audio;
 using Ashburn.Interaction;
 using Ashburn.Player;
 using Ashburn.World;
@@ -65,8 +67,23 @@ namespace Ashburn.Cutscenes
                                  transform.position, map, raiseFlagOnComplete))
                 return;
 
+            if (UsesPaper(eventId))
+                GameAudio.PlayPaper(transform.position, map);
+
             if (singleUse)
                 WorldState.Raise(UsedFlag);
+        }
+
+        static bool UsesPaper(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return false;
+
+            return id.Contains("record", StringComparison.OrdinalIgnoreCase) ||
+                   id.Contains("doc", StringComparison.OrdinalIgnoreCase) ||
+                   id.Contains("files", StringComparison.OrdinalIgnoreCase) ||
+                   id.Contains("calls", StringComparison.OrdinalIgnoreCase) ||
+                   id.Contains("floor_plan", StringComparison.OrdinalIgnoreCase);
         }
 
         void OnDrawGizmos()

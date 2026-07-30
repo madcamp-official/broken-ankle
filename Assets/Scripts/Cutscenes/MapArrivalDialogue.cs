@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Ashburn.Interaction;
+using Ashburn.Net;
 using Ashburn.Player;
 using Ashburn.World;
 using Photon.Pun;
@@ -25,6 +27,7 @@ namespace Ashburn.Cutscenes
         string StartKey => "arrival-dialogue:" + eventId + ":start";
         string AdvanceKey => "arrival-dialogue:" + eventId + ":advance";
         string DoneKey => "arrival-dialogue:" + eventId + ":done";
+        string ArrivalReadyPrefix => "arrival-dialogue:" + eventId + ":present:";
 
         bool _networkPlaying;
         bool _startSeen;
@@ -32,6 +35,7 @@ namespace Ashburn.Cutscenes
         int _advanceCounter;
         int _pendingAdvancePulses;
         readonly List<PlayerRig> _arrivalLocks = new();
+        readonly HashSet<int> _publishedArrivalSlots = new();
 
         IEnumerator Start()
         {
@@ -84,6 +88,8 @@ namespace Ashburn.Cutscenes
 
             if (PhotonNetwork.InRoom)
             {
+                PublishControlledArrivals(zone);
+
                 if (_doneSeen)
                 {
                     ReleaseArrivalLocks();
@@ -93,9 +99,10 @@ namespace Ashburn.Cutscenes
                 // A map loads independently on each machine. The host can arrive while the other
                 // client is still on its loading frame, so publishing immediately would let the
                 // whole conversation finish before that client even owns this component.
-                while (!AllRoomPlayersPresent(zone) && !_doneSeen)
+                while (!AllRoomPlayersPresent() && !_doneSeen)
                 {
                     HoldArrivedPlayers(zone);
+                    PublishControlledArrivals(zone);
                     yield return null;
                 }
 
@@ -293,23 +300,56 @@ namespace Ashburn.Cutscenes
             base.OnDisable();
         }
 
-        static bool AllRoomPlayersPresent(MapZone zone)
+        void PublishControlledArrivals(MapZone zone)
         {
             if (!PhotonNetwork.InRoom || PhotonNetwork.CurrentRoom == null)
-                return HasControlledPlayer(zone);
+                return;
 
-            var present = 0;
+            var arrivals = new Hashtable();
             foreach (var rig in PlayerRig.All)
             {
-                if (rig == null)
+                if (rig == null || !rig.IsControlled)
                     continue;
 
                 var presence = rig.GetComponent<MapPresence>();
-                if (presence != null && presence.Zone == zone)
-                    present++;
+                var slot = SlotOf(rig);
+                if (presence != null && presence.Zone == zone &&
+                    _publishedArrivalSlots.Add(slot))
+                {
+                    arrivals[ArrivalReadyKey(slot)] = true;
+                }
             }
 
-            return present >= PhotonNetwork.CurrentRoom.PlayerCount;
+            if (arrivals.Count > 0)
+                PhotonNetwork.CurrentRoom.SetCustomProperties(arrivals);
+        }
+
+        bool AllRoomPlayersPresent()
+        {
+            if (!PhotonNetwork.InRoom || PhotonNetwork.CurrentRoom == null)
+                return true;
+
+            var room = PhotonNetwork.CurrentRoom;
+            foreach (var player in PhotonNetwork.PlayerList)
+            {
+                if (!player.CustomProperties.TryGetValue(NetworkGame.SlotKey, out var value) ||
+                    !TryReadInt(value, out var slot) ||
+                    !room.CustomProperties.TryGetValue(ArrivalReadyKey(slot), out var arrived) ||
+                    arrived is not bool ready || !ready)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        string ArrivalReadyKey(int slot) => ArrivalReadyPrefix + slot;
+
+        static int SlotOf(PlayerRig rig)
+        {
+            var inventory = rig != null ? rig.GetComponent<Inventory>() : null;
+            return inventory != null ? inventory.Slot : 0;
         }
     }
 }

@@ -44,7 +44,8 @@ namespace Ashburn.Cutscenes
 
         void OnTriggerEnter2D(Collider2D other)
         {
-            if (!other.GetComponentInParent<Player.PlayerRig>())
+            var rig = other.GetComponentInParent<Player.PlayerRig>();
+            if (rig == null || !rig.IsControlled)
                 return;
 
             Play();
@@ -106,6 +107,9 @@ namespace Ashburn.Cutscenes
                 _pending = false;
                 yield break;
             }
+
+            while (DialogueManager.IsPlaying)
+                yield return null;
 
             if (playOnce)
                 WorldState.Raise(CompletedFlag);

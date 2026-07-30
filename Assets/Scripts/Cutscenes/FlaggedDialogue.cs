@@ -113,8 +113,19 @@ namespace Ashburn.Cutscenes
                 yield break;
             }
 
+            // Shared dialogue starts synchronously on the requesting machine, but can take a frame
+            // to be adopted elsewhere. Never expose the completion flag until the line itself has
+            // actually finished.
+            while (!DialogueManager.IsPlaying && !WorldState.Has(CompletedFlag))
+                yield return null;
+
+            while (DialogueManager.IsPlaying)
+                yield return null;
+
             if (playOnce)
                 WorldState.Raise(CompletedFlag);
+
+            _started = false;
         }
 
         static bool HasControlledPlayer(MapZone zone)

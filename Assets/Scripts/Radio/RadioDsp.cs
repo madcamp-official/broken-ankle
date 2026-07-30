@@ -63,7 +63,7 @@ namespace Ashburn.Radio
         [Header("Interference (scaled by Interference)")]
         [Tooltip("Noise floor at full interference.")]
         [Range(0f, 0.5f)]
-        [SerializeField] float hiss = 0.08f;
+        [SerializeField] float hiss;
 
         [Tooltip("Extra samples each one is held for at full interference. Digital break-up.")]
         [Range(0, 16)]

@@ -838,7 +838,7 @@ MonoBehaviour:
   lowPassHz: 3000
   drive: 3.5
   outputGain: 1.6
-  hiss: 0.08
+  hiss: 0
   crush: 5
   dropoutChance: 0.05
   dropoutSeconds: {x: 0.04, y: 0.22}

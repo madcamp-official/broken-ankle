@@ -1,4 +1,5 @@
 using System;
+using Ashburn.Audio;
 using Ashburn.Cutscenes;
 using Ashburn.Interaction;
 using Ashburn.Noise;
@@ -163,10 +164,11 @@ namespace Ashburn.World
             if (!CanSearch(interactor))
                 return;
 
-            NoiseBus.Emit(at, noiseRange, NoiseKind.Self, MapZone.IdOf(this));
+            var map = MapZone.IdOf(this);
+            GameAudio.PlayPaper(at, map);
+            NoiseBus.Emit(at, noiseRange, NoiseKind.Self, map);
 
             var manager = DialogueManager.Ensure();
-            var map = MapZone.IdOf(this);
 
             if (index == Holder)
             {
