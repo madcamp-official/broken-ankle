@@ -73,7 +73,15 @@ namespace Ashburn.Player
 
         static readonly List<PlayerRig> _all = new();
 
-        void Awake() => Apply(isViewer, isControlled);
+        Monster.Downed _downed;
+
+        void Awake()
+        {
+            // Asked for once, so SuspendInput can tell a menu apart from a broken leg. See there.
+            _downed = GetComponent<Monster.Downed>();
+
+            Apply(isViewer, isControlled);
+        }
 
         void OnEnable() => _all.Add(this);
 
@@ -147,6 +155,15 @@ namespace Ashburn.Player
             // its body would be reaching into somebody else's: a partner's position arrives from the
             // wire every frame and is none of a local menu's business.
             if (!isControlled)
+                return;
+
+            // A player on the floor does not stand up because a cutscene ended. Downed switches off
+            // the movement and the interactor — the same two components listed here — and it is the
+            // only thing entitled to switch them back on. Without this a story beat that finished
+            // while somebody was down handed their legs back and left the state saying otherwise:
+            // they walked about with their partner being offered 구출하기 over a healthy character,
+            // and their own camera watching somebody else because the game had them lying there.
+            if (!suspended && _downed != null && _downed.IsDown)
                 return;
 
             foreach (var component in inputComponents)
