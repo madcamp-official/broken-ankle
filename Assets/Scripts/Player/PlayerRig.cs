@@ -115,9 +115,15 @@ namespace Ashburn.Player
         /// </summary>
         public void SuspendInput(bool suspended)
         {
+            // A character this machine does not drive has no hands to take off the keys, and stopping
+            // its body would be reaching into somebody else's: a partner's position arrives from the
+            // wire every frame and is none of a local menu's business.
+            if (!isControlled)
+                return;
+
             foreach (var component in inputComponents)
                 if (component != null)
-                    component.enabled = isControlled && !suspended;
+                    component.enabled = !suspended;
 
             if (!suspended)
                 return;
