@@ -185,6 +185,13 @@ namespace Ashburn.Cutscenes
         {
             _running = true;
 
+            // Held here rather than at the call sites because a sequence is started from three
+            // places, and one of them is a room property that arrives once and is never repeated.
+            // Refusing it while the title screen was up would drop the beat for that client
+            // entirely; waiting keeps it.
+            while (Net.TitleScreen.IsUp)
+                yield return null;
+
             var participants = ParticipantsInZone();
             SetControlledInput(participants, suspended: true);
 

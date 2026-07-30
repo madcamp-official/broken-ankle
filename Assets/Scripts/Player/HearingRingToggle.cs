@@ -34,9 +34,14 @@ namespace Ashburn.Player
 
         InputAction _toggleAction;
         InputActionAsset _ownedActions;
+        PlayerRig _rig;
 
         void Awake()
         {
+            // Whose character this is, so the switch can tell the state apart from the picture of
+            // it. See Apply.
+            _rig = GetComponentInParent<PlayerRig>();
+
             // Here rather than in Start, because Start does not run on a component that is switched
             // off — which this one is on every character but the viewer's. Anything asking a
             // partner whether their headset is on would otherwise be told no, whatever startOn
@@ -87,13 +92,24 @@ namespace Ashburn.Player
 
         void OnToggle(InputAction.CallbackContext _) => Apply(!IsOn);
 
-        /// <summary>Lets other systems kill the ring — deafened by a blast, a scripted moment.</summary>
+        /// <summary>
+        /// Lets other systems kill the ring — deafened by a blast, a scripted moment.
+        ///
+        /// The state and the drawing of it are two different things, and only one of them belongs to
+        /// the character. <see cref="IsOn"/> is replicated so a partner's headset can be seen on
+        /// their head, and PlayerSync applies it to their copy on this machine; the mesh is that
+        /// player's own reading of their own surroundings and is meaningless on somebody else's
+        /// screen. Applying both together drew a second ring around the partner, wobbling at what
+        /// they could hear from where they were standing.
+        /// </summary>
         public void Apply(bool on)
         {
             IsOn = on;
 
+            // PlayerRig switches the ring off for a partner at spawn, and this used to switch it
+            // straight back on with the first packet that arrived.
             if (hearingRing != null)
-                hearingRing.SetActive(on);
+                hearingRing.SetActive(on && (_rig == null || _rig.IsViewer));
 
             Switched?.Invoke(on);
         }
