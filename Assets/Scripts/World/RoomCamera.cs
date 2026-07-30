@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Ashburn.Core;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -68,6 +69,12 @@ namespace Ashburn.World
         [Tooltip("Aspect to assume before a camera exists to ask. Only used on the first frame.")]
         [SerializeField] float fallbackAspect = 16f / 9f;
 
+        [Header("Cutscene framing")]
+        [SerializeField] float groupMinimumSize = 4.5f;
+        [SerializeField] float groupMaximumSize = 9f;
+        [SerializeField] float groupPadding = 2f;
+        [SerializeField] float groupSmoothSeconds = 0.16f;
+
         /// <summary>The room camera in the current scene, if there is one.</summary>
         public static RoomCamera Current { get; private set; }
 
@@ -85,6 +92,8 @@ namespace Ashburn.World
         float _sizeVelocity;
         bool _framed;
         bool _fading;
+        bool _groupFraming;
+        readonly List<Transform> _groupTargets = new();
 
         void Awake()
         {
@@ -183,6 +192,12 @@ namespace Ashburn.World
 
         void LateUpdate()
         {
+            if (_groupFraming)
+            {
+                UpdateGroupFrame();
+                return;
+            }
+
             if (!_framed)
                 return;
 
@@ -239,6 +254,102 @@ namespace Ashburn.World
             var centre = new Vector3(area.center.x, area.center.y, z);
 
             return FitsWholeRoom(area) ? centre : PositionFor(room, size, centre);
+        }
+
+        /// <summary>Keeps every supplied participant visible until <see cref="EndGroupFrame"/>.</summary>
+        public void BeginGroupFrame(IEnumerable<Transform> participants)
+        {
+            _groupTargets.Clear();
+            if (participants != null)
+                foreach (var participant in participants)
+                    if (participant != null && !_groupTargets.Contains(participant))
+                        _groupTargets.Add(participant);
+
+            if (_groupTargets.Count == 0)
+                return;
+
+            _groupFraming = true;
+
+            if (_binder != null)
+                _binder.enabled = false;
+
+            cinemachineCamera.Follow = null;
+            UpdateGroupTarget();
+            Snap();
+        }
+
+        /// <summary>Returns control to the current room frame or the ordinary player follower.</summary>
+        public void EndGroupFrame()
+        {
+            if (!_groupFraming)
+                return;
+
+            _groupFraming = false;
+            _groupTargets.Clear();
+            _velocity = Vector3.zero;
+            _sizeVelocity = 0f;
+
+            if (Room != null)
+            {
+                _framed = true;
+                _targetSize = Mathf.Min(SizeFor(Room.Area), maxSize);
+                _targetPosition = InitialPositionFor(Room, _targetSize);
+                Snap();
+                return;
+            }
+
+            Release();
+        }
+
+        void UpdateGroupFrame()
+        {
+            for (var i = _groupTargets.Count - 1; i >= 0; i--)
+                if (_groupTargets[i] == null || !_groupTargets[i].gameObject.activeInHierarchy)
+                    _groupTargets.RemoveAt(i);
+
+            if (_groupTargets.Count == 0)
+            {
+                EndGroupFrame();
+                return;
+            }
+
+            UpdateGroupTarget();
+
+            if (groupSmoothSeconds <= 0f)
+            {
+                Snap();
+                return;
+            }
+
+            cinemachineCamera.transform.position = Vector3.SmoothDamp(
+                cinemachineCamera.transform.position, _targetPosition, ref _velocity,
+                groupSmoothSeconds);
+
+            cinemachineCamera.Lens.OrthographicSize = Mathf.SmoothDamp(
+                cinemachineCamera.Lens.OrthographicSize, _targetSize, ref _sizeVelocity,
+                groupSmoothSeconds);
+        }
+
+        void UpdateGroupTarget()
+        {
+            var min = (Vector2)_groupTargets[0].position;
+            var max = min;
+
+            for (var i = 1; i < _groupTargets.Count; i++)
+            {
+                var point = (Vector2)_groupTargets[i].position;
+                min = Vector2.Min(min, point);
+                max = Vector2.Max(max, point);
+            }
+
+            var centre = (min + max) * 0.5f;
+            var neededHeight = (max.y - min.y) * 0.5f + groupPadding;
+            var neededWidth = ((max.x - min.x) * 0.5f + groupPadding) / Aspect();
+
+            _targetSize = Mathf.Clamp(
+                Mathf.Max(neededHeight, neededWidth), groupMinimumSize, groupMaximumSize);
+            _targetPosition = new Vector3(
+                centre.x, centre.y, cinemachineCamera.transform.position.z);
         }
 
         Vector3 PositionFor(RoomBounds room, float size, Vector3 current)

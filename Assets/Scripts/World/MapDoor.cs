@@ -38,6 +38,9 @@ namespace Ashburn.World
                  "off and name the item in Required Key instead.")]
         [SerializeField] bool locked;
 
+        [Tooltip("Optional WorldState flag required before this door can open.")]
+        [SerializeField] string requiredFlag;
+
         [Tooltip("Name of the item the pair must be carrying, matching the Key on a KeyItem. Empty " +
                  "needs nothing. Either player carrying it is enough: both of them have to get " +
                  "through, so a key in the partner's pocket must not strand the other one.")]
@@ -61,6 +64,9 @@ namespace Ashburn.World
             get
             {
                 if (locked)
+                    return false;
+
+                if (!string.IsNullOrEmpty(requiredFlag) && !WorldState.Has(requiredFlag))
                     return false;
 
                 // Asked of the pair rather than of whoever is standing here. See the note on the

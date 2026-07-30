@@ -156,6 +156,11 @@ namespace Ashburn.Monster
 
         static NavGrid Build(MapZone zone, float agentRadius, float cellSize, LayerMask obstacles)
         {
+            // MapZone moves an additive map to its world slot during Awake. Collider bounds can
+            // still contain a mix of pre-move and post-move values until physics is synchronized,
+            // which would make an ordinary room appear thousands of units wide.
+            Physics2D.SyncTransforms();
+
             var solids = new List<Collider2D>();
             var bounds = new Bounds();
             var any = false;

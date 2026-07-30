@@ -2411,6 +2411,9 @@ MonoBehaviour:
   speed: 4.6
   arriveDistance: 0.08
   lockInput: 1
+  slotOffsets:
+  - {x: -0.3, y: 0}
+  - {x: 0.3, y: 0}
 --- !u!1 &297495570
 GameObject:
   m_ObjectHideFlags: 0
@@ -39906,6 +39909,17 @@ MonoBehaviour:
   closingDialogueId: corp_after_escape_001
   emitOpeningNoise: 1
   openingNoiseRange: 11
+  raiseFlagBeforeMovement: Story:CorpFirstWardenAwake
+  transitionMap: Village Map
+  transitionEntry: Corp
+  requireBothPlayers: 1
+  stagingOffsets:
+  - {x: -0.65, y: -0.4}
+  - {x: 0.65, y: -0.4}
+  stagingSpeed: 3.8
+  stagingArriveDistance: 0.06
+  allowSoloPreview: 1
+  soloPreviewKey: 101
 --- !u!61 &1526578147
 BoxCollider2D:
   m_ObjectHideFlags: 0

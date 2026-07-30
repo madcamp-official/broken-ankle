@@ -46,9 +46,13 @@ namespace Ashburn.Cutscenes
                 "hangar_enter_001" or
                 "hangar_button_001" or
                 "hangar_warden_doc_001" or
-                "hangar_power_ready_001" or
-                "hangar_awakening_001" =>
+                "hangar_power_ready_001" =>
                     WorldState.Has(CompanySecondVisitComplete),
+
+                "hangar_awakening_001" =>
+                    WorldState.Has(CompanySecondVisitComplete) &&
+                    WorldState.Has("WardenDocRead") &&
+                    WorldState.Has("HangarButtonPressed"),
 
                 "cityhall_1f_enter_001" or
                 "cityhall_2f_crouch_001" or

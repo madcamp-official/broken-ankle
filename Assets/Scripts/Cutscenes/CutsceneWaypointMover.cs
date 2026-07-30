@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using Ashburn.Interaction;
 using Ashburn.Player;
 using UnityEngine;
 
@@ -16,6 +18,12 @@ namespace Ashburn.Cutscenes
         [SerializeField] float speed = 4.6f;
         [SerializeField] float arriveDistance = 0.08f;
         [SerializeField] bool lockInput = true;
+        [Tooltip("World-space path offset per player slot. Keeps two characters from overlapping.")]
+        [SerializeField] Vector2[] slotOffsets =
+        {
+            new(-0.3f, 0f),
+            new(0.3f, 0f),
+        };
 
         public bool IsMoving { get; private set; }
 
@@ -26,20 +34,27 @@ namespace Ashburn.Cutscenes
 
         public IEnumerator PlayForAllControlledPlayersRoutine()
         {
+            var moving = new List<Coroutine>();
+
             foreach (var rig in FindObjectsByType<PlayerRig>(
                          FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             {
                 if (rig.IsControlled)
-                    yield return Move(rig);
+                    moving.Add(StartCoroutine(Move(rig)));
             }
+
+            IsMoving = moving.Count > 0;
+
+            foreach (var routine in moving)
+                yield return routine;
+
+            IsMoving = false;
         }
 
         IEnumerator Move(PlayerRig rig)
         {
             if (rig == null || waypoints == null || waypoints.Length == 0)
                 yield break;
-
-            IsMoving = true;
 
             if (lockInput)
                 rig.SuspendInput(true);
@@ -54,11 +69,12 @@ namespace Ashburn.Cutscenes
                     if (waypoint == null)
                         continue;
 
+                    var target = (Vector2)waypoint.position + OffsetFor(rig);
+
                     while (rig != null &&
-                           Vector2.Distance(rig.transform.position, waypoint.position) > arriveDistance)
+                           Vector2.Distance(rig.transform.position, target) > arriveDistance)
                     {
                         var current = body != null ? body.position : (Vector2)rig.transform.position;
-                        var target = (Vector2)waypoint.position;
                         var deltaTime = body != null ? Time.fixedDeltaTime : Time.deltaTime;
                         var next = Vector2.MoveTowards(current, target, speed * deltaTime);
                         var delta = next - current;
@@ -87,8 +103,17 @@ namespace Ashburn.Cutscenes
                 if (lockInput)
                     rig.SuspendInput(false);
 
-                IsMoving = false;
             }
+        }
+
+        Vector2 OffsetFor(PlayerRig rig)
+        {
+            var inventory = rig != null ? rig.GetComponent<Inventory>() : null;
+            var slot = inventory != null ? inventory.Slot : 0;
+
+            return slotOffsets != null && slot >= 0 && slot < slotOffsets.Length
+                ? slotOffsets[slot]
+                : Vector2.zero;
         }
     }
 }

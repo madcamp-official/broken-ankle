@@ -110,6 +110,13 @@ namespace Ashburn.Monster
         [Tooltip("Fraction the idle gap is randomised by, so it never settles into a metronome.")]
         [SerializeField, Range(0f, 1f)] float idleJitter = 0.35f;
 
+        [Header("Story state")]
+        [Tooltip("When set, the monster remains visible but inert until this WorldState flag exists.")]
+        [SerializeField] string activationFlag;
+
+        [Tooltip("When set, the monster becomes inert after this WorldState flag exists.")]
+        [SerializeField] string deactivationFlag;
+
         /// <summary>Current behaviour, for animation, audio and debugging.</summary>
         public MonsterState State { get; private set; } = MonsterState.Patrol;
 
@@ -127,6 +134,11 @@ namespace Ashburn.Monster
 
         /// <summary>Whether it has a route to <see cref="Destination"/> rather than a straight line.</summary>
         public bool HasPath => _pathIndex < _path.Count;
+
+        /// <summary>Whether story progression currently permits this monster to act.</summary>
+        public bool IsDormant =>
+            (!string.IsNullOrEmpty(activationFlag) && !WorldState.Has(activationFlag)) ||
+            (!string.IsNullOrEmpty(deactivationFlag) && WorldState.Has(deactivationFlag));
 
         /// <summary>The waypoint being steered at, for gizmos.</summary>
         Vector2 Waypoint => HasPath ? _path[_pathIndex] : Destination;
@@ -222,6 +234,9 @@ namespace Ashburn.Monster
 
         void OnHeard(NoiseEvent noise, float strength)
         {
+            if (IsDormant)
+                return;
+
             Suspicion += suspicionPerNoise * strength;
             _lastNoisePosition = noise.Position;
 
@@ -234,6 +249,14 @@ namespace Ashburn.Monster
 
         void Update()
         {
+            if (IsDormant)
+            {
+                Suspicion = 0f;
+                IsLit = false;
+                Speed = 0f;
+                return;
+            }
+
             // Drained first, then topped up by anything happening now, then acted on. A beam held
             // steadily on the monster has to out-run the decay to mean anything, which is the same
             // bargain a sound makes.
@@ -295,6 +318,14 @@ namespace Ashburn.Monster
 
         void FixedUpdate()
         {
+            if (IsDormant)
+            {
+                _body.linearVelocity = Vector2.zero;
+                _previousPosition = _body.position;
+                Speed = 0f;
+                return;
+            }
+
             // Measured before the new velocity is set, so this is what the last step actually
             // achieved rather than what it was told to do.
             var moved = (_body.position - _previousPosition).magnitude;
@@ -303,6 +334,26 @@ namespace Ashburn.Monster
 
             TrackStuck();
             _body.linearVelocity = Steer();
+        }
+
+        /// <summary>Assigns story gates to a monster spawned by the map placement director.</summary>
+        public void ConfigureStoryState(string activatesOn, string deactivatesOn = null)
+        {
+            activationFlag = activatesOn;
+            deactivationFlag = deactivatesOn;
+        }
+
+        /// <summary>Resets physics and navigation state after a runtime-authored placement.</summary>
+        public void RefreshAfterPlacement()
+        {
+            _body.position = transform.position;
+            _body.linearVelocity = Vector2.zero;
+            Destination = _body.position;
+            _previousPosition = _body.position;
+            _lastNoisePosition = _body.position;
+            _path.Clear();
+            _pathIndex = 0;
+            _nextRepathAt = 0f;
         }
 
         void Enter(MonsterState state)

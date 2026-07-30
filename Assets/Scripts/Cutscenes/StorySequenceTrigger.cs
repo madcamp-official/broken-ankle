@@ -1,16 +1,27 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using Ashburn.Interaction;
+using Ashburn.Player;
 using Ashburn.World;
+using Photon.Pun;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace Ashburn.Cutscenes
 {
     /// <summary>
-    /// Runs a simple authored beat: dialogue, optional waypoint movement, then optional dialogue.
-    /// Used for the first company escape before a full Timeline pass exists.
+    /// Runs an authored story beat only after both players are staged in the same shot.
+    ///
+    /// In a network room the master client publishes the start and dialogue-advance counter as
+    /// room properties. Both clients therefore run the same phase, while each machine moves only
+    /// the character it owns and receives the other character through PlayerSync.
     /// </summary>
     [RequireComponent(typeof(Collider2D))]
-    public class StorySequenceTrigger : MonoBehaviour
+    public class StorySequenceTrigger : MonoBehaviourPunCallbacks
     {
+        [Header("Story")]
         [SerializeField] string id;
         [SerializeField] string openingDialogueId;
         [SerializeField] CutsceneWaypointMover mover;
@@ -18,10 +29,40 @@ namespace Ashburn.Cutscenes
         [SerializeField] string closingDialogueId;
         [SerializeField] bool emitOpeningNoise = true;
         [SerializeField] float openingNoiseRange = 11f;
+        [SerializeField] string raiseFlagBeforeMovement;
 
+        [Header("Post-sequence travel")]
+        [SerializeField] string transitionMap;
+        [SerializeField] string transitionEntry;
+
+        [Header("Two-player staging")]
+        [SerializeField] bool requireBothPlayers = true;
+        [Tooltip("World-space offset from this trigger per player slot.")]
+        [SerializeField] Vector2[] stagingOffsets =
+        {
+            new(-0.65f, -0.4f),
+            new(0.65f, -0.4f),
+        };
+        [SerializeField] float stagingSpeed = 3.8f;
+        [SerializeField] float stagingArriveDistance = 0.06f;
+
+        [Header("Solo development preview")]
+        [SerializeField] bool allowSoloPreview = true;
+        [SerializeField] Key soloPreviewKey = Key.F8;
+
+        Collider2D _trigger;
+        MapZone _zone;
         bool _running;
+        bool _localPreview;
+        bool _startPublished;
+        int _advanceCounter;
+        int _pendingAdvancePulses;
+        bool _handedOff;
 
-        string CompletedFlag => "sequence:" + (string.IsNullOrEmpty(id) ? name : id);
+        string SequenceId => string.IsNullOrEmpty(id) ? name : id;
+        string CompletedFlag => "sequence:" + SequenceId;
+        string StartKey => "cutscene:" + SequenceId + ":start";
+        string AdvanceKey => "cutscene:" + SequenceId + ":advance";
 
         void Reset()
         {
@@ -31,55 +72,251 @@ namespace Ashburn.Cutscenes
 
         void Awake()
         {
-            var trigger = GetComponent<Collider2D>();
-            if (trigger != null)
-                trigger.isTrigger = true;
+            _trigger = GetComponent<Collider2D>();
+            if (_trigger != null)
+                _trigger.isTrigger = true;
+
+            _zone = MapZone.Of(this);
         }
 
-        void OnTriggerEnter2D(Collider2D other)
+        IEnumerator Start()
         {
-            if (!other.GetComponentInParent<Player.PlayerRig>())
+            // Room properties can arrive before an additive scene and its trigger exist.
+            yield return null;
+            TryAdoptNetworkStart();
+        }
+
+        void Update()
+        {
+            if (_running)
+            {
+                PublishAdvanceFromMaster();
+                return;
+            }
+
+            if (WorldState.Has(CompletedFlag) || !StoryProgression.CanPlay(openingDialogueId))
                 return;
 
-            if (_running || WorldState.Has(CompletedFlag))
+            if (allowSoloPreview && SoloPreviewAllowed() &&
+                SoloPreviewPressed() && HasControlledPlayerInside())
+            {
+                StartSequence(localPreview: true);
+                return;
+            }
+
+            if (!ParticipantsReady())
                 return;
 
-            if (!StoryProgression.CanPlay(openingDialogueId))
+            if (!PhotonNetwork.InRoom)
+            {
+                StartSequence(localPreview: false);
+                return;
+            }
+
+            if (PhotonNetwork.IsMasterClient)
+                PublishStart();
+        }
+
+        public override void OnRoomPropertiesUpdate(Hashtable changed)
+        {
+            if (changed == null)
                 return;
 
+            if (changed.TryGetValue(StartKey, out var started) && IsTrue(started))
+                StartSequence(localPreview: false);
+
+            if (changed.TryGetValue(AdvanceKey, out var value) && TryReadInt(value, out var counter))
+                AdoptAdvance(counter);
+        }
+
+        public override void OnDisable()
+        {
+            base.OnDisable();
+            Cleanup();
+        }
+
+        void PublishStart()
+        {
+            if (_startPublished || PhotonNetwork.CurrentRoom == null)
+                return;
+
+            _startPublished = true;
+            _advanceCounter = 0;
+            PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable
+            {
+                { StartKey, true },
+                { AdvanceKey, _advanceCounter },
+            });
+
+            // Do not wait for the room property to make a round trip to its author.
+            StartSequence(localPreview: false);
+        }
+
+        void TryAdoptNetworkStart()
+        {
+            if (!PhotonNetwork.InRoom || PhotonNetwork.CurrentRoom == null)
+                return;
+
+            var properties = PhotonNetwork.CurrentRoom.CustomProperties;
+            if (properties.TryGetValue(AdvanceKey, out var advance) &&
+                TryReadInt(advance, out var counter))
+            {
+                _advanceCounter = counter;
+            }
+
+            if (properties.TryGetValue(StartKey, out var started) && IsTrue(started))
+                StartSequence(localPreview: false);
+        }
+
+        void StartSequence(bool localPreview)
+        {
+            if (_running || WorldState.Has(CompletedFlag) ||
+                !StoryProgression.CanPlay(openingDialogueId))
+            {
+                return;
+            }
+
+            _localPreview = localPreview;
             StartCoroutine(Run());
         }
 
         IEnumerator Run()
         {
             _running = true;
-            WorldState.Raise(CompletedFlag);
 
-            var manager = DialogueManager.Ensure();
-            var map = MapZone.IdOf(this);
+            var participants = ParticipantsInZone();
+            SetControlledInput(participants, suspended: true);
 
-            if (!string.IsNullOrEmpty(openingDialogueId))
-                yield return PlayAndWait(manager, openingDialogueId, emitOpeningNoise,
-                                         openingNoiseRange, map);
+            var cameraTargets = new List<Transform>();
+            foreach (var participant in participants)
+                if (participant != null)
+                    cameraTargets.Add(participant.transform);
 
-            while (DialogueManager.IsPlaying)
-                yield return null;
+            if (RoomCamera.Current != null)
+                RoomCamera.Current.BeginGroupFrame(cameraTargets);
 
-            if (!string.IsNullOrEmpty(movementDialogueId))
-                manager.TryPlay(movementDialogueId, lockInput: false, emitNoise: true,
-                                noiseRange: openingNoiseRange, noisePosition: transform.position,
-                                map: map, raiseFlagOnComplete: null);
+            try
+            {
+                yield return StageControlledPlayers(participants);
 
-            if (mover != null)
-                yield return mover.PlayForAllControlledPlayersRoutine();
+                var manager = DialogueManager.Ensure();
+                var map = MapZone.IdOf(this);
 
-            while (DialogueManager.IsPlaying)
-                yield return null;
+                if (!string.IsNullOrEmpty(openingDialogueId))
+                    yield return PlayAndWait(manager, openingDialogueId, emitOpeningNoise,
+                                             openingNoiseRange, map);
 
-            if (!string.IsNullOrEmpty(closingDialogueId))
-                yield return PlayAndWait(manager, closingDialogueId, false, 0f, map);
+                while (DialogueManager.IsPlaying)
+                    yield return null;
 
-            _running = false;
+                if (!string.IsNullOrEmpty(raiseFlagBeforeMovement))
+                    WorldState.Raise(raiseFlagBeforeMovement);
+
+                if (!string.IsNullOrEmpty(movementDialogueId))
+                    manager.TryPlay(movementDialogueId, lockInput: false, emitNoise: true,
+                                    noiseRange: openingNoiseRange,
+                                    noisePosition: transform.position, map: map,
+                                    raiseFlagOnComplete: null,
+                                    advanceSource: SynchronizedAdvanceSource());
+
+                if (mover != null)
+                    yield return mover.PlayForAllControlledPlayersRoutine();
+
+                while (DialogueManager.IsPlaying)
+                    yield return null;
+
+                if (!string.IsNullOrEmpty(transitionMap))
+                {
+                    _handedOff = StoryTransitionRunner.Begin(
+                        SequenceId,
+                        CompletedFlag,
+                        participants,
+                        transitionMap,
+                        transitionEntry,
+                        closingDialogueId);
+
+                    if (_handedOff)
+                        yield break;
+                }
+
+                if (!string.IsNullOrEmpty(closingDialogueId))
+                    yield return PlayAndWait(manager, closingDialogueId, false, 0f, map);
+
+                WorldState.Raise(CompletedFlag);
+            }
+            finally
+            {
+                if (!_handedOff)
+                {
+                    SetControlledInput(participants, suspended: false);
+
+                    if (RoomCamera.Current != null)
+                        RoomCamera.Current.EndGroupFrame();
+                }
+
+                _running = false;
+                _localPreview = false;
+            }
+        }
+
+        IEnumerator StageControlledPlayers(List<PlayerRig> participants)
+        {
+            var routines = new List<Coroutine>();
+
+            foreach (var rig in participants)
+            {
+                if (rig == null || !rig.IsControlled)
+                    continue;
+
+                var point = StagingPointFor(rig);
+                if (point.HasValue)
+                    routines.Add(StartCoroutine(MoveTo(rig, point.Value)));
+            }
+
+            foreach (var routine in routines)
+                yield return routine;
+        }
+
+        IEnumerator MoveTo(PlayerRig rig, Vector2 target)
+        {
+            var body = rig.GetComponent<Rigidbody2D>();
+            var controller = rig.GetComponent<PlayerController>();
+
+            while (rig != null &&
+                   Vector2.Distance(rig.transform.position, target) > stagingArriveDistance)
+            {
+                var current = body != null ? body.position : (Vector2)rig.transform.position;
+                var deltaTime = body != null ? Time.fixedDeltaTime : Time.deltaTime;
+                var next = Vector2.MoveTowards(current, target, stagingSpeed * deltaTime);
+                var delta = next - current;
+
+                if (controller != null && delta.sqrMagnitude > 0.0001f)
+                    controller.Drive(delta.normalized, MovementMode.Walk);
+
+                if (body != null)
+                {
+                    body.MovePosition(next);
+                    yield return new WaitForFixedUpdate();
+                }
+                else
+                {
+                    rig.transform.position = next;
+                    yield return null;
+                }
+            }
+
+            if (controller != null)
+                controller.Drive(Vector2.zero, MovementMode.Walk);
+        }
+
+        Vector2? StagingPointFor(PlayerRig rig)
+        {
+            var inventory = rig != null ? rig.GetComponent<Inventory>() : null;
+            var slot = inventory != null ? inventory.Slot : 0;
+
+            return stagingOffsets != null && slot >= 0 && slot < stagingOffsets.Length
+                ? (Vector2)transform.position + stagingOffsets[slot]
+                : null;
         }
 
         IEnumerator PlayAndWait(
@@ -92,9 +329,10 @@ namespace Ashburn.Cutscenes
             while (DialogueManager.IsPlaying)
                 yield return null;
 
-            if (!manager.TryPlay(dialogueId, lockInput: true, emitNoise: emitNoise,
+            if (!manager.TryPlay(dialogueId, lockInput: false, emitNoise: emitNoise,
                                  noiseRange: noiseRange, noisePosition: transform.position,
-                                 map: map, raiseFlagOnComplete: null))
+                                 map: map, raiseFlagOnComplete: null,
+                                 advanceSource: SynchronizedAdvanceSource()))
             {
                 Debug.LogWarning($"Could not start story dialogue '{dialogueId}'.", this);
                 yield break;
@@ -102,6 +340,184 @@ namespace Ashburn.Cutscenes
 
             while (DialogueManager.IsPlaying)
                 yield return null;
+        }
+
+        Func<bool> SynchronizedAdvanceSource()
+        {
+            return PhotonNetwork.InRoom && !_localPreview ? NetworkAdvancePressed : null;
+        }
+
+        bool NetworkAdvancePressed()
+        {
+            if (_pendingAdvancePulses <= 0)
+                return false;
+
+            _pendingAdvancePulses--;
+            return true;
+        }
+
+        void PublishAdvanceFromMaster()
+        {
+            if (_localPreview || !PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient ||
+                !DialogueManager.IsPlaying || !LocalAdvancePressed())
+            {
+                return;
+            }
+
+            _advanceCounter++;
+            _pendingAdvancePulses++;
+            PhotonNetwork.CurrentRoom?.SetCustomProperties(
+                new Hashtable { { AdvanceKey, _advanceCounter } });
+        }
+
+        void AdoptAdvance(int counter)
+        {
+            if (counter <= _advanceCounter)
+                return;
+
+            _pendingAdvancePulses += counter - _advanceCounter;
+            _advanceCounter = counter;
+        }
+
+        bool ParticipantsReady()
+        {
+            var present = new bool[2];
+            var count = 0;
+
+            foreach (var rig in ParticipantsInZone())
+            {
+                if (_trigger == null || !_trigger.OverlapPoint(rig.transform.position))
+                    continue;
+
+                var inventory = rig.GetComponent<Inventory>();
+                var slot = inventory != null ? inventory.Slot : count;
+                if (slot >= 0 && slot < present.Length && !present[slot])
+                {
+                    present[slot] = true;
+                    count++;
+                }
+            }
+
+            return requireBothPlayers ? present[0] && present[1] : count > 0;
+        }
+
+        bool HasControlledPlayerInside()
+        {
+            foreach (var rig in ParticipantsInZone())
+                if (rig.IsControlled &&
+                    (_trigger == null || _trigger.OverlapPoint(rig.transform.position)))
+                    return true;
+
+            return false;
+        }
+
+        List<PlayerRig> ParticipantsInZone()
+        {
+            var participants = new List<PlayerRig>();
+
+            foreach (var rig in FindObjectsByType<PlayerRig>(
+                         FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            {
+                var presence = rig.GetComponent<MapPresence>();
+                if (_zone != null && (presence == null || presence.Zone != _zone))
+                    continue;
+
+                participants.Add(rig);
+            }
+
+            participants.Sort((a, b) => SlotOf(a).CompareTo(SlotOf(b)));
+            return participants;
+        }
+
+        static int SlotOf(PlayerRig rig)
+        {
+            var inventory = rig != null ? rig.GetComponent<Inventory>() : null;
+            return inventory != null ? inventory.Slot : 0;
+        }
+
+        static void SetControlledInput(List<PlayerRig> participants, bool suspended)
+        {
+            foreach (var rig in participants)
+                if (rig != null && rig.IsControlled)
+                    rig.SuspendInput(suspended);
+        }
+
+        void Cleanup()
+        {
+            if (!_running)
+                return;
+
+            if (_handedOff)
+            {
+                _running = false;
+                return;
+            }
+
+            SetControlledInput(ParticipantsInZone(), suspended: false);
+
+            if (RoomCamera.Current != null)
+                RoomCamera.Current.EndGroupFrame();
+
+            _running = false;
+            _localPreview = false;
+        }
+
+        bool SoloPreviewPressed()
+        {
+            var keyboard = Keyboard.current;
+            return keyboard != null && keyboard[soloPreviewKey].wasPressedThisFrame;
+        }
+
+        static bool SoloPreviewAllowed()
+        {
+            return !PhotonNetwork.InRoom ||
+                   PhotonNetwork.CurrentRoom == null ||
+                   PhotonNetwork.CurrentRoom.PlayerCount < 2;
+        }
+
+        static bool LocalAdvancePressed()
+        {
+            var keyboard = Keyboard.current;
+            if (keyboard != null &&
+                (keyboard.spaceKey.wasPressedThisFrame ||
+                 keyboard.enterKey.wasPressedThisFrame))
+            {
+                return true;
+            }
+
+            var mouse = Mouse.current;
+            return mouse != null && mouse.leftButton.wasPressedThisFrame;
+        }
+
+        static bool IsTrue(object value) => value is bool flag && flag;
+
+        static bool TryReadInt(object value, out int result)
+        {
+            switch (value)
+            {
+                case int number:
+                    result = number;
+                    return true;
+                case byte number:
+                    result = number;
+                    return true;
+                default:
+                    result = 0;
+                    return false;
+            }
+        }
+
+        void OnDrawGizmos()
+        {
+            Gizmos.color = new Color(0.4f, 0.8f, 1f, 0.65f);
+            Gizmos.DrawWireCube(transform.position, transform.localScale);
+
+            if (stagingOffsets == null)
+                return;
+
+            Gizmos.color = new Color(0.35f, 1f, 0.55f, 0.8f);
+            foreach (var offset in stagingOffsets)
+                Gizmos.DrawWireSphere((Vector2)transform.position + offset, 0.18f);
         }
     }
 }

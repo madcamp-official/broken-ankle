@@ -50,6 +50,8 @@ namespace Ashburn.Cutscenes
         bool _playing;
         bool _revealing;
         bool _lockInput;
+        bool _advanceAfterReveal;
+        Func<bool> _advanceSource;
 
         void Awake()
         {
@@ -86,7 +88,8 @@ namespace Ashburn.Cutscenes
             float noiseRange,
             Vector2 noisePosition,
             int map,
-            string raiseFlagOnComplete)
+            string raiseFlagOnComplete,
+            Func<bool> advanceSource = null)
         {
             if (_playing)
                 return false;
@@ -101,7 +104,7 @@ namespace Ashburn.Cutscenes
             }
 
             _routine = StartCoroutine(Play(lines, lockInput, emitNoise, noiseRange, noisePosition,
-                                           map, raiseFlagOnComplete, eventId));
+                                           map, raiseFlagOnComplete, eventId, advanceSource));
             return true;
         }
 
@@ -113,10 +116,12 @@ namespace Ashburn.Cutscenes
             Vector2 noisePosition,
             int map,
             string raiseFlagOnComplete,
-            string eventId)
+            string eventId,
+            Func<bool> advanceSource)
         {
             _playing = true;
             _lockInput = lockInput;
+            _advanceSource = advanceSource;
             _lines = lines;
             _lineIndex = 0;
 
@@ -126,12 +131,15 @@ namespace Ashburn.Cutscenes
             while (_lineIndex < _lines.Length)
             {
                 _line = _lines[_lineIndex];
+                _advanceAfterReveal = false;
 
                 if (emitNoise && noiseRange > 0f)
                     NoiseBus.Emit(noisePosition, noiseRange, NoiseKind.Self, map);
 
                 yield return RevealLine(_line.Text);
-                yield return WaitForAdvance();
+                if (!_advanceAfterReveal)
+                    yield return WaitForAdvance();
+
                 _lineIndex++;
             }
 
@@ -156,6 +164,7 @@ namespace Ashburn.Cutscenes
                 if (AdvancePressed())
                 {
                     _visibleCharacters = total;
+                    _advanceAfterReveal = _advanceSource != null;
                     break;
                 }
 
@@ -170,6 +179,14 @@ namespace Ashburn.Cutscenes
 
         IEnumerator WaitForAdvance()
         {
+            if (_advanceSource != null)
+            {
+                while (!AdvancePressed())
+                    yield return null;
+
+                yield break;
+            }
+
             while (AdvancePressed())
                 yield return null;
 
@@ -184,6 +201,8 @@ namespace Ashburn.Cutscenes
             _revealing = false;
             _lines = null;
             _visibleCharacters = 0;
+            _advanceAfterReveal = false;
+            _advanceSource = null;
 
             if (_lockInput)
                 SuspendPlayers(false);
@@ -200,6 +219,9 @@ namespace Ashburn.Cutscenes
 
         bool AdvancePressed()
         {
+            if (_advanceSource != null)
+                return _advanceSource();
+
             var keyboard = Keyboard.current;
             if (keyboard != null &&
                 (keyboard[advanceKey].wasPressedThisFrame ||
