@@ -30,17 +30,29 @@ namespace Ashburn.Monster
         [Tooltip("Layers to look for players on.")]
         [SerializeField] LayerMask playerLayers = ~0;
 
+        [Tooltip("Seconds of quiet after a cutscene hands control back. A beat can leave the monster " +
+                 "standing on somebody — that is the shot — and without this it takes them on the " +
+                 "first frame they are allowed to run.")]
+        [SerializeField] float graceAfterSceneSeconds = 1.25f;
+
         [Header("Noise")]
         [Tooltip("How far the sound of it carries, in world units. Going down is not quiet, and a " +
                  "partner has to be able to place where it happened.")]
         [SerializeField] float strikeNoiseRange = 16f;
 
         float _readyAt;
+        MonsterAI _ai;
         ContactFilter2D _filter;
         readonly List<Collider2D> _hits = new();
 
-        void Awake() =>
-            _filter = new ContactFilter2D
+        void Awake()
+        {
+            _ai = GetComponent<MonsterAI>();
+            _filter = Filter();
+        }
+
+        ContactFilter2D Filter() =>
+            new ContactFilter2D
             {
                 useLayerMask = true,
                 layerMask = playerLayers,
@@ -57,6 +69,14 @@ namespace Ashburn.Monster
             if (PhotonNetwork.IsConnected && !PhotonNetwork.IsMasterClient)
                 return;
 
+            // A story monster stands in its scene long before it is allowed to act, and MonsterAI
+            // holds it still for exactly that — see its story flags. Reach is not part of the AI,
+            // so this went on knocking people over on behalf of something that was not moving,
+            // looking at them, or able to hear them: a statue that took your legs if you walked
+            // past it.
+            if (_ai != null && _ai.IsDormant)
+                return;
+
             if (Time.time < _readyAt)
                 return;
 
@@ -69,7 +89,15 @@ namespace Ashburn.Monster
             // time, and the copy of a partner this machine holds is not the one their cutscene
             // suspended — the keyboard driving them is on the other machine.
             if (Cutscenes.StoryBeat.Running)
+            {
+                // The quiet is carried past the end of the beat rather than stopping with it. The
+                // escape walks the players along a path that goes by design straight past the
+                // monster, so control comes back with it already within reach and the very next
+                // frame took them — which is indistinguishable, from the chair, from being caught
+                // by a cutscene.
+                _readyAt = Time.time + graceAfterSceneSeconds;
                 return;
+            }
 
             Physics2D.OverlapCircle((Vector2)transform.position, reach, _filter, _hits);
 
