@@ -56,9 +56,35 @@ namespace Ashburn.Cutscenes
         bool _running;
         bool _localPreview;
         bool _startPublished;
+        bool _startHeard;
         int _advanceCounter;
         int _pendingAdvancePulses;
         bool _handedOff;
+
+        /// <summary>
+        /// Whether this beat is playing, and the one place that tells <see cref="StoryBeat"/> so.
+        ///
+        /// A property rather than the bare field because the two must not be able to disagree:
+        /// every path that ends a beat — the finally, the interrupted cleanup, the handover — has
+        /// to be counted, and one that was missed would leave the monster unable to touch anybody
+        /// for the rest of the run.
+        /// </summary>
+        bool Running
+        {
+            get => _running;
+            set
+            {
+                if (_running == value)
+                    return;
+
+                _running = value;
+
+                if (value)
+                    StoryBeat.Begin();
+                else
+                    StoryBeat.End();
+            }
+        }
 
         string SequenceId => string.IsNullOrEmpty(id) ? name : id;
         string CompletedFlag => "sequence:" + SequenceId;
@@ -98,6 +124,19 @@ namespace Ashburn.Cutscenes
             if (WorldState.Has(CompletedFlag) || !StoryProgression.CanPlay(openingDialogueId))
                 return;
 
+            // The room has already said this beat began, and only now can this machine play it.
+            //
+            // The start crosses as a room property, which arrives once and is never repeated. What
+            // gates the beat is a WorldState flag, which crosses as a different room property — so
+            // the two race, and a client that heard the start first used to refuse it and never
+            // hear about it again. That client stood through the whole scene with no dialogue while
+            // their partner read it.
+            if (_startHeard)
+            {
+                StartSequence(localPreview: false);
+                return;
+            }
+
             if (allowSoloPreview && SoloPreviewAllowed() &&
                 SoloPreviewPressed() && HasControlledPlayerInside())
             {
@@ -124,7 +163,12 @@ namespace Ashburn.Cutscenes
                 return;
 
             if (changed.TryGetValue(StartKey, out var started) && IsTrue(started))
+            {
+                // Remembered before it is acted on, so Update can try again if this machine is not
+                // ready yet. See there.
+                _startHeard = true;
                 StartSequence(localPreview: false);
+            }
 
             if (changed.TryGetValue(AdvanceKey, out var value) && TryReadInt(value, out var counter))
                 AdoptAdvance(counter);
@@ -166,7 +210,10 @@ namespace Ashburn.Cutscenes
             }
 
             if (properties.TryGetValue(StartKey, out var started) && IsTrue(started))
+            {
+                _startHeard = true;
                 StartSequence(localPreview: false);
+            }
         }
 
         void StartSequence(bool localPreview)
@@ -177,13 +224,19 @@ namespace Ashburn.Cutscenes
                 return;
             }
 
+            // Consumed, not left standing. Once it has taken effect the beat is under way, and a
+            // pending start that outlived it would run the whole thing a second time the moment
+            // Run's finally clears _running — which happens before the flag that marks it done,
+            // whenever the ending is handed to StoryTransitionRunner.
+            _startHeard = false;
+
             _localPreview = localPreview;
             StartCoroutine(Run());
         }
 
         IEnumerator Run()
         {
-            _running = true;
+            Running = true;
 
             // Held here rather than at the call sites because a sequence is started from three
             // places, and one of them is a room property that arrives once and is never repeated.
@@ -265,7 +318,7 @@ namespace Ashburn.Cutscenes
                         RoomCamera.Current.EndGroupFrame();
                 }
 
-                _running = false;
+                Running = false;
                 _localPreview = false;
             }
         }
@@ -462,7 +515,7 @@ namespace Ashburn.Cutscenes
 
             if (_handedOff)
             {
-                _running = false;
+                Running = false;
                 return;
             }
 
@@ -471,7 +524,7 @@ namespace Ashburn.Cutscenes
             if (RoomCamera.Current != null)
                 RoomCamera.Current.EndGroupFrame();
 
-            _running = false;
+            Running = false;
             _localPreview = false;
         }
 
