@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,9 +7,19 @@ namespace Ashburn.Core
     /// <summary>
     /// Prints the current controls in the corner of the screen.
     ///
-    /// The keys are read out of the input asset rather than typed in here, because the bindings
-    /// have already moved several times — arrow keys left the first player, a flashlight toggle
-    /// arrived, a second local player appeared — and a hint card that lies is worse than none.
+    /// The keys come out of the input asset through <see cref="BindingText"/> rather than being
+    /// typed in here, because the bindings have already moved several times — arrow keys left the
+    /// first player, a flashlight toggle arrived, a second local player appeared — and a hint card
+    /// that lies is worse than none.
+    ///
+    /// One player's keys: the ones belonging to whoever is looking at this screen. Two people play
+    /// this on two machines with one character each, so a table listing both of them printed the
+    /// partner's keys onto a keyboard nobody was sitting at, under a "1P" heading that had nothing to
+    /// tell it apart from.
+    ///
+    /// Whether it is showing belongs to <see cref="GameSettings"/> rather than to this component,
+    /// so the pause menu's switch and this card's own key are the same switch and it is remembered
+    /// between sessions.
     /// </summary>
     public class ControlsOverlay : MonoBehaviour
     {
@@ -18,11 +27,12 @@ namespace Ashburn.Core
         [Tooltip("Drag Assets/InputSystem_Actions here.")]
         [SerializeField] InputActionAsset inputActions;
 
-        [Tooltip("Action maps to list, in order. One block each.")]
-        [SerializeField] string[] maps = { "Player", "Player2" };
+        [Tooltip("Tag PlayerRig puts on the character the screen belongs to. Its keys are the ones " +
+                 "listed; the map below is only used until that character exists.")]
+        [SerializeField] string viewerTag = "Player";
 
-        [Tooltip("Heading shown above each map's block.")]
-        [SerializeField] string[] mapTitles = { "1P", "2P (더미 동료)" };
+        [Tooltip("Action map to fall back on before anybody has spawned.")]
+        [SerializeField] string actionMap = "Player";
 
         [Tooltip("Actions to list, in order. Anything else in the map is skipped.")]
         [SerializeField] string[] actions = { "Move", "Sprint", "Crouch", "Interact", "ToggleFlashlight", "ToggleHearing" };
@@ -36,130 +46,62 @@ namespace Ashburn.Core
         [SerializeField] Color textColour = new(0.92f, 0.92f, 0.96f);
         [SerializeField] Color panelColour = new(0f, 0f, 0f, 0.55f);
 
-        [Tooltip("Hides and shows the card without disabling the object.")]
+        [Tooltip("Hides and shows the card without disabling the object. The same switch the pause " +
+                 "menu offers, so pressing this is remembered too.")]
         [SerializeField] Key toggleKey = Key.F1;
-
-        [SerializeField] bool visible = true;
 
         // Rows are kept as two columns because Korean glyphs are twice the width of Latin ones,
         // so padding a single string with spaces never lines up.
         readonly List<string> _labelColumn = new();
         readonly List<string> _keyColumn = new();
 
+        InputActionMap _map;
         GUIStyle _style;
-        Texture2D _panel;
 
-        /// <summary>
-        /// Unity's readable names are written out in full, which is fine in a rebinding menu and
-        /// far too wide on a corner card. Four arrow keys alone run past a third of the screen.
-        /// </summary>
-        static readonly Dictionary<string, string> ShortNames = new()
-        {
-            { "Up Arrow", "↑" },
-            { "Down Arrow", "↓" },
-            { "Left Arrow", "←" },
-            { "Right Arrow", "→" },
-            { "Left Shift", "Shift" },
-            { "Right Shift", "R Shift" },
-            { "Left Control", "Ctrl" },
-            { "Right Control", "R Ctrl" },
-            { "Numpad 0", "Num 0" },
-            { "Numpad .", "Num ." },
-        };
+        /// <summary>The rows as drawn, for anything else that wants to show the same list.</summary>
+        public IReadOnlyList<string> Labels => _labelColumn;
+
+        /// <summary>The keys for those rows, one to one with <see cref="Labels"/>.</summary>
+        public IReadOnlyList<string> Keys => _keyColumn;
 
         void Start() => Rebuild();
 
-        void OnDestroy()
-        {
-            if (_panel != null)
-                Destroy(_panel);
-        }
-
         void Update()
         {
+            // The character whose keys these are does not exist yet at Start — a networked one is
+            // created once the room is joined — so the map is re-read until it settles rather than
+            // trusted once.
+            var map = BindingText.LocalMap(viewerTag, inputActions, actionMap);
+            if (map != _map)
+            {
+                _map = map;
+                Rebuild();
+            }
+
             var keyboard = Keyboard.current;
-            if (keyboard != null && keyboard[toggleKey].wasPressedThisFrame)
-                visible = !visible;
+            if (keyboard == null)
+                return;
+
+            // Written to the setting rather than to a field of our own, so this key and the pause
+            // menu's switch cannot disagree about whether the card is up.
+            if (keyboard[toggleKey].wasPressedThisFrame)
+                GameSettings.ShowControlsCard = !GameSettings.ShowControlsCard;
         }
 
         /// <summary>Re-reads the bindings. Call after rebinding at runtime.</summary>
         public void Rebuild()
         {
-            _labelColumn.Clear();
-            _keyColumn.Clear();
+            if (_map == null)
+                _map = BindingText.LocalMap(viewerTag, inputActions, actionMap);
 
-            if (inputActions == null)
-            {
-                _labelColumn.Add("(입력 에셋이 연결되지 않음)");
-                _keyColumn.Add(string.Empty);
-                return;
-            }
-
-            for (var m = 0; m < maps.Length; m++)
-            {
-                var map = inputActions.FindActionMap(maps[m], throwIfNotFound: false);
-                if (map == null)
-                    continue;
-
-                if (_labelColumn.Count > 0)
-                {
-                    _labelColumn.Add(string.Empty);
-                    _keyColumn.Add(string.Empty);
-                }
-
-                _labelColumn.Add(m < mapTitles.Length ? mapTitles[m] : maps[m]);
-                _keyColumn.Add(string.Empty);
-
-                for (var a = 0; a < actions.Length; a++)
-                {
-                    var action = map.FindAction(actions[a]);
-                    if (action == null)
-                        continue;
-
-                    var keys = KeyboardBindingsOf(action);
-                    if (keys.Length == 0)
-                        continue;
-
-                    _labelColumn.Add("  " + (a < labels.Length ? labels[a] : actions[a]));
-                    _keyColumn.Add(keys);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Only the keyboard bindings. A gamepad's buttons mean nothing to somebody reading a
-        /// card while sitting at a keyboard, and listing both doubles the height for no gain.
-        /// </summary>
-        static string KeyboardBindingsOf(InputAction action)
-        {
-            var parts = new List<string>();
-
-            foreach (var binding in action.bindings)
-            {
-                if (binding.isComposite || string.IsNullOrEmpty(binding.path))
-                    continue;
-
-                if (!binding.path.StartsWith("<Keyboard>"))
-                    continue;
-
-                var readable = InputControlPath.ToHumanReadableString(
-                    binding.path, InputControlPath.HumanReadableStringOptions.OmitDevice);
-
-                if (ShortNames.TryGetValue(readable, out var shortened))
-                    readable = shortened;
-
-                if (!parts.Contains(readable))
-                    parts.Add(readable);
-            }
-
-            // A stick composite reads as four separate keys, which is exactly what the player
-            // presses, so they are joined rather than summarised.
-            return string.Join(" ", parts);
+            BindingText.BuildRows(_map, actions, labels, _labelColumn, _keyColumn);
         }
 
         void OnGUI()
         {
-            if (!visible || _labelColumn.Count == 0)
+            // Not while the menu is up. Its 조작 tab is this same list, and the card sits on top of
+            // the panel rather than beside it.
+            if (!GameSettings.ShowControlsCard || PauseMenu.AnyOpen || _labelColumn.Count == 0)
                 return;
 
             if (_style == null)
@@ -172,10 +114,6 @@ namespace Ashburn.Core
                     padding = new RectOffset(0, 0, 0, 0),
                 };
                 _style.normal.textColor = textColour;
-
-                _panel = new Texture2D(1, 1);
-                _panel.SetPixel(0, 0, panelColour);
-                _panel.Apply();
             }
 
             var lineHeight = _style.lineHeight + 2f;
@@ -204,7 +142,7 @@ namespace Ashburn.Core
                 labelWidth + gutter + keyWidth + pad * 2f,
                 _labelColumn.Count * lineHeight + pad * 2f);
 
-            GUI.DrawTexture(rect, _panel);
+            Imgui.Fill(rect, panelColour);
 
             for (var i = 0; i < _labelColumn.Count; i++)
             {

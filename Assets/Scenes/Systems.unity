@@ -226,7 +226,7 @@ MonoBehaviour:
   actionMaps:
   - Player
   - Player2
-  startingMap: Container Box
+  startingMap: House
   startingEntry: 
   offlinePlayers: 2
   offlineViewerIndex: 0
@@ -237,6 +237,59 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1148376436}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1176205780
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1176205782}
+  - component: {fileID: 1176205781}
+  m_Layer: 0
+  m_Name: InteractionPrompt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1176205781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1176205780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bd8396488e1a764faf6d82e1eaef2b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Core.InteractionPrompt
+  viewerTag: Player
+  bottomMargin: 28
+  fontSize: 12
+  gutter: 9
+  textColour: {r: 0.95, g: 0.95, b: 0.98, a: 1}
+  panelColour: {r: 0.05, g: 0.05, b: 0.07, a: 0.86}
+  keyColour: {r: 0.22, g: 0.23, b: 0.28, a: 0.96}
+  progressColour: {r: 0.85, g: 0.76, b: 0.42, a: 0.95}
+  progressHeight: 3
+--- !u!4 &1176205782
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1176205780}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -382,13 +435,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 456208d8ef61c454b9525ae4d037aa22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Core.ControlsOverlay
-  inputActions: {fileID: 0}
-  maps:
-  - Player
-  - Player2
-  mapTitles:
-  - 1P
-  - "2P (\uB354\uBBF8 \uB3D9\uB8CC)"
+  inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  viewerTag: Player
+  actionMap: Player
   actions:
   - Move
   - Sprint
@@ -408,7 +457,6 @@ MonoBehaviour:
   textColour: {r: 0.92, g: 0.92, b: 0.96, a: 1}
   panelColour: {r: 0, g: 0, b: 0, a: 0.55}
   toggleKey: 94
-  visible: 1
 --- !u!4 &1727549900
 Transform:
   m_ObjectHideFlags: 0
@@ -484,6 +532,76 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f16776b2d1b718c42ba24e4b18da2451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Net.WorldStateSync
+--- !u!1 &2118870470
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2118870472}
+  - component: {fileID: 2118870471}
+  m_Layer: 0
+  m_Name: PauseMenu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2118870471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2118870470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c18ccc13968f6b418ce171f01c1be2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Core.PauseMenu
+  toggleKey: 60
+  itemsKey: 3
+  inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  viewerTag: Player
+  actionMap: Player
+  actions:
+  - Move
+  - Sprint
+  - Crouch
+  - Interact
+  - ToggleFlashlight
+  - ToggleHearing
+  - PushToTalk
+  labels:
+  - "\uC774\uB3D9"
+  - "\uB2EC\uB9AC\uAE30"
+  - "\uC6C5\uD06C\uB9AC\uAE30"
+  - "\uC0C1\uD638\uC791\uC6A9"
+  - "\uC190\uC804\uB4F1"
+  - "\uC18C\uC74C \uB9C1"
+  - "\uBB34\uC804"
+  size: {x: 420, y: 190}
+  fontSize: 11
+  textColour: {r: 0.93, g: 0.93, b: 0.97, a: 1}
+  dimColour: {r: 0, g: 0, b: 0, a: 0.6}
+  panelColour: {r: 0.07, g: 0.07, b: 0.09, a: 0.97}
+--- !u!4 &2118870472
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2118870470}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -493,3 +611,5 @@ SceneRoots:
   - {fileID: 947414612}
   - {fileID: 1727549900}
   - {fileID: 2099118211}
+  - {fileID: 2118870472}
+  - {fileID: 1176205782}

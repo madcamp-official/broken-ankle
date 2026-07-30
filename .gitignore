@@ -131,6 +131,14 @@ InitTestScene*.unity*
 # Paid third-party source assets. Keep these local and out of the public repo.
 /[Aa]rt[Ss]ource/[Ll]ime[Zz]u/
 
+# Art bundles staged for a teammate. These hold copies of the paid tiles under their
+# real Assets/ paths, so nothing here may reach a public remote. Kept at the project
+# root rather than under Assets/ so the editor never imports a second copy of every
+# tile and mints a rival set of GUIDs.
+/send/
+/_send/
+/_send_to_terry/
+
 # Paid LimeZu Unity assets. Keep the imported tiles, palettes, and generated
 # tile assets local because this repository is public.
 #
