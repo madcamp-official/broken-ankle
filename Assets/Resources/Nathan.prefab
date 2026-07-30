@@ -156,6 +156,7 @@ GameObject:
   - component: {fileID: 7332499401990226577}
   - component: {fileID: 717210449169272632}
   - component: {fileID: 8955386978868582016}
+  - component: {fileID: 5089556256852656329}
   m_Layer: 8
   m_Name: Nathan
   m_TagString: Player
@@ -592,6 +593,20 @@ MonoBehaviour:
   beam: {fileID: 3378130258239158657}
   catchUpSeconds: 0.08
   teleportOver: 4
+--- !u!114 &5089556256852656329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dab85e8f65a051748bcec57ea79d1ec2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Interaction.Inventory
+  slot: 0
+  ownerName: 
 --- !u!1 &3743583923798362931
 GameObject:
   m_ObjectHideFlags: 0

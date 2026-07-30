@@ -70,6 +70,20 @@ namespace Ashburn.World
         /// <summary>Whether the pair has this key on them.</summary>
         public static bool HasKey(string key) => !string.IsNullOrEmpty(key) && Has(KeyFlag(key));
 
+        /// <summary>
+        /// The flag naming which of the two picked something up.
+        ///
+        /// Separate from <see cref="KeyFlag"/> because they answer different questions, and only one
+        /// of them is allowed to be slow. A door asks "do they have it" every frame a player stands
+        /// in front of it and gets an O(1) set lookup; the menu asks "whose pocket is it in" only
+        /// when somebody opens it, and pays a scan for the answer. Folding the two into one flag
+        /// would put that scan in the door's prompt.
+        /// </summary>
+        public static string CarryFlag(int slot, string item) => "carry:" + slot + ":" + item;
+
+        /// <summary>The start of every <see cref="CarryFlag"/> belonging to one player.</summary>
+        public static string CarryPrefix(int slot) => "carry:" + slot + ":";
+
         // Statics outlive a play session when the editor skips its domain reload, and a door left
         // open from the last run would be open before anybody had found its key.
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

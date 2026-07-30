@@ -29,10 +29,19 @@ namespace Ashburn.World
         [Tooltip("Shown while the player is in range.")]
         [SerializeField] string prompt = "Enter";
 
-        [Tooltip("Shown instead while it is locked.")]
+        [Tooltip("Shown instead while it will not open. Say what is missing — a door that only says " +
+                 "'Locked' sends the player back over ground they have already searched.")]
         [SerializeField] string lockedPrompt = "Locked";
 
+        [Tooltip("Held shut by the story rather than by a lock, and no key opens it. For a door " +
+                 "something else unlocks later through SetLocked; to gate it on an item, leave this " +
+                 "off and name the item in Required Key instead.")]
         [SerializeField] bool locked;
+
+        [Tooltip("Name of the item the pair must be carrying, matching the Key on a KeyItem. Empty " +
+                 "needs nothing. Either player carrying it is enough: both of them have to get " +
+                 "through, so a key in the partner's pocket must not strand the other one.")]
+        [SerializeField] string requiredKey;
 
         [Tooltip("Whether the building needs power before this will open.")]
         [SerializeField] bool needsPower;
@@ -43,12 +52,21 @@ namespace Ashburn.World
 
         public string Prompt => IsOpenable ? prompt : lockedPrompt;
 
+        /// <summary>The item this door wants, or empty if it wants nothing.</summary>
+        public string RequiredKey => requiredKey;
+
         /// <summary>Whether it would open right now.</summary>
         public bool IsOpenable
         {
             get
             {
                 if (locked)
+                    return false;
+
+                // Asked of the pair rather than of whoever is standing here. See the note on the
+                // field: both of them are meant to get through, so the one without the keycard in
+                // their own pocket is not the one to stop.
+                if (!string.IsNullOrEmpty(requiredKey) && !WorldState.HasKey(requiredKey))
                     return false;
 
                 if (!needsPower)
@@ -61,7 +79,7 @@ namespace Ashburn.World
             }
         }
 
-        /// <summary>Locks or unlocks it, for a key found elsewhere or a scripted moment.</summary>
+        /// <summary>Locks or unlocks it, for a scripted moment. Not the key path.</summary>
         public void SetLocked(bool value) => locked = value;
 
         // The prompt still shows while locked, so the player learns the door exists and that it is
@@ -93,7 +111,16 @@ namespace Ashburn.World
 
         void OnDrawGizmos()
         {
-            Gizmos.color = locked ? new Color(1f, 0.4f, 0.4f, 0.9f) : new Color(0.5f, 1f, 0.6f, 0.9f);
+            // Drawn from what the door wants rather than from whether it would open this instant:
+            // in the editor nobody is carrying anything, and every keyed door would read as shut.
+            // Amber for keyed matches LockedDoor, which is the other half of the same idea.
+            if (locked)
+                Gizmos.color = new Color(1f, 0.4f, 0.4f, 0.9f);
+            else if (!string.IsNullOrEmpty(requiredKey))
+                Gizmos.color = new Color(1f, 0.75f, 0.3f, 0.9f);
+            else
+                Gizmos.color = new Color(0.5f, 1f, 0.6f, 0.9f);
+
             Gizmos.DrawWireCube(transform.position, Vector3.one * 0.8f);
         }
     }

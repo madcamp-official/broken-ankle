@@ -6,9 +6,10 @@ namespace Ashburn.Interaction
     /// <summary>
     /// Something lying in the world that a door asks for: a keycard, a fuse, the elevator's motor.
     ///
-    /// Picking it up is world state, not an item in somebody's pocket. Both of them are meant to
-    /// get through the door this opens, and a keycard in the wrong partner's hands while they are
-    /// three rooms apart is a lock with no key in the building — see <see cref="WorldState"/>.
+    /// It goes into the pockets of whoever bent down for it — see <see cref="Inventory"/> — so the
+    /// two of them can see who found what. Whose pockets it is in does not decide who may open the
+    /// door, though: both of them are meant to get through, and a keycard in the wrong partner's
+    /// hands while they are three rooms apart is a lock with no key in the building.
     ///
     /// The pickup remembers being taken under its own name rather than the key's, so two copies of
     /// the same keycard in different buildings do not vanish together, and a player arriving later
@@ -74,10 +75,24 @@ namespace Ashburn.Interaction
             if (IsTaken)
                 return;
 
-            // Two flags, and they are different things. One says this object is gone, the other says
-            // the pair are carrying the key — a second keycard elsewhere sets the same second flag
-            // and the door does not care which of them was found.
-            WorldState.Raise(WorldState.KeyFlag(key));
+            // Into the pockets of whoever picked it up, which records both that this character has
+            // it and that the pair do. A second keycard elsewhere sets the same second flag, and the
+            // door does not care which of them was found.
+            var pockets = Inventory.Of(interactor);
+            if (pockets != null)
+            {
+                pockets.Take(key);
+            }
+            else
+            {
+                // Taken by something with no pockets — a scripted grab, or a test rig. The pair
+                // still have it, because that is the half a door reads; it just sits in nobody's
+                // column in the menu.
+                WorldState.Raise(WorldState.KeyFlag(key));
+            }
+
+            // Separate from either of those: this says the object on the floor is gone, under its
+            // own id, so two copies of one keycard do not vanish together.
             WorldState.Raise(Flag);
         }
 

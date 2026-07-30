@@ -99,5 +99,39 @@ namespace Ashburn.Player
             // players would leave the camera bound to whichever it happened to find first.
             gameObject.tag = viewer ? "Player" : "Untagged";
         }
+
+        /// <summary>
+        /// Takes this character's hands off the keys while a menu is up, and gives them back.
+        ///
+        /// <see cref="Apply"/> would do the same thing, but only by being told the role again, and a
+        /// caller that merely wants the menu open has no business deciding whether this character is
+        /// the viewer. It belongs here because this is already the one place that knows which
+        /// components read input.
+        ///
+        /// The body is stopped as well. Disabling the controller stops its FixedUpdate, and a
+        /// Rigidbody2D with no drag keeps whatever velocity it had — the character would coast on
+        /// across the room for as long as the menu was open, which is a horror game's worst way to
+        /// find out somebody opened the settings.
+        /// </summary>
+        public void SuspendInput(bool suspended)
+        {
+            foreach (var component in inputComponents)
+                if (component != null)
+                    component.enabled = isControlled && !suspended;
+
+            if (!suspended)
+                return;
+
+            var body = GetComponent<Rigidbody2D>();
+            if (body != null)
+                body.linearVelocity = Vector2.zero;
+
+            // Everything downstream of movement — the animator, the footsteps — reads these off the
+            // controller, and left as they were the character would keep walking on the spot and
+            // keep making the noise that goes with it.
+            var controller = GetComponent<PlayerController>();
+            if (controller != null)
+                controller.Drive(Vector2.zero, MovementMode.Walk);
+        }
     }
 }

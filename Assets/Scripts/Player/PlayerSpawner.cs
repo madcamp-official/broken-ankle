@@ -172,6 +172,13 @@ namespace Ashburn.Player
             var prefab = PrefabFor(index);
             character.name = prefab != null ? prefab.name : $"Player {index + 1}";
 
+            // Which of the two is carrying what, told for the same reason the map is: a networked
+            // partner is built by PUN on the receiving machine, where nothing called Spawn and
+            // nothing else knows which player the copy is meant to be.
+            var pockets = character.GetComponent<Interaction.Inventory>();
+            if (pockets != null)
+                pockets.SetSlot(index);
+
             // Which map this character is in, told rather than worked out. Everything that must not
             // cross a map — the noise bus, the power, the darkness — reads it from here.
             var presence = character.GetComponent<MapPresence>();
