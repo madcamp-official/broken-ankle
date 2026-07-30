@@ -25,6 +25,7 @@ namespace Ashburn.Net
         /// <summary>Key the flags are published under in the room's properties.</summary>
         public const string RoomKey = "world";
 
+        const string FlagPrefix = "world:";
         const char Separator = '\n';
 
         // Announcing a flag that arrived from the room raises the same event a local one does, and
@@ -48,41 +49,48 @@ namespace Ashburn.Net
         public override void OnRoomPropertiesUpdate(Hashtable changed) => Adopt(changed);
 
         /// <summary>
-        /// Sends the whole set rather than the one flag that changed.
-        ///
-        /// Photon's properties are last-writer-wins per key, so two machines each appending their
-        /// own flag at the same moment would lose one of them. Writing the union every time makes
-        /// the loser's next write carry the winner's flag as well: the two of them opening a door
-        /// and taking a keycard in the same second cannot drop either.
+        /// Publishes an immutable property per flag. Two players completing different tasks in the
+        /// same frame therefore write different keys instead of replacing one shared string.
+        /// RoomKey is retained for compatibility with rooms created by an older build.
         /// </summary>
         void Publish(string flag)
         {
             if (_adopting || !PhotonNetwork.InRoom)
                 return;
 
-            PhotonNetwork.CurrentRoom.SetCustomProperties(
-                new Hashtable { { RoomKey, string.Join(Separator.ToString(), WorldState.All) } });
+            PhotonNetwork.CurrentRoom.SetCustomProperties(new Hashtable
+            {
+                { FlagPrefix + flag, true },
+                { RoomKey, string.Join(Separator.ToString(), WorldState.All) },
+            });
         }
 
         void Adopt(Hashtable properties)
         {
-            if (properties == null || !properties.TryGetValue(RoomKey, out var value))
-                return;
-
-            var packed = value as string;
-            if (string.IsNullOrEmpty(packed))
+            if (properties == null)
                 return;
 
             // Accept rather than Raise: these came from the room, so echoing them back would be a
             // write per flag per machine for state everybody already has.
             var arrived = new List<string>();
-            foreach (var flag in packed.Split(Separator))
+            if (properties.TryGetValue(RoomKey, out var value) &&
+                value is string packed &&
+                !string.IsNullOrEmpty(packed))
             {
-                if (string.IsNullOrEmpty(flag) || WorldState.Has(flag))
-                    continue;
+                foreach (var flag in packed.Split(Separator))
+                    Accept(flag, arrived);
+            }
 
-                WorldState.Accept(flag);
-                arrived.Add(flag);
+            foreach (System.Collections.DictionaryEntry pair in properties)
+            {
+                if (pair.Key is not string key ||
+                    !key.StartsWith(FlagPrefix, System.StringComparison.Ordinal) ||
+                    pair.Value is not bool set || !set)
+                {
+                    continue;
+                }
+
+                Accept(key.Substring(FlagPrefix.Length), arrived);
             }
 
             // Told after the whole set is in, so a door that opens because of one flag can already
@@ -92,6 +100,15 @@ namespace Ashburn.Net
             foreach (var flag in arrived)
                 WorldState.Announce(flag);
             _adopting = false;
+        }
+
+        static void Accept(string flag, List<string> arrived)
+        {
+            if (string.IsNullOrEmpty(flag) || WorldState.Has(flag))
+                return;
+
+            WorldState.Accept(flag);
+            arrived.Add(flag);
         }
     }
 }
