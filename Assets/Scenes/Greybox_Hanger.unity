@@ -4679,10 +4679,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 100466690}
-  - component: {fileID: 100466692}
   - component: {fileID: 100466691}
   m_Layer: 0
-  m_Name: TRG_Dialogue_hangar_awakening_001
+  m_Name: FLAG_Dialogue_hangar_awakening_001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4712,62 +4711,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 100466689}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e09542093ec2944b96f51fdc7dd755e, type: 3}
+  m_Script: {fileID: 11500000, guid: b8b5f198fe24f3942a87d8e009fd36c7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Cutscenes.DialogueTrigger
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Cutscenes.FlaggedDialogue
+  flag: Story:HangarAwakened
+  requirePlayerPresent: 1
+  delay: 0.5
   eventId: hangar_awakening_001
   playOnce: 1
   lockInput: 1
   emitNoise: 1
   noiseRange: 15
-  requiredFlag: 
   raiseFlagOnComplete: 
---- !u!61 &100466692
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100466689}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 12, y: 5}
-  m_EdgeRadius: 0
 --- !u!43 &100738562
 Mesh:
   m_ObjectHideFlags: 0
@@ -8458,6 +8413,10 @@ Transform:
   - {fileID: 1890708797}
   - {fileID: 526726733}
   - {fileID: 100466690}
+  - {fileID: 310412393}
+  - {fileID: 1196877812}
+  - {fileID: 1434623389}
+  - {fileID: 2051994512}
   m_Father: {fileID: 838139267}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &269262143
@@ -9654,6 +9613,62 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8316549900258936485, guid: 31976ce921501084c96fe1c3c3d99f9f, type: 3}
   m_PrefabInstance: {fileID: 307667321}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &310412392
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 310412393}
+  - component: {fileID: 310412394}
+  m_Layer: 0
+  m_Name: LOCK_hangar_powerroom
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &310412393
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310412392}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.5, y: -5.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 534765208}
+  m_Father: {fileID: 263581912}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &310412394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 310412392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58f2c66d917572c4cb870acb08e042dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.TilemapDoor
+  requiredFlag: HangarButtonPressed
+  closedTiles: {fileID: 937979904}
+  closedCells:
+  - {x: 10, y: -6, z: 0}
+  openTiles: {fileID: 196601763}
+  openCells:
+  - {x: 11, y: -6, z: 0}
+  - {x: 11, y: -5, z: 0}
+  blockers:
+  - {fileID: 534765207}
+  noiseRange: 14
 --- !u!43 &317229351
 Mesh:
   m_ObjectHideFlags: 0
@@ -14796,7 +14811,7 @@ Transform:
   m_GameObject: {fileID: 526726732}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: 7, z: 0}
+  m_LocalPosition: {x: 24.5, y: 12.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14820,6 +14835,7 @@ MonoBehaviour:
   lockInput: 1
   requiredFlag: 
   raiseFlagOnComplete: WardenDocRead
+  requiredSlot: 0
 --- !u!61 &526726735
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -15044,6 +15060,84 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &534765207
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 534765208}
+  - component: {fileID: 534765209}
+  m_Layer: 0
+  m_Name: BLOCK_hangar_powerroom
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &534765208
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 534765207}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 310412393}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &534765209
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 534765207}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!43 &541169550
 Mesh:
   m_ObjectHideFlags: 0
@@ -22979,6 +23073,7 @@ MonoBehaviour:
   prompt: "\uC0AC\uB2E4\uB9AC\uB85C \uD68C\uC0AC \uC9C0\uD558\uB85C \uB0B4\uB824\uAC00\uAE30"
   lockedPrompt: "\uC7A0\uACA8 \uC788\uB2E4"
   locked: 0
+  requiredFlag: 
   requiredKey: 
   needsPower: 0
   noiseRange: 9
@@ -50135,6 +50230,105 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8316549900258936485, guid: 31976ce921501084c96fe1c3c3d99f9f, type: 3}
   m_PrefabInstance: {fileID: 1193933266}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1196877811
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1196877812}
+  - component: {fileID: 1196877814}
+  - component: {fileID: 1196877813}
+  m_Layer: 0
+  m_Name: TASK_hangar_power
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1196877812
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1196877811}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 14.5, y: -8.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 263581912}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1196877813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1196877811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcf0e598af9e5904f8f22817c25551e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.RepairTask
+  prompt: "\uBA54\uC778 \uB77C\uC778\uC744 \uC62C\uB9B0\uB2E4"
+  finishedPrompt: "\uBA54\uC778 \uB77C\uC778\uC740 \uC774\uBBF8 \uC62C\uB838\uB2E4"
+  requiredSlot: 1
+  holdSeconds: 5
+  raiseFlagOnComplete: HangarPowerFixed
+  dialogueId: hangar_power_ready_001
+  noiseRange: 18
+  noisyWhileWorking: 1
+--- !u!61 &1196877814
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1196877811}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 2, y: 1.4}
+  m_EdgeRadius: 0
 --- !u!1001 &1200662457
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -51804,8 +51998,10 @@ MonoBehaviour:
   targetMap: Village Map
   targetEntry: Spawn_FromHangar
   prompt: "\uB9C8\uC744\uB85C \uC774\uB3D9\uD558\uAE30"
-  lockedPrompt: "\uC7A0\uACA8 \uC788\uB2E4"
-  locked: 1
+  lockedPrompt: "\uBC16\uC73C\uB85C \uB098\uAC00\uB294 \uBB38\uC774 \uC7A0\uACA8
+    \uC788\uB2E4"
+  locked: 0
+  requiredFlag: Story:HangarAwakened
   requiredKey: 
   needsPower: 0
   noiseRange: 9
@@ -60433,6 +60629,54 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &1434623388
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1434623389}
+  - component: {fileID: 1434623390}
+  m_Layer: 0
+  m_Name: GATE_hangar_awakening
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1434623389
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1434623388}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 263581912}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1434623390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1434623388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 102085c5b03396f4c91d66f3e015eb68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.WorldFlagAll
+  required:
+  - HangarPowerFixed
+  - WardenDocRead
+  raise: Story:HangarAwakened
 --- !u!43 &1435874380
 Mesh:
   m_ObjectHideFlags: 0
@@ -72198,7 +72442,7 @@ Transform:
   m_GameObject: {fileID: 1890708796}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7, y: 5, z: 0}
+  m_LocalPosition: {x: 18.5, y: 6.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -72222,6 +72466,7 @@ MonoBehaviour:
   lockInput: 1
   requiredFlag: 
   raiseFlagOnComplete: HangarButtonPressed
+  requiredSlot: 0
 --- !u!61 &1890708799
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -85686,6 +85931,54 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1 &2051994511
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2051994512}
+  - component: {fileID: 2051994513}
+  m_Layer: 0
+  m_Name: GATE_hangar_exit
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2051994512
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051994511}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 263581912}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2051994513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051994511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7fd6fb90ae89214ca3857a32b128241, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Cutscenes.WorldFlagGate
+  flag: Story:HangarAwakened
+  activeWhenFlagSet: 0
+  targets:
+  - {fileID: 595032204}
 --- !u!1001 &2055995187
 PrefabInstance:
   m_ObjectHideFlags: 0
