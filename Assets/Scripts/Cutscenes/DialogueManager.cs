@@ -27,6 +27,7 @@ namespace Ashburn.Cutscenes
         [SerializeField] float lettersPerSecond = 34f;
 
         [Header("Look")]
+        [SerializeField] int guiDepth = -800;
         [SerializeField] Color panelColour = new(0.03f, 0.03f, 0.04f, 0.92f);
         [SerializeField] Color lineColour = new(0.67f, 0.55f, 0.38f, 0.95f);
         [SerializeField] Color speakerColour = new(0.95f, 0.9f, 0.8f);
@@ -90,6 +91,9 @@ namespace Ashburn.Cutscenes
             if (_playing)
                 return false;
 
+            if (!StoryProgression.CanPlay(eventId))
+                return false;
+
             if (!DialogueCatalog.TryGet(eventId, out var lines) || lines.Length == 0)
             {
                 Debug.LogWarning($"No dialogue lines found for event id '{eventId}'.", this);
@@ -134,6 +138,7 @@ namespace Ashburn.Cutscenes
             if (!string.IsNullOrEmpty(raiseFlagOnComplete))
                 WorldState.Raise(raiseFlagOnComplete);
 
+            StoryProgression.Complete(eventId);
             Finished?.Invoke(eventId);
             Finish();
         }
@@ -210,9 +215,20 @@ namespace Ashburn.Cutscenes
             if (!_playing || _lines == null)
                 return;
 
+            GUI.depth = guiDepth;
             EnsureStyles();
 
-            var viewport = Viewport();
+            if (_line.Speaker == "센틸 안내방송")
+            {
+                DrawBroadcast(Viewport());
+                return;
+            }
+
+            DrawDialogueBox(Viewport());
+        }
+
+        void DrawDialogueBox(Rect viewport)
+        {
             var width = Mathf.Min(panelSize.x, viewport.width - 32f);
             var height = Mathf.Min(panelSize.y, viewport.height * 0.42f);
             var panel = new Rect(
@@ -235,6 +251,57 @@ namespace Ashburn.Cutscenes
             var textRect = new Rect(panel.x + pad, panel.y + 32f, panel.width - pad * 2f,
                                     panel.height - 42f);
             GUI.Label(textRect, visible, _textStyle);
+        }
+
+        void DrawBroadcast(Rect viewport)
+        {
+            Imgui.Fill(viewport, new Color(0.006f, 0.008f, 0.007f, 1f));
+
+            var safe = new Rect(
+                viewport.x + viewport.width * 0.08f,
+                viewport.y + viewport.height * 0.12f,
+                viewport.width * 0.84f,
+                viewport.height * 0.76f);
+
+            DrawCrtLines(viewport);
+            DrawVignette(viewport);
+
+            Imgui.Fill(new Rect(safe.x, safe.y, safe.width, 2f),
+                       new Color(0.34f, 0.52f, 0.38f, 0.7f));
+            Imgui.Fill(new Rect(safe.x, safe.yMax - 2f, safe.width, 2f),
+                       new Color(0.34f, 0.52f, 0.38f, 0.45f));
+
+            GUI.Label(new Rect(safe.x, safe.y + 14f, safe.width, 28f),
+                      "SENTIL FIELD BRIEFING", _speakerStyle);
+
+            var visible = _line.Text;
+            if (_revealing && _visibleCharacters < visible.Length)
+                visible = visible.Substring(0, _visibleCharacters);
+
+            var body = new Rect(safe.x, safe.y + safe.height * 0.34f, safe.width,
+                                safe.height * 0.34f);
+            GUI.Label(body, visible, _textStyle);
+
+            var footer = new Rect(safe.x, safe.yMax - 32f, safe.width, 18f);
+            GUI.Label(footer, "SPACE / ENTER  //  SIGNAL STABLE", _speakerStyle);
+        }
+
+        void DrawCrtLines(Rect viewport)
+        {
+            var line = new Color(0.18f, 0.31f, 0.21f, 0.08f);
+            for (var y = viewport.y; y < viewport.yMax; y += 6f)
+                Imgui.Fill(new Rect(viewport.x, y, viewport.width, 1f), line);
+        }
+
+        void DrawVignette(Rect viewport)
+        {
+            var edge = new Color(0f, 0f, 0f, 0.55f);
+            Imgui.Fill(new Rect(viewport.x, viewport.y, viewport.width, viewport.height * 0.08f), edge);
+            Imgui.Fill(new Rect(viewport.x, viewport.yMax - viewport.height * 0.08f,
+                                viewport.width, viewport.height * 0.08f), edge);
+            Imgui.Fill(new Rect(viewport.x, viewport.y, viewport.width * 0.055f, viewport.height), edge);
+            Imgui.Fill(new Rect(viewport.xMax - viewport.width * 0.055f, viewport.y,
+                                viewport.width * 0.055f, viewport.height), edge);
         }
 
         Rect Viewport()

@@ -144,6 +144,7 @@ MonoBehaviour:
   fadeInSeconds: 0.38
   maxSize: 6
   clampToRoom: 1
+  followDeadZone: 0.42
   fallbackAspect: 1.7777778
 --- !u!1 &947414610
 GameObject:

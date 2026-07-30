@@ -47,38 +47,48 @@ namespace Ashburn.Cutscenes
             var body = rig.GetComponent<Rigidbody2D>();
             var controller = rig.GetComponent<PlayerController>();
 
-            foreach (var waypoint in waypoints)
+            try
             {
-                if (waypoint == null)
-                    continue;
-
-                while (rig != null &&
-                       Vector2.Distance(rig.transform.position, waypoint.position) > arriveDistance)
+                foreach (var waypoint in waypoints)
                 {
-                    var current = (Vector2)rig.transform.position;
-                    var target = (Vector2)waypoint.position;
-                    var next = Vector2.MoveTowards(current, target, speed * Time.deltaTime);
-                    var delta = next - current;
+                    if (waypoint == null)
+                        continue;
 
-                    if (controller != null && delta.sqrMagnitude > 0.0001f)
-                        controller.Drive(delta.normalized, MovementMode.Run);
+                    while (rig != null &&
+                           Vector2.Distance(rig.transform.position, waypoint.position) > arriveDistance)
+                    {
+                        var current = body != null ? body.position : (Vector2)rig.transform.position;
+                        var target = (Vector2)waypoint.position;
+                        var deltaTime = body != null ? Time.fixedDeltaTime : Time.deltaTime;
+                        var next = Vector2.MoveTowards(current, target, speed * deltaTime);
+                        var delta = next - current;
 
-                    if (body != null)
-                        body.MovePosition(next);
-                    else
-                        rig.transform.position = next;
+                        if (controller != null && delta.sqrMagnitude > 0.0001f)
+                            controller.Drive(delta.normalized, MovementMode.Run);
 
-                    yield return null;
+                        if (body != null)
+                        {
+                            body.MovePosition(next);
+                            yield return new WaitForFixedUpdate();
+                        }
+                        else
+                        {
+                            rig.transform.position = next;
+                            yield return null;
+                        }
+                    }
                 }
             }
+            finally
+            {
+                if (controller != null)
+                    controller.Drive(Vector2.zero, MovementMode.Walk);
 
-            if (controller != null)
-                controller.Drive(Vector2.zero, MovementMode.Walk);
+                if (lockInput)
+                    rig.SuspendInput(false);
 
-            if (lockInput)
-                rig.SuspendInput(false);
-
-            IsMoving = false;
+                IsMoving = false;
+            }
         }
     }
 }

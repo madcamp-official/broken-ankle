@@ -62,6 +62,11 @@ namespace Ashburn.World
                  "just trails the player around inside it.")]
         [SerializeField] bool clampToRoom = true;
 
+        [Tooltip("Fraction of the visible half-size the player may move from the camera centre " +
+                 "before a large room starts scrolling. Keeps rooms stable while still revealing " +
+                 "their far edges.")]
+        [SerializeField, Range(0f, 0.9f)] float followDeadZone = 0.42f;
+
         [Tooltip("Aspect to assume before a camera exists to ask. Only used on the first frame.")]
         [SerializeField] float fallbackAspect = 16f / 9f;
 
@@ -131,7 +136,7 @@ namespace Ashburn.World
             }
 
             _targetSize = Mathf.Min(SizeFor(room.Area), maxSize);
-            _targetPosition = PositionFor(room, _targetSize);
+            _targetPosition = InitialPositionFor(room, _targetSize);
 
             // The first room always cuts, with no cover. Fading in from black at startup would
             // hide the one moment the player has not asked for anything yet, and sliding in from
@@ -201,7 +206,7 @@ namespace Ashburn.World
 
             // Recomputed rather than set once: a room too large to show whole tracks the player
             // across it, and a room that fits resolves to its centre every time anyway.
-            _targetPosition = PositionFor(Room, _targetSize);
+            _targetPosition = PositionFor(Room, _targetSize, _targetPosition);
 
             // Mid-fade the move happens in one step behind black. Easing towards it as well would
             // mean the camera is still travelling when the screen comes back.
@@ -226,7 +231,31 @@ namespace Ashburn.World
         /// player, pulled back so the view never leaves the room — which is what keeps a corridor
         /// feeling like a corridor rather than a window onto the walls around it.
         /// </summary>
-        Vector3 PositionFor(RoomBounds room, float size)
+        Vector3 InitialPositionFor(RoomBounds room, float size)
+        {
+            if (room == null)
+                return cinemachineCamera.transform.position;
+
+            var area = room.Area;
+            var z = cinemachineCamera.transform.position.z;
+            var halfHeight = size;
+            var halfWidth = size * Aspect();
+            var viewer = Viewer();
+
+            if (viewer == null)
+                return new Vector3(area.center.x, area.center.y, z);
+
+            var x = area.size.x <= halfWidth * 2f
+                ? area.center.x
+                : ClampToRoom(viewer.position.x, area.min.x, area.max.x, halfWidth);
+            var y = area.size.y <= halfHeight * 2f
+                ? area.center.y
+                : ClampToRoom(viewer.position.y, area.min.y, area.max.y, halfHeight);
+
+            return new Vector3(x, y, z);
+        }
+
+        Vector3 PositionFor(RoomBounds room, float size, Vector3 current)
         {
             var z = cinemachineCamera.transform.position.z;
 
@@ -235,7 +264,7 @@ namespace Ashburn.World
 
             var area = room.Area;
             var halfHeight = size;
-            var halfWidth = size * (Camera.main != null ? Camera.main.aspect : fallbackAspect);
+            var halfWidth = size * Aspect();
 
             var centre = new Vector3(area.center.x, area.center.y, z);
 
@@ -250,17 +279,42 @@ namespace Ashburn.World
             // view, which is exactly where the darkness stops being able to cover the screen.
             var x = area.size.x <= halfWidth * 2f
                 ? area.center.x
-                : Track(viewer.position.x, area.min.x, area.max.x, halfWidth);
+                : Track(current.x, viewer.position.x, area.min.x, area.max.x, halfWidth);
 
             var y = area.size.y <= halfHeight * 2f
                 ? area.center.y
-                : Track(viewer.position.y, area.min.y, area.max.y, halfHeight);
+                : Track(current.y, viewer.position.y, area.min.y, area.max.y, halfHeight);
 
             return new Vector3(x, y, z);
         }
 
-        float Track(float viewer, float min, float max, float half) =>
-            clampToRoom ? Mathf.Clamp(viewer, min + half, max - half) : viewer;
+        float Track(float current, float viewer, float min, float max, float half)
+        {
+            var deadHalf = half * followDeadZone;
+            var target = current;
+
+            if (viewer < current - deadHalf)
+                target = viewer + deadHalf;
+            else if (viewer > current + deadHalf)
+                target = viewer - deadHalf;
+
+            return clampToRoom ? ClampToRoom(target, min, max, half) : target;
+        }
+
+        float ClampToRoom(float value, float min, float max, float half)
+        {
+            // SizeFor adds padding when a whole room fits. Large rooms hit maxSize instead, so
+            // position clamping must add the same margin or the outer wall is cut at the viewport.
+            var minimum = min + half - padding;
+            var maximum = max - half + padding;
+            return minimum <= maximum ? Mathf.Clamp(value, minimum, maximum) : (min + max) * 0.5f;
+        }
+
+        float Aspect()
+        {
+            var aspect = Camera.main != null ? Camera.main.aspect : fallbackAspect;
+            return aspect > 0f ? aspect : fallbackAspect;
+        }
 
         /// <summary>
         /// Whether the room on screen belongs to a map the viewer is no longer standing in.
@@ -336,9 +390,7 @@ namespace Ashburn.World
         /// </summary>
         float SizeFor(Bounds area)
         {
-            var aspect = Camera.main != null ? Camera.main.aspect : fallbackAspect;
-            if (aspect <= 0f)
-                aspect = fallbackAspect;
+            var aspect = Aspect();
 
             var byHeight = area.size.y * 0.5f + padding;
             var byWidth = (area.size.x * 0.5f + padding) / aspect;

@@ -33,7 +33,7 @@ namespace Ashburn.Cutscenes
             ["corp_lobby_enter_001"] = new[]
             {
                 Say("Nathan", "로비 도착. 내부 전원은 살아 있는데 출입 권한은 막혀 있어."),
-                Say("Grant", "2층도 지하도 잠겼네. 회사가 열쇠는 안 줬고, 책임은 우리한테 주고."),
+                Say("Grant", "2층도 잠겼네."),
                 Say("Nathan", "우측 사무실부터 확인하자. 관리 단말이 남아 있을 수도 있어."),
             },
             ["corp_first_warden_001"] = new[]

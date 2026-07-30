@@ -14,6 +14,7 @@ namespace Ashburn.Cutscenes
         [SerializeField] string id;
         [SerializeField] string openingDialogueId;
         [SerializeField] CutsceneWaypointMover mover;
+        [SerializeField] string movementDialogueId;
         [SerializeField] string closingDialogueId;
         [SerializeField] bool emitOpeningNoise = true;
         [SerializeField] float openingNoiseRange = 11f;
@@ -43,6 +44,9 @@ namespace Ashburn.Cutscenes
             if (_running || WorldState.Has(CompletedFlag))
                 return;
 
+            if (!StoryProgression.CanPlay(openingDialogueId))
+                return;
+
             StartCoroutine(Run());
         }
 
@@ -55,27 +59,49 @@ namespace Ashburn.Cutscenes
             var map = MapZone.IdOf(this);
 
             if (!string.IsNullOrEmpty(openingDialogueId))
-            {
-                manager.TryPlay(openingDialogueId, lockInput: true, emitNoise: emitOpeningNoise,
+                yield return PlayAndWait(manager, openingDialogueId, emitOpeningNoise,
+                                         openingNoiseRange, map);
+
+            while (DialogueManager.IsPlaying)
+                yield return null;
+
+            if (!string.IsNullOrEmpty(movementDialogueId))
+                manager.TryPlay(movementDialogueId, lockInput: false, emitNoise: true,
                                 noiseRange: openingNoiseRange, noisePosition: transform.position,
                                 map: map, raiseFlagOnComplete: null);
-                while (DialogueManager.IsPlaying)
-                    yield return null;
-            }
 
             if (mover != null)
                 yield return mover.PlayForAllControlledPlayersRoutine();
 
+            while (DialogueManager.IsPlaying)
+                yield return null;
+
             if (!string.IsNullOrEmpty(closingDialogueId))
-            {
-                manager.TryPlay(closingDialogueId, lockInput: true, emitNoise: false,
-                                noiseRange: 0f, noisePosition: transform.position,
-                                map: map, raiseFlagOnComplete: null);
-                while (DialogueManager.IsPlaying)
-                    yield return null;
-            }
+                yield return PlayAndWait(manager, closingDialogueId, false, 0f, map);
 
             _running = false;
+        }
+
+        IEnumerator PlayAndWait(
+            DialogueManager manager,
+            string dialogueId,
+            bool emitNoise,
+            float noiseRange,
+            int map)
+        {
+            while (DialogueManager.IsPlaying)
+                yield return null;
+
+            if (!manager.TryPlay(dialogueId, lockInput: true, emitNoise: emitNoise,
+                                 noiseRange: noiseRange, noisePosition: transform.position,
+                                 map: map, raiseFlagOnComplete: null))
+            {
+                Debug.LogWarning($"Could not start story dialogue '{dialogueId}'.", this);
+                yield break;
+            }
+
+            while (DialogueManager.IsPlaying)
+                yield return null;
         }
     }
 }

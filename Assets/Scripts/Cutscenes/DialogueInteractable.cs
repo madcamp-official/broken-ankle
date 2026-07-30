@@ -32,7 +32,10 @@ namespace Ashburn.Cutscenes
             if (singleUse && WorldState.Has(UsedFlag))
                 return false;
 
-            return string.IsNullOrEmpty(requiredFlag) || WorldState.Has(requiredFlag);
+            if (!string.IsNullOrEmpty(requiredFlag) && !WorldState.Has(requiredFlag))
+                return false;
+
+            return StoryProgression.CanPlay(eventId);
         }
 
         public void Interact(GameObject interactor)

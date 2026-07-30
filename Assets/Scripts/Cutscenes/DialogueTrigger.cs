@@ -1,3 +1,4 @@
+using System.Collections;
 using Ashburn.World;
 using UnityEngine;
 
@@ -24,6 +25,8 @@ namespace Ashburn.Cutscenes
         [Tooltip("Optional flag raised when the dialogue finishes.")]
         [SerializeField] string raiseFlagOnComplete;
 
+        bool _pending;
+
         string CompletedFlag => "dialogue:" + eventId;
 
         void Reset()
@@ -49,6 +52,9 @@ namespace Ashburn.Cutscenes
 
         public void Play()
         {
+            if (_pending)
+                return;
+
             if (string.IsNullOrEmpty(eventId))
             {
                 Debug.LogWarning($"{nameof(DialogueTrigger)} on '{name}' has no event id.", this);
@@ -61,14 +67,50 @@ namespace Ashburn.Cutscenes
             if (!string.IsNullOrEmpty(requiredFlag) && !WorldState.Has(requiredFlag))
                 return;
 
+            if (!StoryProgression.CanPlay(eventId))
+                return;
+
+            StartCoroutine(PlayWhenAvailable());
+        }
+
+        IEnumerator PlayWhenAvailable()
+        {
+            _pending = true;
+
+            while (DialogueManager.IsPlaying)
+                yield return null;
+
+            if (playOnce && WorldState.Has(CompletedFlag))
+            {
+                _pending = false;
+                yield break;
+            }
+
+            if (!string.IsNullOrEmpty(requiredFlag) && !WorldState.Has(requiredFlag))
+            {
+                _pending = false;
+                yield break;
+            }
+
+            if (!StoryProgression.CanPlay(eventId))
+            {
+                _pending = false;
+                yield break;
+            }
+
             var manager = DialogueManager.Ensure();
             var map = MapZone.IdOf(this);
             if (!manager.TryPlay(eventId, lockInput, emitNoise, noiseRange, transform.position, map,
                                  raiseFlagOnComplete))
-                return;
+            {
+                _pending = false;
+                yield break;
+            }
 
             if (playOnce)
                 WorldState.Raise(CompletedFlag);
+
+            _pending = false;
         }
 
         void OnDrawGizmos()
