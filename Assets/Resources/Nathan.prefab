@@ -307,6 +307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb765fa488a7fb147bd07e88f7209577, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Player.PlayerAnimator
+  downedSprite: {fileID: 21300000, guid: e7eb9eb2a4f948089177bb5e84672663, type: 3}
 --- !u!114 &8685373749486869375
 MonoBehaviour:
   m_ObjectHideFlags: 0
