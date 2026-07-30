@@ -432,12 +432,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Core.ControlsOverlay
   inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  maps:
-  - Player
-  - Player2
-  mapTitles:
-  - 1P
-  - "2P (\uB354\uBBF8 \uB3D9\uB8CC)"
+  viewerTag: Player
+  actionMap: Player
   actions:
   - Move
   - Sprint
@@ -564,12 +560,8 @@ MonoBehaviour:
   toggleKey: 60
   itemsKey: 3
   inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  maps:
-  - Player
-  - Player2
-  mapTitles:
-  - 1P
-  - 2P
+  viewerTag: Player
+  actionMap: Player
   actions:
   - Move
   - Sprint

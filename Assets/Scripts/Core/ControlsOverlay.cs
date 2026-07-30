@@ -12,6 +12,11 @@ namespace Ashburn.Core
     /// first player, a flashlight toggle arrived, a second local player appeared — and a hint card
     /// that lies is worse than none.
     ///
+    /// One player's keys: the ones belonging to whoever is looking at this screen. Two people play
+    /// this on two machines with one character each, so a table listing both of them printed the
+    /// partner's keys onto a keyboard nobody was sitting at, under a "1P" heading that had nothing to
+    /// tell it apart from.
+    ///
     /// Whether it is showing belongs to <see cref="GameSettings"/> rather than to this component,
     /// so the pause menu's switch and this card's own key are the same switch and it is remembered
     /// between sessions.
@@ -22,11 +27,12 @@ namespace Ashburn.Core
         [Tooltip("Drag Assets/InputSystem_Actions here.")]
         [SerializeField] InputActionAsset inputActions;
 
-        [Tooltip("Action maps to list, in order. One block each.")]
-        [SerializeField] string[] maps = { "Player", "Player2" };
+        [Tooltip("Tag PlayerRig puts on the character the screen belongs to. Its keys are the ones " +
+                 "listed; the map below is only used until that character exists.")]
+        [SerializeField] string viewerTag = "Player";
 
-        [Tooltip("Heading shown above each map's block.")]
-        [SerializeField] string[] mapTitles = { "1P", "2P (더미 동료)" };
+        [Tooltip("Action map to fall back on before anybody has spawned.")]
+        [SerializeField] string actionMap = "Player";
 
         [Tooltip("Actions to list, in order. Anything else in the map is skipped.")]
         [SerializeField] string[] actions = { "Move", "Sprint", "Crouch", "Interact", "ToggleFlashlight", "ToggleHearing" };
@@ -49,6 +55,7 @@ namespace Ashburn.Core
         readonly List<string> _labelColumn = new();
         readonly List<string> _keyColumn = new();
 
+        InputActionMap _map;
         GUIStyle _style;
 
         /// <summary>The rows as drawn, for anything else that wants to show the same list.</summary>
@@ -61,6 +68,16 @@ namespace Ashburn.Core
 
         void Update()
         {
+            // The character whose keys these are does not exist yet at Start — a networked one is
+            // created once the room is joined — so the map is re-read until it settles rather than
+            // trusted once.
+            var map = BindingText.LocalMap(viewerTag, inputActions, actionMap);
+            if (map != _map)
+            {
+                _map = map;
+                Rebuild();
+            }
+
             var keyboard = Keyboard.current;
             if (keyboard == null)
                 return;
@@ -72,8 +89,13 @@ namespace Ashburn.Core
         }
 
         /// <summary>Re-reads the bindings. Call after rebinding at runtime.</summary>
-        public void Rebuild() => BindingText.BuildRows(
-            inputActions, maps, mapTitles, actions, labels, _labelColumn, _keyColumn);
+        public void Rebuild()
+        {
+            if (_map == null)
+                _map = BindingText.LocalMap(viewerTag, inputActions, actionMap);
+
+            BindingText.BuildRows(_map, actions, labels, _labelColumn, _keyColumn);
+        }
 
         void OnGUI()
         {

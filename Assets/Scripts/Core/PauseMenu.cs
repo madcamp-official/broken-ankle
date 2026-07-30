@@ -45,11 +45,12 @@ namespace Ashburn.Core
         [Tooltip("Drag Assets/InputSystem_Actions here.")]
         [SerializeField] InputActionAsset inputActions;
 
-        [Tooltip("Action maps to list, in order. One block each.")]
-        [SerializeField] string[] maps = { "Player", "Player2" };
+        [Tooltip("Tag PlayerRig puts on the character the screen belongs to. Its keys are the ones " +
+                 "listed; the map below is only used until that character exists.")]
+        [SerializeField] string viewerTag = "Player";
 
-        [Tooltip("Heading shown above each map's block.")]
-        [SerializeField] string[] mapTitles = { "1P", "2P" };
+        [Tooltip("Action map to fall back on before anybody has spawned.")]
+        [SerializeField] string actionMap = "Player";
 
         [Tooltip("Actions to list, in order. Anything else in the map is skipped.")]
         [SerializeField] string[] actions =
@@ -80,6 +81,7 @@ namespace Ashburn.Core
         Tab _tab = Tab.Settings;
         bool _open;
         bool _itemsStale = true;
+        InputActionMap _map;
 
         GUIStyle _label;
         GUIStyle _heading;
@@ -97,9 +99,6 @@ namespace Ashburn.Core
         /// </summary>
         public static bool AnyOpen { get; private set; }
 
-        void Start() => BindingText.BuildRows(
-            inputActions, maps, mapTitles, actions, labels, _controlLabels, _controlKeys);
-
         void OnEnable() => Inventory.Changed += OnInventoryChanged;
 
         void OnDisable()
@@ -116,6 +115,15 @@ namespace Ashburn.Core
 
         void Update()
         {
+            // The character whose keys these are is created after this object exists — a networked
+            // one once the room is joined — so the map is re-read until it settles.
+            var map = BindingText.LocalMap(viewerTag, inputActions, actionMap);
+            if (map != _map)
+            {
+                _map = map;
+                BindingText.BuildRows(_map, actions, labels, _controlLabels, _controlKeys);
+            }
+
             var keyboard = Keyboard.current;
             if (keyboard == null)
                 return;

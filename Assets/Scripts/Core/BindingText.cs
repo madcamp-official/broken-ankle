@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Ashburn.Interaction;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Ashburn.Core
@@ -10,10 +12,14 @@ namespace Ashburn.Core
     /// moved several times — arrow keys left the first player, a flashlight toggle arrived, a second
     /// local player appeared — and a hint card that lies is worse than none.
     ///
-    /// Lives apart from whoever draws it because two things now show the same list: the corner card
-    /// and the pause menu. Which actions to list and what to call them stays with each of them, since
-    /// that is authored data rather than logic; if a third one appears it is worth moving those
-    /// arrays into a shared asset.
+    /// One player's keys, not a table of everybody's. This is a game two people play on two machines,
+    /// each holding one character, so the only keys worth printing on a screen are the keys belonging
+    /// to whoever is looking at it — and they need no "1P" above them, because there is nobody at this
+    /// keyboard for them to be told apart from.
+    ///
+    /// Lives apart from whoever draws it because two things show the same list: the corner card and
+    /// the pause menu. Which actions to list and what to call them stays with each of them, since that
+    /// is authored data rather than logic.
     /// </summary>
     public static class BindingText
     {
@@ -91,7 +97,35 @@ namespace Ashburn.Core
         }
 
         /// <summary>
-        /// Fills two columns with a heading per action map and a row per action.
+        /// The action map the character at this keyboard is actually driving.
+        ///
+        /// Asked of the character rather than assumed, so the card cannot claim a key the player does
+        /// not have. Over the network both people use the first map — each has a keyboard to
+        /// themselves — and in the split-keyboard test the viewer is whichever character the screen
+        /// belongs to, which is the one whose keys are worth printing either way.
+        ///
+        /// Falls back to a named map for the moment before anybody has spawned, so the card has
+        /// something to show on the first frame rather than a gap.
+        /// </summary>
+        public static InputActionMap LocalMap(string viewerTag, InputActionAsset fallbackAsset,
+                                              string fallbackMap)
+        {
+            var tagged = string.IsNullOrEmpty(viewerTag)
+                ? null
+                : GameObject.FindGameObjectWithTag(viewerTag);
+
+            var interactor = tagged != null ? tagged.GetComponent<PlayerInteractor>() : null;
+            var action = interactor != null ? interactor.InteractAction : null;
+            if (action != null && action.actionMap != null)
+                return action.actionMap;
+
+            return fallbackAsset != null
+                ? fallbackAsset.FindActionMap(fallbackMap, throwIfNotFound: false)
+                : null;
+        }
+
+        /// <summary>
+        /// Fills two columns with a row per action, for one player.
         ///
         /// Two columns rather than one padded string, because Korean glyphs are twice the width of
         /// Latin ones and padding with spaces never lines up.
@@ -99,48 +133,31 @@ namespace Ashburn.Core
         /// Actions with no keyboard binding are skipped rather than shown blank: an action that
         /// exists only on a gamepad is not a key the reader can press.
         /// </summary>
-        public static void BuildRows(InputActionAsset asset, string[] maps, string[] mapTitles,
-                                     string[] actions, string[] labels,
+        public static void BuildRows(InputActionMap map, string[] actions, string[] labels,
                                      List<string> labelColumn, List<string> keyColumn)
         {
             labelColumn.Clear();
             keyColumn.Clear();
 
-            if (asset == null)
+            if (map == null)
             {
-                labelColumn.Add("(입력 에셋이 연결되지 않음)");
+                labelColumn.Add("(입력 맵을 찾을 수 없음)");
                 keyColumn.Add(string.Empty);
                 return;
             }
 
-            for (var m = 0; m < maps.Length; m++)
+            for (var a = 0; a < actions.Length; a++)
             {
-                var map = asset.FindActionMap(maps[m], throwIfNotFound: false);
-                if (map == null)
+                var action = map.FindAction(actions[a]);
+                if (action == null)
                     continue;
 
-                if (labelColumn.Count > 0)
-                {
-                    labelColumn.Add(string.Empty);
-                    keyColumn.Add(string.Empty);
-                }
+                var keys = Keyboard(action);
+                if (keys.Length == 0)
+                    continue;
 
-                labelColumn.Add(m < mapTitles.Length ? mapTitles[m] : maps[m]);
-                keyColumn.Add(string.Empty);
-
-                for (var a = 0; a < actions.Length; a++)
-                {
-                    var action = map.FindAction(actions[a]);
-                    if (action == null)
-                        continue;
-
-                    var keys = Keyboard(action);
-                    if (keys.Length == 0)
-                        continue;
-
-                    labelColumn.Add("  " + (a < labels.Length ? labels[a] : actions[a]));
-                    keyColumn.Add(keys);
-                }
+                labelColumn.Add(a < labels.Length ? labels[a] : actions[a]);
+                keyColumn.Add(keys);
             }
         }
     }
