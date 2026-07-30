@@ -157,6 +157,15 @@ GameObject:
   - component: {fileID: 717210449169272632}
   - component: {fileID: 8955386978868582016}
   - component: {fileID: 5089556256852656329}
+  - component: {fileID: 1636030817939534989}
+  - component: {fileID: 417428371467298905}
+  - component: {fileID: 6642988341011755364}
+  - component: {fileID: 7242028456433897195}
+  - component: {fileID: 504203608562450728}
+  - component: {fileID: 6116813782402609627}
+  - component: {fileID: 7855898610490245664}
+  - component: {fileID: 4296904342289357309}
+  - component: {fileID: 8658750969657642374}
   m_Layer: 8
   m_Name: Nathan
   m_TagString: Player
@@ -361,15 +370,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82980660af2e2d84a9ccbb08d44ba3b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Monster.Downed
-  disableWhileHeld:
+  disableWhileDown:
   - {fileID: 4619516547538424807}
   - {fileID: 5971796654612665053}
   - {fileID: 6369505412604317244}
   - {fileID: 8685373749486869375}
-  hideWhileHeld:
+  hideWhileDown:
   - {fileID: 5462522140775758744}
   - {fileID: 3743583923798362931}
-  rescuePrompt: "\uAD6C\uCD9C\uD558\uAE30"
+  helpPrompt: "\uAD6C\uCD9C\uD558\uAE30"
+  helpSeconds: 2.5
 --- !u!114 &9096929615804728950
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -387,6 +397,7 @@ MonoBehaviour:
   inputComponents:
   - {fileID: 4619516547538424807}
   - {fileID: 5971796654612665053}
+  - {fileID: 504203608562450728}
   viewerOnlyObjects:
   - {fileID: 3743583923798362931}
   - {fileID: 6331766093216544031}
@@ -589,6 +600,7 @@ MonoBehaviour:
   controller: {fileID: 4619516547538424807}
   flashlight: {fileID: 6369505412604317244}
   headset: {fileID: 2103446981574230118}
+  downed: {fileID: 0}
   beam: {fileID: 3378130258239158657}
   catchUpSeconds: 0.08
   teleportOver: 4
@@ -606,6 +618,270 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Interaction.Inventory
   slot: 0
   ownerName: 
+--- !u!82 &1636030817939534989
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &417428371467298905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91175dcc15224463780e01a8a98b1b60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonVoice::Photon.Voice.Unity.Recorder
+  voiceDetection: 0
+  voiceDetectionThreshold: 0.01
+  voiceDetectionDelayMs: 500
+  interestGroup: 0
+  useTargetPlayers: 0
+  targetPlayers: 
+  debugEchoMode: 0
+  reliableMode: 0
+  encrypt: 0
+  transmitEnabled: 0
+  samplingRate: 24000
+  frameDuration: 40000
+  bitrate: 30000
+  sourceType: 0
+  microphoneType: 0
+  audioClip: {fileID: 0}
+  loopAudioClip: 1
+  recordingEnabled: 1
+  audioSessionParameters:
+    Category: 4
+    Mode: 1
+    CategoryOptions: 0800000004000000
+  editorAudioSessionPreset: 1
+  androidMicrophoneSettings:
+    EnableAEC: 1
+    EnableAGC: 1
+    EnableNS: 1
+  stopRecordingWhenPaused: 0
+  useOnAudioFilterRead: 0
+  useMicrophoneTypeFallback: 1
+  recordWhenJoined: 1
+--- !u!114 &6642988341011755364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd7fea91fe63f4e1b884ef1e16a975c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonVoice::Photon.Voice.Unity.Speaker
+  playDelayConfig:
+    Low: 200
+    High: 200
+    Max: 1000
+    SpeedUpPerc: 5
+  restartOnDeviceChange: 1
+--- !u!114 &7242028456433897195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 126494ae2a10a34499272ed97a6c9f5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PhotonVoice.PUN::Photon.Voice.PUN.PhotonVoiceView
+--- !u!114 &504203608562450728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d4c5ea869b8b204b8f21418aa89aaca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Radio.RadioTransmitter
+  inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  range: 11
+  interval: 0.35
+  makesNoise: 1
+--- !u!114 &6116813782402609627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d33c76807796d14685a6f4628cabefd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Radio.PhotonRadioBridge
+  recorder: {fileID: 417428371467298905}
+--- !u!114 &7855898610490245664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85ecf6c414d9d274a81698bb8a32b176, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Radio.RadioDsp
+  delaySeconds: 0
+  maxDelaySeconds: 3
+  pitch: 1
+  grainSeconds: 0.06
+  highPassHz: 320
+  lowPassHz: 3000
+  drive: 3.5
+  outputGain: 1.6
+  hiss: 0.08
+  crush: 5
+  dropoutChance: 0.05
+  dropoutSeconds: {x: 0.04, y: 0.22}
+  interferenceSmoothing: 0.35
+  archive: {fileID: 0}
+--- !u!114 &4296904342289357309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0086ceb513736bb4a9e90fafa71af53c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Radio.HeadsetLink
+  partner: {fileID: 556623649489529968}
+  listener: {fileID: 0}
+  clearDistance: 9
+  lostDistance: 45
+  falloff: 1.8
+  delayWhenLost: 0
+  dsp: {fileID: 7855898610490245664}
+--- !u!114 &8658750969657642374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240766376676415943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78f31fb3b4265fd48ac374d193a4a924, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Radio.VoiceArchive
+  memorySeconds: 120
+  maxPhrases: 24
+  speechThreshold: 0.02
+  silenceEndsPhrase: 0.4
+  minPhraseSeconds: 0.5
+  maxPhraseSeconds: 4
+  output: {fileID: 7855898610490245664}
+  replayPitch: 0.94
 --- !u!1 &3743583923798362931
 GameObject:
   m_ObjectHideFlags: 0
