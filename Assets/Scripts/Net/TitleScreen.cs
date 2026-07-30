@@ -32,6 +32,11 @@ namespace Ashburn.Net
         [SerializeField, Range(3, 8)] int codeLength = 4;
 
         [Header("Look")]
+        [Tooltip("IMGUI draw order. Lower is drawn on top, and this has to out-rank every other " +
+                 "screen in the project: the fade sits at -1000 and the dialogue box at -800, so " +
+                 "at the default 0 the briefing drew straight over the room code.")]
+        [SerializeField] int guiDepth = -2000;
+
         [SerializeField] int titleSize = 26;
         [SerializeField] int fontSize = 13;
         [SerializeField] Color textColour = new(0.93f, 0.93f, 0.97f);
@@ -114,6 +119,7 @@ namespace Ashburn.Net
             if (_dismissed || game == null)
                 return;
 
+            GUI.depth = guiDepth;
             EnsureStyles();
 
             var viewport = Viewport();

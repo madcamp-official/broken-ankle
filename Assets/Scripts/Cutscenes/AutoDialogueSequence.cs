@@ -1,4 +1,5 @@
 using System.Collections;
+using Ashburn.Net;
 using Ashburn.World;
 using UnityEngine;
 
@@ -18,6 +19,13 @@ namespace Ashburn.Cutscenes
         {
             if (playOnce && WorldState.Has(CompletedFlag))
                 yield break;
+
+            // The starting map is opened while the title screen is still asking which room to play
+            // in, so that joining is instant once the code is typed. Without this the briefing ran
+            // itself out behind that screen against a player who was still reading a room code, and
+            // playOnce then marked it seen — the beat was gone before the game had begun.
+            while (TitleScreen.IsUp)
+                yield return null;
 
             if (delay > 0f)
                 yield return new WaitForSeconds(delay);
