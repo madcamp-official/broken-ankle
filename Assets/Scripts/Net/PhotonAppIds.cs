@@ -147,24 +147,39 @@ namespace Ashburn.Net
                     return paths;
 
                 var app = settings.AppSettings;
-                var blanked = false;
 
-                // Only what this put there. A value typed in by hand is somebody's decision.
-                if (!string.IsNullOrEmpty(_injectedRealtime) && app.AppIdRealtime == _injectedRealtime)
-                {
+                // Compared against the private asset rather than against what this session
+                // happened to inject. Injection only runs when the settings come up empty, so an
+                // App ID that was already sitting in them — committed by an earlier leak, or
+                // pasted in by hand — left the remembered value null and this guard did nothing.
+                // It protected the one case that was already safe and skipped the one that was not.
+                var ids = Ids();
+
+                if (Matches(app.AppIdRealtime, ids?.realtime, _injectedRealtime))
                     app.AppIdRealtime = string.Empty;
-                    blanked = true;
-                }
 
-                if (!string.IsNullOrEmpty(_injectedVoice) && app.AppIdVoice == _injectedVoice)
-                {
+                if (Matches(app.AppIdVoice, ids?.voice, _injectedVoice))
                     app.AppIdVoice = string.Empty;
-                    blanked = true;
-                }
 
                 // Not put back here. The editor tick above notices they are empty and refills them
                 // once the write is over, which is the only ordering that is actually guaranteed.
                 return paths;
+            }
+
+            /// <summary>
+            /// Whether this value in the settings is one of ours and must not reach the disk.
+            ///
+            /// Either source counts: the id the private asset holds, which is what a teammate's
+            /// copy would also be carrying, or the one this session injected. A value that matches
+            /// neither is somebody's own decision and is left where they put it.
+            /// </summary>
+            static bool Matches(string current, string fromAsset, string injected)
+            {
+                if (string.IsNullOrEmpty(current))
+                    return false;
+
+                return (!string.IsNullOrWhiteSpace(fromAsset) && current == fromAsset.Trim()) ||
+                       (!string.IsNullOrEmpty(injected) && current == injected);
             }
         }
 #endif
