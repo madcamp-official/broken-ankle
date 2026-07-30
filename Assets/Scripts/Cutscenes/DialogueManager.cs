@@ -240,13 +240,16 @@ namespace Ashburn.Cutscenes
             GUI.depth = guiDepth;
             EnsureStyles();
 
+            // Measured in the game's own 640x360 pixels. See Imgui.Scaled.
+            using var screen = Imgui.Scaled();
+
             if (_line.Speaker == "센틸 안내방송")
             {
-                DrawBroadcast(Viewport());
+                DrawBroadcast(screen.Area);
                 return;
             }
 
-            DrawDialogueBox(Viewport());
+            DrawDialogueBox(screen.Area);
         }
 
         void DrawDialogueBox(Rect viewport)
@@ -324,16 +327,6 @@ namespace Ashburn.Cutscenes
             Imgui.Fill(new Rect(viewport.x, viewport.y, viewport.width * 0.055f, viewport.height), edge);
             Imgui.Fill(new Rect(viewport.xMax - viewport.width * 0.055f, viewport.y,
                                 viewport.width * 0.055f, viewport.height), edge);
-        }
-
-        Rect Viewport()
-        {
-            var camera = Camera.main;
-            if (camera == null)
-                return new Rect(0f, 0f, Screen.width, Screen.height);
-
-            var view = camera.pixelRect;
-            return new Rect(view.x, Screen.height - view.yMax, view.width, view.height);
         }
 
         void EnsureStyles()

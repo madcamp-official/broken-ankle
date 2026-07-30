@@ -122,7 +122,10 @@ namespace Ashburn.Net
             GUI.depth = guiDepth;
             EnsureStyles();
 
-            var viewport = Viewport();
+            // Measured in the game's own 640x360 pixels. See Imgui.Scaled.
+            using var screen = Imgui.Scaled();
+
+            var viewport = screen.Area;
             Imgui.Fill(viewport, dimColour);
 
             var width = Mathf.Min(360f, viewport.width - 24f);
@@ -219,17 +222,6 @@ namespace Ashburn.Net
                 letters[i] = alphabet[Random.Range(0, alphabet.Length)];
 
             return new string(letters);
-        }
-
-        Rect Viewport()
-        {
-            var camera = Camera.main;
-            if (camera == null)
-                return new Rect(0f, 0f, Screen.width, Screen.height);
-
-            // pixelRect counts up from the bottom of the window, GUI coordinates down from the top.
-            var view = camera.pixelRect;
-            return new Rect(view.x, Screen.height - view.yMax, view.width, view.height);
         }
 
         void EnsureStyles()

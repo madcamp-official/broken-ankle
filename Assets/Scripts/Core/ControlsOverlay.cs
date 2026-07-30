@@ -116,6 +116,9 @@ namespace Ashburn.Core
                 _style.normal.textColor = textColour;
             }
 
+            // Measured in the game's own 640x360 pixels. See Imgui.Scaled.
+            using var screen = Imgui.Scaled();
+
             var lineHeight = _style.lineHeight + 2f;
             var labelWidth = 0f;
             var keyWidth = 0f;
@@ -127,18 +130,10 @@ namespace Ashburn.Core
             const float gutter = 14f;
             const float pad = 9f;
 
-            // Anchor to the camera's viewport, not the window. Pixel Perfect letterboxes the game
-            // into the middle of a larger window, and screen-corner coordinates land in the black
-            // bars outside it, where the card is easy to miss entirely.
-            var origin = Vector2.zero;
-            var camera = Camera.main;
-            if (camera != null)
-            {
-                var view = camera.pixelRect;
-                origin = new Vector2(view.x, Screen.height - view.yMax);
-            }
-
-            var rect = new Rect(origin.x + margin.x, origin.y + margin.y,
+            // The scaled area already starts at the corner of the picture rather than the corner of
+            // the window. Pixel Perfect letterboxes the game into the middle of a larger one, and a
+            // card anchored to the window lands in the black bars where it is easy to miss.
+            var rect = new Rect(screen.Area.x + margin.x, screen.Area.y + margin.y,
                 labelWidth + gutter + keyWidth + pad * 2f,
                 _labelColumn.Count * lineHeight + pad * 2f);
 

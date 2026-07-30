@@ -74,6 +74,9 @@ namespace Ashburn.Core
 
             EnsureStyles();
 
+            // Everything below is measured in the game's own 640x360 pixels. See Imgui.Scaled.
+            using var screen = Imgui.Scaled();
+
             var key = BindingText.FirstKeyboard(interactor.InteractAction);
             var keySize = _key.CalcSize(new GUIContent(key));
             var textSize = _text.CalcSize(new GUIContent(sentence));
@@ -85,7 +88,7 @@ namespace Ashburn.Core
 
             // Centred on the camera's viewport, not the window: Pixel Perfect letterboxes the game
             // into the middle of a larger window and the window's centre is not the picture's.
-            var viewport = Viewport();
+            var viewport = screen.Area;
             var bar = new Rect(
                 viewport.x + (viewport.width - width) * 0.5f,
                 viewport.yMax - bottomMargin - height,
@@ -151,17 +154,6 @@ namespace Ashburn.Core
             var tagged = GameObject.FindGameObjectWithTag(viewerTag);
             _interactor = tagged != null ? tagged.GetComponent<PlayerInteractor>() : null;
             return _interactor;
-        }
-
-        Rect Viewport()
-        {
-            var camera = Camera.main;
-            if (camera == null)
-                return new Rect(0f, 0f, Screen.width, Screen.height);
-
-            // pixelRect counts up from the bottom of the window, GUI coordinates down from the top.
-            var view = camera.pixelRect;
-            return new Rect(view.x, Screen.height - view.yMax, view.width, view.height);
         }
 
         void EnsureStyles()

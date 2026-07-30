@@ -122,7 +122,10 @@ namespace Ashburn.Core
 
             EnsureStyles();
 
-            var view = Viewport();
+            // Measured in the game's own 640x360 pixels. See Imgui.Scaled.
+            using var screen = Imgui.Scaled();
+
+            var view = screen.Area;
             Imgui.Fill(view, new Color(0f, 0f, 0f, 0.82f));
 
             var box = new Rect(view.x, view.y + view.height * 0.42f, view.width, 60f);
@@ -130,17 +133,6 @@ namespace Ashburn.Core
 
             GUI.Label(new Rect(box.x, box.yMax, box.width, 24f),
                       "R 또는 Enter — 처음부터", _line);
-        }
-
-        Rect Viewport()
-        {
-            var camera = Camera.main;
-            if (camera == null)
-                return new Rect(0f, 0f, Screen.width, Screen.height);
-
-            // pixelRect counts up from the bottom of the window, GUI coordinates down from the top.
-            var view = camera.pixelRect;
-            return new Rect(view.x, Screen.height - view.yMax, view.width, view.height);
         }
 
         void EnsureStyles()

@@ -233,10 +233,13 @@ namespace Ashburn.Core
 
             EnsureStyles();
 
-            // Anchored to the camera's viewport rather than the window. Pixel Perfect letterboxes the
-            // game into the middle of a larger window, and centring on the window would put the panel
-            // off-centre over the picture.
-            var viewport = Viewport();
+            // Measured in the game's own 640x360 pixels, anchored to the camera's viewport rather
+            // than the window: Pixel Perfect letterboxes the game into the middle of a larger
+            // window, and centring on the window would put the panel off-centre over the picture.
+            // See Imgui.Scaled.
+            using var screen = Imgui.Scaled();
+
+            var viewport = screen.Area;
             Imgui.Fill(viewport, dimColour);
 
             const float pad = 11f;
@@ -298,7 +301,10 @@ namespace Ashburn.Core
             if (_itemsStale)
                 RebuildItems();
 
-            var viewport = Viewport();
+            // Measured in the game's own 640x360 pixels. See Imgui.Scaled.
+            using var screen = Imgui.Scaled();
+
+            var viewport = screen.Area;
             Imgui.Fill(viewport, dimColour);
 
             const float pad = 11f;
@@ -410,17 +416,6 @@ namespace Ashburn.Core
                     GUI.Label(new Rect(body.x + labelWidth + gutter, y, keyWidth, line),
                               keyColumn[i], _label);
             }
-        }
-
-        Rect Viewport()
-        {
-            var camera = Camera.main;
-            if (camera == null)
-                return new Rect(0f, 0f, Screen.width, Screen.height);
-
-            // pixelRect counts up from the bottom of the window, GUI coordinates down from the top.
-            var view = camera.pixelRect;
-            return new Rect(view.x, Screen.height - view.yMax, view.width, view.height);
         }
 
         /// <summary>How many rows of body the open tab needs, for the panel to be that tall.</summary>
