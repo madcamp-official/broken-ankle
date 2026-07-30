@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Ashburn.Interaction;
+using Ashburn.Net;
 using Ashburn.Player;
 using Ashburn.World;
 using Photon.Pun;
@@ -26,6 +28,7 @@ namespace Ashburn.Cutscenes
         string _targetMap;
         string _targetEntry;
         string _advanceKey;
+        string _arrivalReadyPrefix;
         int _advanceCounter;
         int _pendingAdvancePulses;
         bool _running;
@@ -102,6 +105,7 @@ namespace Ashburn.Cutscenes
             _targetEntry = targetEntry;
             _dialogueId = dialogueId;
             _advanceKey = "cutscene:" + sequenceId + ":arrivalAdvance";
+            _arrivalReadyPrefix = "cutscene:" + sequenceId + ":arrived:";
             _advanceCounter = 0;
             _pendingAdvancePulses = 0;
             _participants.Clear();
@@ -166,9 +170,17 @@ namespace Ashburn.Cutscenes
                         MapTravel.Go(rig.gameObject, _targetMap, _targetEntry);
                 }
 
-                // Each client moves only the character it owns. The post-escape dialogue cannot
-                // start while the partner is still in the company lobby.
-                while (!AllParticipantsArrived())
+                while (!AllControlledArrivedLocally())
+                    yield return null;
+
+                PublishLocalArrivals();
+
+                // The remote copy's MapPresence can trail the owner's actual map transition by
+                // several packets, or remain elsewhere while that map is loading. Waiting on that
+                // copy left one client's story lock held forever. Each owner now publishes its
+                // arrival directly, so both machines release the same beat from authoritative
+                // player slots rather than a visual replica.
+                while (!AllRoomPlayersArrived())
                     yield return null;
 
                 while (DialogueManager.IsPlaying)
@@ -222,17 +234,17 @@ namespace Ashburn.Cutscenes
             }
         }
 
-        bool AllParticipantsArrived()
+        bool AllControlledArrivedLocally()
         {
-            if (_participants.Count == 0)
+            if (_controlled.Count == 0)
                 return true;
 
-            foreach (var rig in _participants)
+            foreach (var rig in _controlled)
             {
                 if (rig == null)
                     return false;
 
-                if (rig.IsControlled && MapTravel.IsTravelling(rig.gameObject))
+                if (MapTravel.IsTravelling(rig.gameObject))
                     return false;
 
                 var presence = rig.GetComponent<MapPresence>();
@@ -241,6 +253,52 @@ namespace Ashburn.Cutscenes
             }
 
             return true;
+        }
+
+        void PublishLocalArrivals()
+        {
+            if (!PhotonNetwork.InRoom || PhotonNetwork.CurrentRoom == null)
+                return;
+
+            var arrived = new Hashtable();
+            foreach (var rig in _controlled)
+            {
+                if (rig == null)
+                    continue;
+
+                arrived[ArrivalReadyKey(SlotOf(rig))] = true;
+            }
+
+            if (arrived.Count > 0)
+                PhotonNetwork.CurrentRoom.SetCustomProperties(arrived);
+        }
+
+        bool AllRoomPlayersArrived()
+        {
+            if (!PhotonNetwork.InRoom || PhotonNetwork.CurrentRoom == null)
+                return AllControlledArrivedLocally();
+
+            var room = PhotonNetwork.CurrentRoom;
+            foreach (var player in PhotonNetwork.PlayerList)
+            {
+                if (!player.CustomProperties.TryGetValue(NetworkGame.SlotKey, out var value) ||
+                    !TryReadInt(value, out var slot) ||
+                    !room.CustomProperties.TryGetValue(ArrivalReadyKey(slot), out var arrived) ||
+                    !IsTrue(arrived))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        string ArrivalReadyKey(int slot) => _arrivalReadyPrefix + slot;
+
+        static int SlotOf(PlayerRig rig)
+        {
+            var inventory = rig != null ? rig.GetComponent<Inventory>() : null;
+            return inventory != null ? inventory.Slot : 0;
         }
 
         bool NetworkAdvancePressed()
@@ -281,5 +339,7 @@ namespace Ashburn.Cutscenes
                     return false;
             }
         }
+
+        static bool IsTrue(object value) => value is bool flag && flag;
     }
 }

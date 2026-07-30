@@ -53,8 +53,7 @@ namespace Ashburn.Monster
                 new Vector2(18f, 10.8f),
                 activationFlag: "Story:CorpFirstWardenAwake",
                 deactivationFlag: "Story:CorpFirstWardenEscaped",
-                protectionStartFlag: "Story:CorpFirstWardenAwake",
-                protectionEndFlag: "Story:CorpFirstWardenEscaped"),
+                protectionStartFlag: "Story:CorpFirstWardenAwake"),
 
             new(
                 "Village Map",
