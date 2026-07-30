@@ -50,6 +50,64 @@ namespace Ashburn.Player
         Quaternion _lastRotation;
         bool _hasDrawn;
 
+        /// <summary>
+        /// Every beam currently lit. A beam that is switched off has its object deactivated, which
+        /// takes it out of here on its own — so this is the list of lights actually shining.
+        /// </summary>
+        public static IReadOnlyList<FlashlightOcclusion> Lit => _lit;
+
+        static readonly List<FlashlightOcclusion> _lit = new();
+
+        /// <summary>
+        /// Whether this beam is falling on <paramref name="point"/>, and how squarely.
+        ///
+        /// Answered from the fan the occlusion already cast, so a monster asking costs no rays and
+        /// gets exactly the beam the player can see — same cone, same walls, same reach. Working it
+        /// out separately would eventually disagree with the picture, and being caught by light
+        /// that is not on screen is the worst kind of unfair.
+        /// </summary>
+        public bool Illuminates(Vector2 point, out float strength)
+        {
+            strength = 0f;
+
+            // Nothing has been cast yet, so there is no beam to be caught in.
+            if (!_hasDrawn || _rayReach == null)
+                return false;
+
+            var local = (Vector2)(Quaternion.Inverse(_self.rotation) *
+                                  (Vector3)(point - (Vector2)_self.position));
+
+            // Behind the lamp. The cone opens along local +Y and nothing spills backwards.
+            if (local.y <= 0f)
+                return false;
+
+            var angle = Mathf.Atan2(local.x, local.y);
+            if (Mathf.Abs(angle) > _halfAngleRad)
+                return false;
+
+            var t = Mathf.InverseLerp(-_halfAngleRad, _halfAngleRad, angle);
+            var ray = Mathf.Clamp(Mathf.RoundToInt(t * (rayCount - 1)), 0, rayCount - 1);
+
+            var distance = local.magnitude;
+            if (distance > _rayReach[ray])
+                return false;
+
+            // Linear, and for the same reason the noise system is: this drives something a player
+            // has to be able to feel, and inverse-square makes most of the beam read as nothing.
+            var reach = _height / _sourceSprite.pixelsPerUnit;
+            strength = Mathf.Clamp01(1f - distance / reach);
+            return true;
+        }
+
+        void OnEnable() => _lit.Add(this);
+
+        void OnDisable() => _lit.Remove(this);
+
+        // A static list outlives a play session when the editor skips its domain reload, and beams
+        // from the last run would be handed out as lights that are still on.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetOnLoad() => _lit.Clear();
+
         void Awake()
         {
             _light = GetComponent<Light2D>();
