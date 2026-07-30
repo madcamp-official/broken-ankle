@@ -26,6 +26,14 @@ namespace Ashburn.Cutscenes
         [SerializeField] string openingDialogueId;
         [SerializeField] CutsceneWaypointMover mover;
         [SerializeField] string movementDialogueId;
+
+        [Tooltip("Seconds each line of the movement dialogue holds before moving on by itself. " +
+                 "The players are being carried along a path while it plays and are not being " +
+                 "asked to acknowledge it — and the beat cannot travel to the next map until the " +
+                 "last line is done, so waiting on a keypress here strands them. Zero waits for " +
+                 "a press like every other beat.")]
+        [SerializeField] float movementAutoAdvanceSeconds = 1.8f;
+
         [SerializeField] string closingDialogueId;
         [SerializeField] bool emitOpeningNoise = true;
         [SerializeField] float openingNoiseRange = 11f;
@@ -60,6 +68,11 @@ namespace Ashburn.Cutscenes
         int _advanceCounter;
         int _pendingAdvancePulses;
         bool _handedOff;
+
+        // True while a dialogue is running itself off a clock. Presses must not be published then:
+        // nothing is consuming them, and the pulses would survive into the closing dialogue and
+        // flush it line by line the moment it opened.
+        bool _selfAdvancing;
 
         /// <summary>
         /// Whether this beat is playing, and the one place that tells <see cref="StoryBeat"/> so.
@@ -273,18 +286,29 @@ namespace Ashburn.Cutscenes
                 if (!string.IsNullOrEmpty(raiseFlagBeforeMovement))
                     WorldState.Raise(raiseFlagBeforeMovement);
 
+                _selfAdvancing = movementAutoAdvanceSeconds > 0f;
+
                 if (!string.IsNullOrEmpty(movementDialogueId))
                     manager.TryPlay(movementDialogueId, lockInput: false, emitNoise: true,
                                     noiseRange: openingNoiseRange,
                                     noisePosition: transform.position, map: map,
                                     raiseFlagOnComplete: null,
-                                    advanceSource: SynchronizedAdvanceSource());
+                                    // No advance source while it runs itself: the counter exists so
+                                    // one player's press moves both screens on, and nobody is
+                                    // pressing. Leaving it in would hand the clock a gate that only
+                                    // opens on a keystroke and put the hang straight back.
+                                    advanceSource: movementAutoAdvanceSeconds > 0f
+                                        ? null
+                                        : SynchronizedAdvanceSource(),
+                                    autoAdvanceSeconds: movementAutoAdvanceSeconds);
 
                 if (mover != null)
                     yield return mover.PlayForAllControlledPlayersRoutine();
 
                 while (DialogueManager.IsPlaying)
                     yield return null;
+
+                _selfAdvancing = false;
 
                 if (!string.IsNullOrEmpty(raiseFlagAfterMovement))
                     WorldState.Raise(raiseFlagAfterMovement);
@@ -320,6 +344,7 @@ namespace Ashburn.Cutscenes
 
                 Running = false;
                 _localPreview = false;
+                _selfAdvancing = false;
             }
         }
 
@@ -422,7 +447,7 @@ namespace Ashburn.Cutscenes
 
         void PublishAdvanceFromLocalPlayer()
         {
-            if (_localPreview || !PhotonNetwork.InRoom ||
+            if (_selfAdvancing || _localPreview || !PhotonNetwork.InRoom ||
                 !DialogueManager.IsPlaying || !LocalAdvancePressed())
             {
                 return;
@@ -526,6 +551,7 @@ namespace Ashburn.Cutscenes
 
             Running = false;
             _localPreview = false;
+            _selfAdvancing = false;
         }
 
         bool SoloPreviewPressed()
