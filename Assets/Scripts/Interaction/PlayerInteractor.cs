@@ -61,6 +61,17 @@ namespace Ashburn.Interaction
         /// <summary>Fires when the target changes, including to null when the player walks away.</summary>
         public event Action<IInteractable> TargetChanged;
 
+        /// <summary>
+        /// How far the current hold has got, 0..1, or zero when nothing is being held.
+        ///
+        /// Read by the on-screen prompt so the bar fills. A press-and-go interaction never sets it,
+        /// so nothing has to be configured to say which kind a target is.
+        /// </summary>
+        public float HoldProgress { get; private set; }
+
+        IHoldInteractable _holding;
+        float _holdStartedAt;
+
         void Awake()
         {
             _controller = GetComponent<PlayerController>();
@@ -126,7 +137,9 @@ namespace Ashburn.Interaction
             if (_interactAction == null)
                 return;
 
+            _interactAction.started += OnInteractStarted;
             _interactAction.performed += OnInteractPerformed;
+            _interactAction.canceled += OnInteractCanceled;
             _interactAction.Enable();
         }
 
@@ -134,21 +147,82 @@ namespace Ashburn.Interaction
         {
             if (_interactAction != null)
             {
+                _interactAction.started -= OnInteractStarted;
                 _interactAction.performed -= OnInteractPerformed;
+                _interactAction.canceled -= OnInteractCanceled;
                 _interactAction.Disable();
             }
 
+            CancelHold();
             SetTarget(null);
         }
 
-        void Update() => SetTarget(FindBestTarget());
+        void Update()
+        {
+            SetTarget(FindBestTarget());
+            TickHold();
+        }
+
+        void OnInteractStarted(InputAction.CallbackContext _)
+        {
+            // Only a target that asks to be held starts a hold. Everything else runs on performed,
+            // exactly as it did before holds existed.
+            if (_current is IHoldInteractable hold && hold.HoldSeconds > 0f &&
+                hold.CanInteract(gameObject))
+            {
+                _holding = hold;
+                _holdStartedAt = Time.time;
+                HoldProgress = 0f;
+            }
+        }
 
         void OnInteractPerformed(InputAction.CallbackContext _)
         {
+            // A hold is finished by the clock in TickHold, not by the button. Without this the
+            // press that begins the hold would also complete the interaction immediately, because
+            // an action with no interaction on it performs the moment it goes down.
+            if (_holding != null)
+                return;
+
             // Re-check rather than trusting the cached target: a door can lock itself in the same
             // frame the player presses the button, and running it anyway would desync the state.
             if (_current != null && _current.CanInteract(gameObject))
                 _current.Interact(gameObject);
+        }
+
+        void OnInteractCanceled(InputAction.CallbackContext _) => CancelHold();
+
+        /// <summary>
+        /// Counts out a hold, and gives up on it the moment it stops making sense.
+        ///
+        /// Walking away, or the target ceasing to want help — a partner picked up by somebody else,
+        /// a door unlocked from the other side — has to end the hold rather than let it complete on
+        /// something that is no longer there.
+        /// </summary>
+        void TickHold()
+        {
+            if (_holding == null)
+                return;
+
+            if (!ReferenceEquals(_holding, _current) || !_holding.CanInteract(gameObject))
+            {
+                CancelHold();
+                return;
+            }
+
+            HoldProgress = Mathf.Clamp01((Time.time - _holdStartedAt) / _holding.HoldSeconds);
+            if (HoldProgress < 1f)
+                return;
+
+            var finished = _holding;
+            CancelHold();
+            finished.Interact(gameObject);
+        }
+
+        void CancelHold()
+        {
+            _holding = null;
+            HoldProgress = 0f;
         }
 
         IInteractable FindBestTarget()

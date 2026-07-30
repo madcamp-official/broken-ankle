@@ -49,8 +49,24 @@ namespace Ashburn.Player
         bool _networked;
         int _characters;
 
-        /// <summary>The map players are put into. Set once the starting map is up.</summary>
-        public MapZone Zone => _zone;
+        /// <summary>
+        /// The map players are put into, once the starting map is up.
+        ///
+        /// Looked up again when the one being held has been destroyed. The starting map is unloaded
+        /// like any other the moment the last person walks out of it, and the reference left behind
+        /// is a destroyed object — which is not null enough to fail a null check but is null enough
+        /// that everything handed it reports having no map at all.
+        /// </summary>
+        public MapZone Zone
+        {
+            get
+            {
+                if (_zone == null)
+                    _zone = MapZone.Find(startingMap);
+
+                return _zone;
+            }
+        }
 
         /// <summary>Scene name of the map the game opens in.</summary>
         public string StartingMap => startingMap;
@@ -183,7 +199,7 @@ namespace Ashburn.Player
             // cross a map — the noise bus, the power, the darkness — reads it from here.
             var presence = character.GetComponent<MapPresence>();
             if (presence != null)
-                presence.Enter(_zone);
+                presence.Enter(Zone);
             else
                 Debug.LogError($"'{character.name}' has no {nameof(MapPresence)}, so it will " +
                                "neither hear anything nor be heard.", character);
@@ -228,7 +244,7 @@ namespace Ashburn.Player
         {
             if (!string.IsNullOrEmpty(startingEntry))
             {
-                var entry = MapEntry.Find(startingEntry, _zone);
+                var entry = MapEntry.Find(startingEntry, Zone);
                 if (entry != null)
                     return entry.PointFor(index);
 
@@ -236,12 +252,13 @@ namespace Ashburn.Player
                                  "Using its spawn points instead.", this);
             }
 
-            var points = _zone != null ? _zone.GetComponentsInChildren<SpawnPoint>(true) : null;
+            var zone = Zone;
+            var points = zone != null ? zone.GetComponentsInChildren<SpawnPoint>(true) : null;
             if (points == null || points.Length == 0)
             {
                 Debug.LogWarning($"Map '{startingMap}' has no {nameof(SpawnPoint)} in it, so " +
                                  "everybody starts on its origin, most likely inside a wall.", this);
-                return _zone != null ? _zone.transform.position : transform.position;
+                return zone != null ? zone.transform.position : transform.position;
             }
 
             return points[Mathf.Clamp(index, 0, points.Length - 1)].transform.position;

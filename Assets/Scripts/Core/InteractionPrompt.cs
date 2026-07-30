@@ -123,7 +123,11 @@ namespace Ashburn.Core
             if (action == null)
                 return;
 
-            var completion = action.GetTimeoutCompletionPercentage();
+            // Two sources, whichever is running. The Input System counts out a Hold or a SlowTap
+            // put on the action itself; the interactor counts out a target that asked to be held
+            // without the shared key becoming a hold for doors and breakers too.
+            var completion = Mathf.Max(action.GetTimeoutCompletionPercentage(),
+                                       interactor.HoldProgress);
             if (completion <= 0f)
                 return;
 

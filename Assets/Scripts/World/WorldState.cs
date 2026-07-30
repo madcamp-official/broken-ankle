@@ -84,13 +84,24 @@ namespace Ashburn.World
         /// <summary>The start of every <see cref="CarryFlag"/> belonging to one player.</summary>
         public static string CarryPrefix(int slot) => "carry:" + slot + ":";
 
-        // Statics outlive a play session when the editor skips its domain reload, and a door left
-        // open from the last run would be open before anybody had found its key.
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetOnLoad()
+        /// <summary>
+        /// Forgets everything, for a run that is starting over.
+        ///
+        /// Reloading the scene is not enough on its own: this lives in a static, so without it a
+        /// second attempt would begin with every door already unlocked by the first.
+        ///
+        /// The listeners go too. They belong to objects the reload is about to destroy, and a flag
+        /// raised afterwards would be delivered to a door that no longer exists.
+        /// </summary>
+        public static void Clear()
         {
             _set.Clear();
             Set = null;
         }
+
+        // Statics outlive a play session when the editor skips its domain reload, and a door left
+        // open from the last run would be open before anybody had found its key.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetOnLoad() => Clear();
     }
 }

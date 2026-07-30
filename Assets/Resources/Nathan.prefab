@@ -360,7 +360,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 82980660af2e2d84a9ccbb08d44ba3b3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Monster.Captive
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Monster.Downed
   disableWhileHeld:
   - {fileID: 4619516547538424807}
   - {fileID: 5971796654612665053}

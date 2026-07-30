@@ -43,8 +43,62 @@ namespace Ashburn.World
         /// <summary>
         /// Identifies the map to systems that must not reach across one — the noise bus above all.
         /// Only meaningful while the map is loaded; slots are reused once it is gone.
+        ///
+        /// Local to this machine. It is the slot, and two clients claim slots in the order they
+        /// happened to open maps in, so it must never cross the wire. Use <see cref="SharedId"/>.
         /// </summary>
         public int MapId => _slot;
+
+        /// <summary>
+        /// A number for this map that means the same thing on every machine.
+        ///
+        /// The slot cannot do this job. It is claimed in load order, and two players who walked
+        /// into the same house by different routes give it different numbers — which is exactly how
+        /// a partner ends up standing a thousand units away with nothing reporting an error.
+        /// Derived from the name instead, which both machines got from the same commit.
+        /// </summary>
+        public int SharedId => SharedIdOf(Id);
+
+        /// <summary>Where this map's origin sits in world space, which is its slot.</summary>
+        public Vector2 Origin => transform.position;
+
+        /// <summary>
+        /// The shared number for a map name.
+        ///
+        /// FNV-1a rather than <c>string.GetHashCode</c>, which is not promised to be stable between
+        /// runs or platforms, or the scene's build index, which changes the day somebody reorders
+        /// the build list and would silently move every player.
+        /// </summary>
+        public static int SharedIdOf(string mapName)
+        {
+            if (string.IsNullOrEmpty(mapName))
+                return 0;
+
+            unchecked
+            {
+                const uint offset = 2166136261;
+                const uint prime = 16777619;
+
+                var hash = offset;
+                foreach (var c in mapName)
+                {
+                    hash ^= c;
+                    hash *= prime;
+                }
+
+                return (int)hash;
+            }
+        }
+
+        /// <summary>The loaded map with this shared number, or null when it is not open here.</summary>
+        public static MapZone FindShared(int sharedId)
+        {
+            foreach (var zone in _loaded)
+                if (zone != null && zone.SharedId == sharedId)
+                    return zone;
+
+            return null;
+        }
 
         /// <summary>Every map currently in memory.</summary>
         public static IReadOnlyList<MapZone> Loaded => _loaded;

@@ -22,6 +22,9 @@ namespace Ashburn.World
     {
         static readonly Dictionary<string, int> _claims = new();
 
+        /// <summary>Maps whose load has been started and has not finished.</summary>
+        static readonly HashSet<string> _loading = new();
+
         /// <summary>Maps currently held, with how many players are holding each.</summary>
         public static IReadOnlyDictionary<string, int> Claims => _claims;
 
@@ -47,11 +50,27 @@ namespace Ashburn.World
             if (IsLoaded(sceneName))
                 yield break;
 
+            // Somebody else asked for this map and it is still on its way. IsLoaded is false for
+            // the whole of that, so without this the second caller starts a second load of the same
+            // scene: two copies in memory, two MapZones, two slots claimed, and every lookup by
+            // name answering with whichever copy it found first. Two players walking through the
+            // same door together is all it takes.
+            if (_loading.Contains(sceneName))
+            {
+                while (_loading.Contains(sceneName))
+                    yield return null;
+
+                yield break;
+            }
+
+            _loading.Add(sceneName);
+
             var load = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
             if (load == null)
             {
                 Debug.LogError($"Could not load the map '{sceneName}'. Is it in " +
                                "File > Build Profiles > Scene List?");
+                _loading.Remove(sceneName);
                 Release(sceneName);
                 yield break;
             }
@@ -62,6 +81,10 @@ namespace Ashburn.World
             // A frame for the arriving scene's Awake and Start: the zone claims its slot and moves
             // the map, and anything placed before that would be standing at the origin.
             yield return null;
+
+            // After the frame, so anybody who was waiting wakes up to a map that has already
+            // claimed its slot rather than to one still sitting on the origin.
+            _loading.Remove(sceneName);
 
             if (MapZone.Find(sceneName) == null)
                 Debug.LogError($"The map '{sceneName}' loaded but has no {nameof(MapZone)} on a " +
@@ -95,7 +118,21 @@ namespace Ashburn.World
             operation.completed += _ => Resources.UnloadUnusedAssets();
         }
 
+        /// <summary>
+        /// Drops every hold without unloading anything, for a run that is starting over.
+        ///
+        /// The scenes themselves are not this method's business: a restart loads the systems scene
+        /// on its own, which takes every additively loaded map with it. What has to go is the
+        /// count, because it is a static and a second attempt would otherwise begin believing the
+        /// maps of the first are still up.
+        /// </summary>
+        public static void ForgetClaims()
+        {
+            _claims.Clear();
+            _loading.Clear();
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetOnLoad() => _claims.Clear();
+        static void ResetOnLoad() => ForgetClaims();
     }
 }

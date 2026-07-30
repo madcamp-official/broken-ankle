@@ -1,6 +1,9 @@
+using Ashburn.Monster;
 using Ashburn.Player;
+using Ashburn.World;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace Ashburn.Net
 {
@@ -15,6 +18,12 @@ namespace Ashburn.Net
     /// holding the keyboard has already run it into the walls; this end only has to catch up to it
     /// smoothly. That is the right trade for a slow horror game, where a partner sliding half a step
     /// is invisible and a partner lagging behind their own input is not.
+    ///
+    /// The position is measured from the map's own origin rather than from the world's, and the map
+    /// is named alongside it. World coordinates were tried and could not survive the first door:
+    /// maps are moved to a slot claimed in load order, two players who reach the same house by
+    /// different routes number that house differently, and their partner is then a thousand units
+    /// from where they are standing with nothing reporting a problem.
     /// </summary>
     [RequireComponent(typeof(PhotonView))]
     public class PlayerSync : MonoBehaviourPun, IPunObservable
@@ -23,6 +32,9 @@ namespace Ashburn.Net
         [SerializeField] PlayerController controller;
         [SerializeField] FlashlightToggle flashlight;
         [SerializeField] HearingRingToggle headset;
+
+        [Tooltip("Whether this player is on the floor. Left empty the character's own is used.")]
+        [SerializeField] Downed downed;
 
         [Tooltip("The beam's transform, whose angle is sent. Left empty the flashlight's own object " +
                  "is used.")]
@@ -38,13 +50,24 @@ namespace Ashburn.Net
         [SerializeField] float teleportOver = 4f;
 
         Rigidbody2D _body;
+        MapPresence _presence;
 
+        // Hidden while the partner is in a map this machine has not opened. The lights are listed
+        // separately because a Light2D is not a Renderer, and a beam left burning in a room its
+        // owner walked out of is the most visible thing in a dark game.
+        Renderer[] _renderers;
+        Light2D[] _lights;
+        bool _visible = true;
+
+        int _netMap;
+        Vector2 _netLocal;
         Vector2 _netPosition;
         Vector2 _netMoveInput;
         MovementMode _netMode = MovementMode.Walk;
         float _netBeamAngle;
         bool _netFlashlight = true;
         bool _netHeadset = true;
+        bool _netDowned;
         bool _heard;
 
         Vector2 _velocity;
@@ -52,6 +75,9 @@ namespace Ashburn.Net
         void Awake()
         {
             _body = GetComponent<Rigidbody2D>();
+            _presence = GetComponent<MapPresence>();
+            _renderers = GetComponentsInChildren<Renderer>(true);
+            _lights = GetComponentsInChildren<Light2D>(true);
 
             if (controller == null)
                 controller = GetComponent<PlayerController>();
@@ -61,6 +87,9 @@ namespace Ashburn.Net
 
             if (headset == null)
                 headset = GetComponent<HearingRingToggle>();
+
+            if (downed == null)
+                downed = GetComponent<Downed>();
 
             if (beam == null && flashlight != null)
                 beam = flashlight.transform;
@@ -72,34 +101,78 @@ namespace Ashburn.Net
         {
             if (stream.IsWriting)
             {
-                stream.SendNext(_body != null ? _body.position : (Vector2)transform.position);
+                // Named, and measured from that map's origin. Both halves are needed: the number
+                // says which world this position belongs to, and without it the receiver cannot
+                // know whether it even has that world open.
+                var zone = _presence != null ? _presence.Zone : null;
+                var here = _body != null ? _body.position : (Vector2)transform.position;
+
+                stream.SendNext(zone != null ? zone.SharedId : 0);
+                stream.SendNext(zone != null ? here - zone.Origin : here);
                 stream.SendNext(controller != null ? controller.MoveInput : Vector2.zero);
                 stream.SendNext((byte)(controller != null ? controller.Mode : MovementMode.Walk));
                 stream.SendNext(beam != null ? beam.eulerAngles.z : 0f);
                 stream.SendNext(flashlight != null && flashlight.IsOn);
                 stream.SendNext(headset != null && headset.IsOn);
+                stream.SendNext(downed != null && downed.IsDown);
                 return;
             }
 
-            _netPosition = (Vector2)stream.ReceiveNext();
+            _netMap = (int)stream.ReceiveNext();
+            _netLocal = (Vector2)stream.ReceiveNext();
             _netMoveInput = (Vector2)stream.ReceiveNext();
             _netMode = (MovementMode)(byte)stream.ReceiveNext();
             _netBeamAngle = (float)stream.ReceiveNext();
             _netFlashlight = (bool)stream.ReceiveNext();
             _netHeadset = (bool)stream.ReceiveNext();
+            _netDowned = (bool)stream.ReceiveNext();
 
             // The first packet is where this character actually is, not somewhere to ease towards
             // from the spawn point it was built at.
             if (!_heard)
             {
                 _heard = true;
-                Place(_netPosition);
+                if (Resolve())
+                    Place(_netPosition);
             }
+        }
+
+        /// <summary>
+        /// Turns the map-local position just heard into a position in this machine's world, and
+        /// records which map the partner is in.
+        ///
+        /// False when that map is not open here, which is the ordinary state of affairs while one
+        /// player is in the house and the other is out on the street. There is no sensible place to
+        /// put somebody who is not in any world this machine has loaded, so they are hidden instead
+        /// of being drawn at a coordinate that means nothing.
+        /// </summary>
+        bool Resolve()
+        {
+            var zone = MapZone.FindShared(_netMap);
+            if (zone == null)
+                return false;
+
+            _netPosition = _netLocal + zone.Origin;
+
+            // Kept current rather than set once at spawn. The noise bus asks a character which map
+            // it is in, and a partner who walked out of the starting map would otherwise go on
+            // being heard in it — and go on not being heard where they actually are.
+            if (_presence != null && _presence.Zone != zone)
+                _presence.Enter(zone);
+
+            return true;
         }
 
         void Update()
         {
             if (photonView.IsMine || !_heard)
+                return;
+
+            // Their map may have been opened or closed on this machine since the last packet: a
+            // partner becomes placeable the moment this player follows them through the door.
+            var inOurWorld = Resolve();
+            SetVisible(inOurWorld);
+            if (!inOurWorld)
                 return;
 
             var here = _body != null ? _body.position : (Vector2)transform.position;
@@ -126,6 +199,35 @@ namespace Ashburn.Net
 
             if (headset != null && headset.IsOn != _netHeadset)
                 headset.Apply(_netHeadset);
+
+            // Applied rather than requested: this is the owner's own account of themselves, and
+            // asking them to change it would send their state back to them.
+            if (downed != null && downed.IsDown != _netDowned)
+                downed.Apply(_netDowned);
+        }
+
+        /// <summary>
+        /// Draws or hides the partner, without switching the character off.
+        ///
+        /// Only the renderers. Disabling the object would take its <see cref="PlayerSync"/> with it
+        /// and there would be nothing left listening for the packet that says they came back.
+        /// </summary>
+        void SetVisible(bool visible)
+        {
+            if (_visible == visible)
+                return;
+
+            _visible = visible;
+
+            if (_renderers != null)
+                foreach (var renderer in _renderers)
+                    if (renderer != null)
+                        renderer.enabled = visible;
+
+            if (_lights != null)
+                foreach (var light in _lights)
+                    if (light != null)
+                        light.enabled = visible;
         }
 
         void Place(Vector2 position)
