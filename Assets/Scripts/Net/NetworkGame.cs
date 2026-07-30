@@ -46,6 +46,16 @@ namespace Ashburn.Net
         /// <summary>The room being joined or held, in whatever case the player typed it.</summary>
         public string RoomName => roomName;
 
+        /// <summary>
+        /// The version two builds have to share to be able to see each other.
+        ///
+        /// Public because a mismatch has no error to report. Photon partitions matchmaking by it, so
+        /// two players who type the same code on different builds each get a room of that name in
+        /// their own version's world, both succeed, and both wait alone forever. Nothing fails, so
+        /// the only way to say what happened is to show this and let them compare.
+        /// </summary>
+        public string Version => gameVersion;
+
         /// <summary>How far along the connection is, for a title screen to report.</summary>
         public enum Stage
         {
