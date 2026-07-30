@@ -226,7 +226,7 @@ MonoBehaviour:
   actionMaps:
   - Player
   - Player2
-  startingMap: Village Map
+  startingMap: House
   startingEntry: 
   offlinePlayers: 2
   offlineViewerIndex: 0
