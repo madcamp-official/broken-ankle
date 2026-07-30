@@ -245,6 +245,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1176205780
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1176205782}
+  - component: {fileID: 1176205781}
+  m_Layer: 0
+  m_Name: InteractionPrompt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1176205781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1176205780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bd8396488e1a764faf6d82e1eaef2b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Core.InteractionPrompt
+  viewerTag: Player
+  bottomMargin: 28
+  fontSize: 12
+  gutter: 9
+  textColour: {r: 0.95, g: 0.95, b: 0.98, a: 1}
+  panelColour: {r: 0.05, g: 0.05, b: 0.07, a: 0.86}
+  keyColour: {r: 0.22, g: 0.23, b: 0.28, a: 0.96}
+  progressColour: {r: 0.85, g: 0.76, b: 0.42, a: 0.95}
+  progressHeight: 3
+--- !u!4 &1176205782
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1176205780}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1700497067
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -509,6 +562,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Core.PauseMenu
   toggleKey: 60
+  itemsKey: 3
   inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   maps:
   - Player
@@ -562,3 +616,4 @@ SceneRoots:
   - {fileID: 1727549900}
   - {fileID: 2099118211}
   - {fileID: 2118870472}
+  - {fileID: 1176205782}

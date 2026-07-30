@@ -48,6 +48,16 @@ namespace Ashburn.Interaction
         /// </summary>
         public IInteractable CurrentTarget => _current;
 
+        /// <summary>
+        /// The action this character interacts with, or null before Awake has found it.
+        ///
+        /// Exposed so the on-screen hint can name the key the player is actually meant to press, and
+        /// read how far a hold has got, rather than being told a key by hand and lying about it once
+        /// the bindings move. It is this character's private copy of the asset — see Awake — so the
+        /// key it names is the one this character responds to even in the split-keyboard test.
+        /// </summary>
+        public InputAction InteractAction => _interactAction;
+
         /// <summary>Fires when the target changes, including to null when the player walks away.</summary>
         public event Action<IInteractable> TargetChanged;
 

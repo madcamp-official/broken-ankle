@@ -43,10 +43,31 @@ namespace Ashburn.Core
         /// </summary>
         public static string Keyboard(InputAction action)
         {
-            if (action == null)
-                return string.Empty;
+            // A stick composite reads as four separate keys, which is exactly what the player
+            // presses, so they are joined rather than summarised.
+            return string.Join(" ", KeyboardKeys(action));
+        }
 
+        /// <summary>
+        /// The first keyboard key of one action, or empty.
+        ///
+        /// For a one-line prompt, where naming every alternative is worse than naming one: player B's
+        /// interact key is bound twice and "Num 0 R Ctrl 상자를 연다" reads as three words of
+        /// nonsense followed by the sentence.
+        /// </summary>
+        public static string FirstKeyboard(InputAction action)
+        {
+            foreach (var key in KeyboardKeys(action))
+                return key;
+
+            return string.Empty;
+        }
+
+        static List<string> KeyboardKeys(InputAction action)
+        {
             var parts = new List<string>();
+            if (action == null)
+                return parts;
 
             foreach (var binding in action.bindings)
             {
@@ -66,9 +87,7 @@ namespace Ashburn.Core
                     parts.Add(readable);
             }
 
-            // A stick composite reads as four separate keys, which is exactly what the player
-            // presses, so they are joined rather than summarised.
-            return string.Join(" ", parts);
+            return parts;
         }
 
         /// <summary>
