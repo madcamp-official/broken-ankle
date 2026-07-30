@@ -23,7 +23,7 @@ namespace Ashburn.Player
 
         [Header("Movement")]
         [Tooltip("World units per second while walking. One unit is one 32x32 tile at PPU 32.")]
-        [SerializeField] float moveSpeed = 3.5f;
+        [SerializeField] float moveSpeed = 2.9f;
 
         [Tooltip("Multiplies walk speed while sprinting. Fast, but the loudest way to travel.")]
         [SerializeField] float runMultiplier = 1.7f;

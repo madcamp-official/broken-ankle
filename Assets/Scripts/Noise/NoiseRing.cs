@@ -80,7 +80,7 @@ namespace Ashburn.Noise
                  "sound, against whatever made it — a monster at arm's length is red even with the " +
                  "partner across the map.")]
         [FormerlySerializedAs("allyRecognitionRange")]
-        [SerializeField] float recognitionRange = 14f;
+        [SerializeField] float recognitionRange = 5f;
 
         readonly List<Ripple> _ripples = new();
         Mesh _mesh;

@@ -263,9 +263,9 @@ MonoBehaviour:
   suspicionPerNoise: 0.55
   suspicionDecay: 0.22
   chaseThreshold: 0.75
-  patrolSpeed: 1.6
-  chaseSpeed: 3.2
-  searchSpeed: 2
+  patrolSpeed: 1.9
+  chaseSpeed: 4.6
+  searchSpeed: 2.6
   obstacles:
     serializedVersion: 2
     m_Bits: 55

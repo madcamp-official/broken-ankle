@@ -271,7 +271,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Player.PlayerController
   inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   actionMap: Player
-  moveSpeed: 3.5
+  moveSpeed: 2.9
   runMultiplier: 1.7
   crouchMultiplier: 0.45
   acceleration: 0.08
@@ -1000,7 +1000,7 @@ MonoBehaviour:
   restColour: {r: 0.5, g: 0.55, b: 0.7, a: 1}
   restAlpha: 0.18
   ally: {fileID: 0}
-  allyRecognitionRange: 9
+  allyRecognitionRange: 5
 --- !u!1 &5462522140775758744
 GameObject:
   m_ObjectHideFlags: 0

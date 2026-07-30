@@ -29,16 +29,16 @@ namespace Ashburn.Core
         {
             Settings,
             Controls,
-            Items,
         }
 
         [Header("Input")]
-        [Tooltip("Opens and closes the menu. Read straight off the keyboard rather than through an " +
-                 "action, because the action maps are what this switches off.")]
+        [Tooltip("Opens and closes the menu — the settings and the key list. Read straight off the " +
+                 "keyboard rather than through an action, because the action maps are what this " +
+                 "switches off.")]
         [SerializeField] Key toggleKey = Key.Escape;
 
-        [Tooltip("Opens the menu straight on 소지품, and closes it again from there. Checking what " +
-                 "you are carrying is the one thing worth its own key.")]
+        [Tooltip("Opens and closes the pockets, which are their own panel and nothing else. What " +
+                 "you are carrying is checked mid-game and often; the settings are not.")]
         [SerializeField] Key itemsKey = Key.Tab;
 
         [Header("Controls list")]
@@ -80,6 +80,7 @@ namespace Ashburn.Core
 
         Tab _tab = Tab.Settings;
         bool _open;
+        bool _itemsOpen;
         bool _itemsStale = true;
         InputActionMap _map;
 
@@ -105,10 +106,10 @@ namespace Ashburn.Core
         {
             Inventory.Changed -= OnInventoryChanged;
 
-            // Leaving the object disabled with the menu open would strand the players with no input
-            // and nothing on screen to explain why.
-            if (_open)
-                SetOpen(false);
+            // Leaving the object disabled with either panel open would strand the players with no
+            // input and nothing on screen to explain why.
+            if (_open || _itemsOpen)
+                SetOpen(false, false);
         }
 
         void OnInventoryChanged() => _itemsStale = true;
@@ -128,36 +129,38 @@ namespace Ashburn.Core
             if (keyboard == null)
                 return;
 
+            // Two panels, two keys, and each key only ever works its own. They were one screen with
+            // the pockets as a third tab, which meant reaching for your pockets mid-game put the
+            // volume slider on top of you and reading the settings was two presses from an
+            // inventory you did not want.
+            // Each key toggles its own panel and shuts the other. Pressing one while the other is
+            // up is a player changing their mind, not asking for both.
             if (keyboard[toggleKey].wasPressedThisFrame)
             {
-                SetOpen(!_open);
+                SetOpen(!_open, false);
                 return;
             }
 
-            if (!keyboard[itemsKey].wasPressedThisFrame)
-                return;
-
-            // Tab is a way in and a way out of the pockets, not a way of cycling tabs: pressing it
-            // while already reading them means the player is done. Pressing it while the menu is up
-            // on something else takes them there rather than closing, which is what happens if you
-            // reach for your pockets from the settings.
-            if (_open && _tab == Tab.Items)
-            {
-                SetOpen(false);
-                return;
-            }
-
-            _tab = Tab.Items;
-            if (!_open)
-                SetOpen(true);
+            if (keyboard[itemsKey].wasPressedThisFrame)
+                SetOpen(false, !_itemsOpen);
         }
 
-        void SetOpen(bool open)
+        /// <summary>
+        /// Shows or hides the two panels.
+        ///
+        /// Never both at once. They are drawn in the same place and each dims the picture behind
+        /// it, so a second one over the first is unreadable — and whichever key was pressed is a
+        /// statement about which of the two the player wants.
+        /// </summary>
+        void SetOpen(bool menu, bool items)
         {
-            _open = open;
+            _open = menu;
+            _itemsOpen = items;
+
+            var open = menu || items;
             AnyOpen = open;
 
-            if (open)
+            if (items)
                 _itemsStale = true;
 
             // Every character this machine drives, which in the split-keyboard test is both of them:
@@ -219,13 +222,16 @@ namespace Ashburn.Core
 
         void OnGUI()
         {
+            if (_itemsOpen)
+            {
+                DrawItemsPanel();
+                return;
+            }
+
             if (!_open)
                 return;
 
             EnsureStyles();
-
-            if (_tab == Tab.Items && _itemsStale)
-                RebuildItems();
 
             // Anchored to the camera's viewport rather than the window. Pixel Perfect letterboxes the
             // game into the middle of a larger window, and centring on the window would put the panel
@@ -266,41 +272,73 @@ namespace Ashburn.Core
 
             var body = new Rect(inner.x, y, inner.width, inner.yMax - y - line * 1.4f);
 
-            switch (_tab)
-            {
-                case Tab.Settings:
-                    DrawSettings(body, line);
-                    break;
+            if (_tab == Tab.Settings)
+                DrawSettings(body, line);
+            else
+                DrawColumns(body, line, _controlLabels, _controlKeys);
 
-                case Tab.Controls:
-                    DrawColumns(body, line, _controlLabels, _controlKeys);
-                    break;
-
-                case Tab.Items:
-                    DrawColumns(body, line, _itemLabels, _itemKeys);
-                    break;
-            }
-
-            // Both keys are named here because neither is an action in the input asset, so the
+            // The keys are named here because neither is an action in the input asset, so the
             // controls card cannot know about them. The last part is said out loud because a menu
             // that looks like a pause screen and is not one gets somebody killed while they read it.
             GUI.Label(new Rect(inner.x, inner.yMax - line, inner.width, line),
-                      $"{toggleKey} 닫기 · {itemsKey} 소지품 · 게임은 멈추지 않는다", _label);
+                      $"{toggleKey} 닫기 · 게임은 멈추지 않는다", _label);
+        }
+
+        /// <summary>
+        /// The pockets, on their own.
+        ///
+        /// Its own panel rather than a tab, and deliberately plain: this is read in the middle of
+        /// a game, often with something walking about, so it has to be one key in, one key out, and
+        /// nothing to click past.
+        /// </summary>
+        void DrawItemsPanel()
+        {
+            EnsureStyles();
+
+            if (_itemsStale)
+                RebuildItems();
+
+            var viewport = Viewport();
+            Imgui.Fill(viewport, dimColour);
+
+            const float pad = 11f;
+            const float chrome = 3.0f;   // title, the gap under it, and the footer
+            var line = _label.lineHeight + 2f;
+
+            var width = Mathf.Min(size.x, viewport.width - 24f);
+            var height = Mathf.Min(Mathf.Max(pad * 2f + line * (chrome + _itemLabels.Count), 120f),
+                                   viewport.height - 16f);
+
+            var panel = new Rect(
+                viewport.x + (viewport.width - width) * 0.5f,
+                viewport.y + (viewport.height - height) * 0.5f,
+                width, height);
+
+            Imgui.Fill(panel, panelColour);
+
+            var inner = new Rect(panel.x + pad, panel.y + pad,
+                                 panel.width - pad * 2f, panel.height - pad * 2f);
+
+            GUI.Label(new Rect(inner.x, inner.y, inner.width, line), "소지품", _heading);
+
+            var y = inner.y + line * 1.6f;
+            DrawColumns(new Rect(inner.x, y, inner.width, inner.yMax - y - line * 1.4f),
+                        line, _itemLabels, _itemKeys);
+
+            GUI.Label(new Rect(inner.x, inner.yMax - line, inner.width, line),
+                      $"{itemsKey} 닫기 · 게임은 멈추지 않는다", _label);
         }
 
         float DrawTabs(Rect inner, float y, float line)
         {
-            var width = inner.width / 3f;
+            var width = inner.width / 2f;
             var height = line * 1.4f;
 
             if (GUI.Button(new Rect(inner.x, y, width, height), Title(Tab.Settings, "설정"), _button))
                 _tab = Tab.Settings;
 
-            if (GUI.Button(new Rect(inner.x + width, y, width, height), Title(Tab.Controls, "조작"), _button))
+            if (GUI.Button(new Rect(inner.x + width, y, width, height), Title(Tab.Controls, "도움말"), _button))
                 _tab = Tab.Controls;
-
-            if (GUI.Button(new Rect(inner.x + width * 2f, y, width, height), Title(Tab.Items, "소지품"), _button))
-                _tab = Tab.Items;
 
             return y + height;
         }
@@ -388,15 +426,9 @@ namespace Ashburn.Core
         /// <summary>How many rows of body the open tab needs, for the panel to be that tall.</summary>
         float BodyRows()
         {
-            switch (_tab)
-            {
-                case Tab.Controls: return _controlLabels.Count;
-                case Tab.Items: return _itemLabels.Count;
-
-                // The settings tab is a hand-placed layout rather than a list; this is what
-                // DrawSettings advances y by, and the two have to be changed together.
-                default: return 8f;
-            }
+            // The settings tab is a hand-placed layout rather than a list; the number is what
+            // DrawSettings advances y by, and the two have to be changed together.
+            return _tab == Tab.Controls ? _controlLabels.Count : 8f;
         }
 
         // A static outlives a play session when the editor skips its domain reload, and one left true

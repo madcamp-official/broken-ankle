@@ -49,9 +49,9 @@ namespace Ashburn.Monster
         [SerializeField, Range(0.1f, 2f)] float chaseThreshold = 0.75f;
 
         [Header("Movement")]
-        [SerializeField] float patrolSpeed = 1.6f;
-        [SerializeField] float chaseSpeed = 3.2f;
-        [SerializeField] float searchSpeed = 2f;
+        [SerializeField] float patrolSpeed = 1.9f;
+        [SerializeField] float chaseSpeed = 4.6f;
+        [SerializeField] float searchSpeed = 2.6f;
 
         [Tooltip("Layers the monster cannot walk through. Characters do not belong here: they are " +
                  "things to walk into, not walls, and a layer with a moving body on it would be " +
