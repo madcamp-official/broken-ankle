@@ -583,7 +583,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Net.NetworkGame
   spawner: {fileID: 1148376437}
   roomName: ashburn
-  gameVersion: 2
+  gameVersion: 3
 --- !u!4 &2099118211
 Transform:
   m_ObjectHideFlags: 0

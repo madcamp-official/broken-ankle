@@ -36,7 +36,7 @@ namespace Ashburn.Net
                  "compatible with the one your partner has — a changed PlayerSync packet above all, " +
                  "since that stream is read by position and a stale client reads the wrong fields " +
                  "out of it without anything reporting an error.")]
-        [SerializeField] string gameVersion = "2";
+        [SerializeField] string gameVersion = "3";
 
         int _slot = -1;
 
