@@ -88,28 +88,6 @@ namespace Ashburn.Core
         readonly List<Collider2D> _overlaps = new();
         ContactFilter2D _filter;
 
-        /// <summary>
-        /// A patch of the world somebody else is lighting, which this mask has to let through.
-        ///
-        /// Kept as circles because the mask is a fan of rays from one eye and can only carve a
-        /// shape around that eye. A circle answers the one question a ray needs to ask — how wide
-        /// is this from here, and how far past it do I have to reach — and a partner's cone is
-        /// several of them laid along its axis.
-        /// </summary>
-        readonly struct LitPatch
-        {
-            public readonly Vector2 Point;
-            public readonly float Radius;
-
-            public LitPatch(Vector2 point, float radius)
-            {
-                Point = point;
-                Radius = radius;
-            }
-        }
-
-        readonly List<LitPatch> _partnerLit = new();
-
         void Awake()
         {
             _self = transform;
@@ -225,8 +203,6 @@ namespace Ashburn.Core
             var buried = Physics2D.OverlapPoint(origin, _filter, _overlaps) > 0;
             var beamAngle = haveBeam ? Mathf.Atan2(beam.up.y, beam.up.x) * Mathf.Rad2Deg : 0f;
 
-            CollectPartnerLight(origin);
-
             for (var i = 0; i < rayCount; i++)
             {
                 var degrees = i / (float)rayCount * 360f;
@@ -238,11 +214,6 @@ namespace Ashburn.Core
                 var want = ambientRadius;
                 if (haveBeam && Mathf.Abs(Mathf.DeltaAngle(beamAngle, degrees)) <= beamHalfAngle)
                     want = Mathf.Max(want, beamRange);
-
-                // A partner is carrying a light of their own, and this ray has to reach past what
-                // it is lighting or the mask paints over it. The wall check below still applies,
-                // so their glow coming through a doorway stops at the doorway.
-                want = Mathf.Max(want, ReachForPartnerLight(origin, degrees));
 
                 if (buried)
                 {
@@ -262,86 +233,6 @@ namespace Ashburn.Core
 
                 _reach[i] = nearest >= want ? want : Mathf.Min(want, nearest + wallBleed);
             }
-        }
-
-        /// <summary>
-        /// Gathers what every other character in this map is lighting.
-        ///
-        /// The same numbers this mask uses for its owner are used for them, because the point is
-        /// that a partner is lit exactly the way the viewer is: an arm's length bubble they always
-        /// carry, and a long cone when their torch is on. Anything else and the two players would
-        /// disagree about what the other one can be seen from.
-        /// </summary>
-        void CollectPartnerLight(Vector2 origin)
-        {
-            _partnerLit.Clear();
-
-            var here = _presence != null ? _presence.Zone : null;
-
-            foreach (var rig in Player.PlayerRig.All)
-            {
-                // Not this character, and not somebody standing in another map — whose position is
-                // a thousand units away and would open a corridor of sight across the world.
-                if (rig == null || rig.IsViewer)
-                    continue;
-
-                var theirs = rig.GetComponentInParent<MapPresence>();
-                if (here != null && theirs != null && theirs.Zone != here)
-                    continue;
-
-                var eye = (Vector2)rig.transform.position + eyeOffset;
-                _partnerLit.Add(new LitPatch(eye, ambientRadius));
-
-                var torch = rig.GetComponent<Player.FlashlightToggle>();
-                if (torch == null || !torch.IsOn || torch.Beam == null || !torch.Beam.activeInHierarchy)
-                    continue;
-
-                // Their cone, laid out as a row of circles along its axis that widen the way the
-                // cone does. Five is enough for the fan to open smoothly along it.
-                const int steps = 5;
-                var forward = (Vector2)torch.Beam.transform.up;
-                var spread = Mathf.Tan(beamHalfAngle * Mathf.Deg2Rad);
-
-                for (var i = 1; i <= steps; i++)
-                {
-                    var along = beamRange * i / steps;
-                    _partnerLit.Add(new LitPatch(eye + forward * along,
-                                            Mathf.Max(ambientRadius * 0.5f, along * spread)));
-                }
-            }
-        }
-
-        /// <summary>
-        /// How far this ray has to reach to uncover what a partner is lighting, or zero.
-        ///
-        /// A circle is only worth reaching for if the ray actually points at it, so each one is
-        /// measured as an angle from here and skipped unless this ray falls inside it.
-        /// </summary>
-        float ReachForPartnerLight(Vector2 origin, float degrees)
-        {
-            var reach = 0f;
-
-            foreach (var lit in _partnerLit)
-            {
-                var offset = lit.Point - origin;
-                var distance = offset.magnitude;
-
-                // Standing on top of it: every direction is inside, so no angle test applies.
-                if (distance <= lit.Radius)
-                {
-                    reach = Mathf.Max(reach, lit.Radius);
-                    continue;
-                }
-
-                var halfWidth = Mathf.Asin(lit.Radius / distance) * Mathf.Rad2Deg;
-                var towards = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
-                if (Mathf.Abs(Mathf.DeltaAngle(towards, degrees)) > halfWidth)
-                    continue;
-
-                reach = Mathf.Max(reach, distance + lit.Radius);
-            }
-
-            return reach;
         }
 
         /// <summary>
