@@ -27,9 +27,10 @@ namespace Ashburn.Net
         [SerializeField] PlayerSpawner spawner;
 
         [Header("Room")]
-        [Tooltip("The room both players join. A fixed name is enough for two people who already " +
-                 "agreed to play; a room code would go here.")]
+        [Tooltip("The room both players join. Set by the title screen from the code the players " +
+                 "agreed on; what is typed here is only used when nobody asks for anything else.")]
         [SerializeField] string roomName = "ashburn";
+
 
         [Tooltip("Clients with different versions never meet. Bump it when a build stops being " +
                  "compatible with the one your partner has — a changed PlayerSync packet above all, " +
@@ -41,6 +42,66 @@ namespace Ashburn.Net
 
         /// <summary>Which player this machine is. 0 is A, 1 is B. -1 before the room is joined.</summary>
         public int Slot => _slot;
+
+        /// <summary>The room being joined or held, in whatever case the player typed it.</summary>
+        public string RoomName => roomName;
+
+        /// <summary>How far along the connection is, for a title screen to report.</summary>
+        public enum Stage
+        {
+            /// <summary>Nothing has been asked for yet.</summary>
+            Idle,
+
+            /// <summary>Talking to Photon, or waiting for a room.</summary>
+            Working,
+
+            /// <summary>In the room. The partner may or may not have arrived.</summary>
+            Joined,
+
+            /// <summary>It did not work, and <see cref="Problem"/> says why.</summary>
+            Failed,
+        }
+
+        /// <summary>Where the connection has got to.</summary>
+        public Stage State { get; private set; } = Stage.Idle;
+
+        /// <summary>
+        /// What went wrong, in a sentence meant for the player rather than the console.
+        ///
+        /// A build has no console. Left as a log line, somebody who typed a code for a full room
+        /// saw the map load with nobody in it and nothing to say why — which is what a crash looks
+        /// like.
+        /// </summary>
+        public string Problem { get; private set; } = string.Empty;
+
+        /// <summary>Whether this machine created the room rather than joining one.</summary>
+        public bool IsHost { get; private set; }
+
+        /// <summary>
+        /// Makes a room with this code and waits in it, or joins one that already exists.
+        ///
+        /// Both halves are one call because Photon's own JoinOrCreate is: whoever presses first
+        /// makes the room and the other one walks into it, and neither has to know which they were.
+        /// </summary>
+        public void Enter(string code)
+        {
+            if (!string.IsNullOrWhiteSpace(code))
+                roomName = code.Trim();
+
+            Problem = string.Empty;
+            State = Stage.Working;
+
+            // Already talking to the master server from a previous attempt — a code that was
+            // refused, most often. Reconnecting would drop that and take longer than asking again.
+            if (PhotonNetwork.IsConnectedAndReady)
+            {
+                JoinNamedRoom();
+                return;
+            }
+
+            PhotonNetwork.GameVersion = gameVersion;
+            PhotonNetwork.ConnectUsingSettings();
+        }
 
         void Awake()
         {
@@ -66,19 +127,29 @@ namespace Ashburn.Net
 
         void Start()
         {
-            PhotonNetwork.GameVersion = gameVersion;
-            PhotonNetwork.ConnectUsingSettings();
+            // A title screen is going to ask which room, so connecting now would take the choice
+            // away from it. Asked of the scene rather than set by a checkbox: a flag that has to
+            // agree with whether an object exists is a flag that will one day disagree, and the
+            // symptom — everybody silently back in the same room — is one nobody would look for.
+            if (FindAnyObjectByType<TitleScreen>() == null)
+                Enter(roomName);
         }
 
-        public override void OnConnectedToMaster()
+        public override void OnConnectedToMaster() => JoinNamedRoom();
+
+        void JoinNamedRoom()
         {
-            // Two, hard. A third player would get a slot number nothing has a spawn point for.
+            // Two, hard. A third player would get a slot number nothing has a spawn point for, so
+            // six people wanting to play are three rooms rather than one crowded one.
             var options = new RoomOptions { MaxPlayers = 2 };
             PhotonNetwork.JoinOrCreateRoom(roomName, options, TypedLobby.Default);
         }
 
         public override void OnJoinedRoom()
         {
+            State = Stage.Joined;
+            IsHost = PhotonNetwork.IsMasterClient;
+
             // Whoever is master at this moment is A. Read once and then published, rather than
             // asked for whenever it is wanted: master is transferred when the host leaves, and a
             // role that flips underneath a player mid-game is worse than a host that has gone.
@@ -123,16 +194,36 @@ namespace Ashburn.Net
 
         public override void OnJoinRoomFailed(short returnCode, string message)
         {
-            // Nearly always the room already holding two people.
-            Debug.LogError($"Could not join the room '{roomName}': {message} ({returnCode}). If " +
-                           "somebody is already playing with somebody else, this is why.", this);
+            // Nearly always the room already holding two people. Said on screen as well as in the
+            // log, because the player who needs to know is looking at a build.
+            Fail(returnCode == ErrorCode.GameFull
+                     ? $"'{roomName}' 방에 이미 두 사람이 있습니다."
+                     : $"'{roomName}' 방에 들어가지 못했습니다. ({message})");
         }
 
         public override void OnCreateRoomFailed(short returnCode, string message) =>
-            Debug.LogError($"Could not create the room '{roomName}': {message} ({returnCode}).", this);
+            Fail($"'{roomName}' 방을 만들지 못했습니다. ({message})");
 
-        public override void OnDisconnected(DisconnectCause cause) =>
-            Debug.LogWarning($"{nameof(NetworkGame)} disconnected: {cause}. Nobody will be spawned. " +
-                             "A missing App ID reports itself separately, from PhotonAppIds.", this);
+        public override void OnDisconnected(DisconnectCause cause)
+        {
+            // A disconnect after the room was joined is the partner's problem to notice, not a
+            // failure of anything the title screen asked for.
+            if (State == Stage.Joined)
+            {
+                Debug.LogWarning($"{nameof(NetworkGame)} disconnected: {cause}.", this);
+                return;
+            }
+
+            Fail(cause == DisconnectCause.InvalidAuthentication
+                     ? "App ID 가 없거나 잘못되었습니다. Multiplayer.MD 9절을 보세요."
+                     : $"접속하지 못했습니다. ({cause})");
+        }
+
+        void Fail(string reason)
+        {
+            State = Stage.Failed;
+            Problem = reason;
+            Debug.LogError($"{nameof(NetworkGame)}: {reason}", this);
+        }
     }
 }
