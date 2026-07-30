@@ -53,6 +53,8 @@ namespace Ashburn.Cutscenes
             new(-0.65f, -0.4f),
             new(0.65f, -0.4f),
         };
+        [Tooltip("Keeps the authored staging mark separate from a room-sized trigger volume.")]
+        [SerializeField] Vector2 stagingCenterOffset;
         [SerializeField] float stagingSpeed = 3.8f;
         [SerializeField] float stagingArriveDistance = 0.06f;
 
@@ -408,7 +410,7 @@ namespace Ashburn.Cutscenes
             var slot = inventory != null ? inventory.Slot : 0;
 
             return stagingOffsets != null && slot >= 0 && slot < stagingOffsets.Length
-                ? (Vector2)transform.position + stagingOffsets[slot]
+                ? (Vector2)transform.position + stagingCenterOffset + stagingOffsets[slot]
                 : null;
         }
 

@@ -35,6 +35,12 @@ namespace Ashburn.Monster
                  "first frame they are allowed to run.")]
         [SerializeField] float graceAfterSceneSeconds = 1.25f;
 
+        [Header("Story protection")]
+        [Tooltip("Optional flag that starts a scripted interval in which this monster cannot catch.")]
+        [SerializeField] string protectionStartFlag;
+        [Tooltip("Flag that ends the scripted no-catch interval.")]
+        [SerializeField] string protectionEndFlag;
+
         [Header("Noise")]
         [Tooltip("How far the sound of it carries, in world units. Going down is not quiet, and a " +
                  "partner has to be able to place where it happened.")]
@@ -45,10 +51,22 @@ namespace Ashburn.Monster
         ContactFilter2D _filter;
         readonly List<Collider2D> _hits = new();
 
+        public bool IsStoryProtected =>
+            !string.IsNullOrEmpty(protectionStartFlag) &&
+            WorldState.Has(protectionStartFlag) &&
+            (string.IsNullOrEmpty(protectionEndFlag) ||
+             !WorldState.Has(protectionEndFlag));
+
         void Awake()
         {
             _ai = GetComponent<MonsterAI>();
             _filter = Filter();
+        }
+
+        public void ConfigureStoryProtection(string startFlag, string endFlag)
+        {
+            protectionStartFlag = startFlag;
+            protectionEndFlag = endFlag;
         }
 
         ContactFilter2D Filter() =>
@@ -75,6 +93,9 @@ namespace Ashburn.Monster
             // looking at them, or able to hear them: a statue that took your legs if you walked
             // past it.
             if (_ai != null && _ai.IsDormant)
+                return;
+
+            if (IsStoryProtected)
                 return;
 
             if (Time.time < _readyAt)

@@ -21,7 +21,9 @@ namespace Ashburn.Monster
                 Vector2 localPosition,
                 string activationFlag = null,
                 string deactivationFlag = "TruthDevicePlayed",
-                string spawnFlag = null)
+                string spawnFlag = null,
+                string protectionStartFlag = null,
+                string protectionEndFlag = null)
             {
                 Scene = scene;
                 Name = name;
@@ -29,6 +31,8 @@ namespace Ashburn.Monster
                 ActivationFlag = activationFlag;
                 DeactivationFlag = deactivationFlag;
                 SpawnFlag = spawnFlag;
+                ProtectionStartFlag = protectionStartFlag;
+                ProtectionEndFlag = protectionEndFlag;
             }
 
             public string Scene { get; }
@@ -37,6 +41,8 @@ namespace Ashburn.Monster
             public string ActivationFlag { get; }
             public string DeactivationFlag { get; }
             public string SpawnFlag { get; }
+            public string ProtectionStartFlag { get; }
+            public string ProtectionEndFlag { get; }
         }
 
         static readonly Placement[] Placements =
@@ -45,8 +51,10 @@ namespace Ashburn.Monster
                 "Corp_Lobby",
                 "Warden_Corp_FirstEncounter",
                 new Vector2(18f, 10.8f),
-                "Story:CorpFirstWardenAwake",
-                "Story:CorpFirstWardenEscaped"),
+                activationFlag: "Story:CorpFirstWardenAwake",
+                deactivationFlag: "Story:CorpFirstWardenEscaped",
+                protectionStartFlag: "Story:CorpFirstWardenAwake",
+                protectionEndFlag: "Story:CorpFirstWardenEscaped"),
 
             new(
                 "Village Map",
@@ -163,6 +171,10 @@ namespace Ashburn.Monster
                         placement.DeactivationFlag);
                     ai.RefreshAfterPlacement();
                 }
+
+                monster.GetComponent<MonsterStrike>()?.ConfigureStoryProtection(
+                    placement.ProtectionStartFlag,
+                    placement.ProtectionEndFlag);
             }
 
             if (scene.name != "Village Map")
