@@ -58,6 +58,10 @@ namespace Ashburn.Net
         Renderer[] _renderers;
         Light2D[] _lights;
         bool _visible = true;
+        bool _warnedMissingMap;
+
+        /// <summary>Set by Resolve: they named a map and this machine does not have it open.</summary>
+        bool _elsewhere;
 
         int _netMap;
         Vector2 _netLocal;
@@ -148,9 +152,32 @@ namespace Ashburn.Net
         /// </summary>
         bool Resolve()
         {
+            _elsewhere = false;
+
+            // Nothing has said which map they are in yet — a packet sent before their machine had
+            // placed them. There is nowhere to move them to, but that is not a reason to hide
+            // somebody, and the next packet almost certainly says where they are.
+            if (_netMap == 0)
+                return false;
+
             var zone = MapZone.FindShared(_netMap);
             if (zone == null)
+            {
+                // Named a map, and it is not one this machine has open. Now they really are
+                // somewhere else.
+                _elsewhere = true;
+
+                if (!_warnedMissingMap)
+                {
+                    _warnedMissingMap = true;
+                    Debug.Log($"'{name}' is in a map this machine has not opened (id {_netMap}), " +
+                              "so they are hidden until it is.", this);
+                }
+
                 return false;
+            }
+
+            _warnedMissingMap = false;
 
             _netPosition = _netLocal + zone.Origin;
 
@@ -170,9 +197,14 @@ namespace Ashburn.Net
 
             // Their map may have been opened or closed on this machine since the last packet: a
             // partner becomes placeable the moment this player follows them through the door.
-            var inOurWorld = Resolve();
-            SetVisible(inOurWorld);
-            if (!inOurWorld)
+            var placed = Resolve();
+
+            // Hidden only for being somewhere this machine has not loaded. Not knowing yet where
+            // somebody is is not grounds for making them disappear — that turns one late packet
+            // into a partner who is never drawn again.
+            SetVisible(!_elsewhere);
+
+            if (!placed)
                 return;
 
             var here = _body != null ? _body.position : (Vector2)transform.position;
