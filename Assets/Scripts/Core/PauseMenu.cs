@@ -37,6 +37,10 @@ namespace Ashburn.Core
                  "action, because the action maps are what this switches off.")]
         [SerializeField] Key toggleKey = Key.Escape;
 
+        [Tooltip("Opens the menu straight on 소지품, and closes it again from there. Checking what " +
+                 "you are carrying is the one thing worth its own key.")]
+        [SerializeField] Key itemsKey = Key.Tab;
+
         [Header("Controls list")]
         [Tooltip("Drag Assets/InputSystem_Actions here.")]
         [SerializeField] InputActionAsset inputActions;
@@ -113,8 +117,31 @@ namespace Ashburn.Core
         void Update()
         {
             var keyboard = Keyboard.current;
-            if (keyboard != null && keyboard[toggleKey].wasPressedThisFrame)
+            if (keyboard == null)
+                return;
+
+            if (keyboard[toggleKey].wasPressedThisFrame)
+            {
                 SetOpen(!_open);
+                return;
+            }
+
+            if (!keyboard[itemsKey].wasPressedThisFrame)
+                return;
+
+            // Tab is a way in and a way out of the pockets, not a way of cycling tabs: pressing it
+            // while already reading them means the player is done. Pressing it while the menu is up
+            // on something else takes them there rather than closing, which is what happens if you
+            // reach for your pockets from the settings.
+            if (_open && _tab == Tab.Items)
+            {
+                SetOpen(false);
+                return;
+            }
+
+            _tab = Tab.Items;
+            if (!_open)
+                SetOpen(true);
         }
 
         void SetOpen(bool open)
@@ -246,10 +273,11 @@ namespace Ashburn.Core
                     break;
             }
 
-            // Said out loud, because a menu that looks like a pause screen and is not one gets
-            // somebody killed while they read it.
+            // Both keys are named here because neither is an action in the input asset, so the
+            // controls card cannot know about them. The last part is said out loud because a menu
+            // that looks like a pause screen and is not one gets somebody killed while they read it.
             GUI.Label(new Rect(inner.x, inner.yMax - line, inner.width, line),
-                      $"{toggleKey} 닫기 · 게임은 멈추지 않는다", _label);
+                      $"{toggleKey} 닫기 · {itemsKey} 소지품 · 게임은 멈추지 않는다", _label);
         }
 
         float DrawTabs(Rect inner, float y, float line)
