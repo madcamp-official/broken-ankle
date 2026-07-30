@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Ashburn.Noise;
 using Ashburn.World;
 using Photon.Pun;
@@ -35,7 +36,19 @@ namespace Ashburn.Monster
         [SerializeField] float strikeNoiseRange = 16f;
 
         float _readyAt;
-        readonly Collider2D[] _hits = new Collider2D[8];
+        ContactFilter2D _filter;
+        readonly List<Collider2D> _hits = new();
+
+        void Awake() =>
+            _filter = new ContactFilter2D
+            {
+                useLayerMask = true,
+                layerMask = playerLayers,
+
+                // A character's use zone and the room volumes are triggers, and neither of them is
+                // somebody to knock over.
+                useTriggers = false,
+            };
 
         void Update()
         {
@@ -47,10 +60,11 @@ namespace Ashburn.Monster
             if (Time.time < _readyAt)
                 return;
 
-            var count = Physics2D.OverlapCircleNonAlloc(transform.position, reach, _hits, playerLayers);
-            for (var i = 0; i < count; i++)
+            Physics2D.OverlapCircle((Vector2)transform.position, reach, _filter, _hits);
+
+            foreach (var hit in _hits)
             {
-                var player = _hits[i].GetComponentInParent<Downed>();
+                var player = hit == null ? null : hit.GetComponentInParent<Downed>();
                 if (player == null || player.IsDown)
                     continue;
 

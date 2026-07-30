@@ -56,10 +56,51 @@ namespace Ashburn.Core
                 if (Screen.fullScreen == value)
                     return;
 
-                Screen.fullScreen = value;
+                if (value)
+                    Screen.fullScreen = true;
+                else
+                    GoWindowed();
+
                 PlayerPrefs.SetInt(FullscreenKey, value ? 1 : 0);
                 PlayerPrefs.Save();
             }
+        }
+
+        /// <summary>The size the game is drawn at before the camera scales it up.</summary>
+        const int ReferenceWidth = 640;
+        const int ReferenceHeight = 360;
+
+        /// <summary>
+        /// Leaves fullscreen at a window the picture fits exactly.
+        ///
+        /// The camera scales by whole numbers only — its crop frame is Windowbox — so a window that
+        /// is not a multiple of 640x360 is filled out with black bars and the picture shrinks to the
+        /// next multiple down. At 1024x576 that is a single scale in the middle of a window six
+        /// tenths black. Handing Unity a window that is already a multiple means there is nothing
+        /// left over to put bars in.
+        ///
+        /// The largest multiple that fits the monitor, with room left for the desktop's own
+        /// furniture: a window exactly as tall as the screen has its title bar under the taskbar.
+        /// </summary>
+        static void GoWindowed()
+        {
+            var display = Screen.currentResolution;
+
+            var scale = Mathf.Max(1, Mathf.Min(display.width / ReferenceWidth,
+                                               display.height / ReferenceHeight));
+
+            // A window exactly the size of the screen has its title bar off the top of it and its
+            // foot under the taskbar, so the largest multiple that fits is one step too large
+            // whenever the screen is itself a multiple. Stepping down there rather than reserving a
+            // fixed margin matters: a 1366x768 laptop has room for two scales with nothing to
+            // spare, and a margin wide enough for a title bar would cost it one of them.
+            if (scale > 1 &&
+                ReferenceWidth * scale >= display.width &&
+                ReferenceHeight * scale >= display.height)
+                scale--;
+
+            Screen.SetResolution(ReferenceWidth * scale, ReferenceHeight * scale,
+                                 FullScreenMode.Windowed);
         }
 
         /// <summary>Whether the controls card sits in the corner. See <see cref="ControlsOverlay"/>.</summary>
@@ -100,8 +141,16 @@ namespace Ashburn.Core
 
             // Only when it was stored. Forcing the window mode on every start would undo a player
             // who dragged the window out of fullscreen and left it there.
-            if (PlayerPrefs.HasKey(FullscreenKey))
-                Screen.fullScreen = PlayerPrefs.GetInt(FullscreenKey) != 0;
+            //
+            // Through the same path the menu uses, or a game remembered as windowed comes back at
+            // whatever size the last run left behind — which is the size the bars appear in.
+            if (!PlayerPrefs.HasKey(FullscreenKey))
+                return;
+
+            if (PlayerPrefs.GetInt(FullscreenKey) != 0)
+                Screen.fullScreen = true;
+            else
+                GoWindowed();
         }
 
         /// <summary>Puts everything back to how it ships. The menu's one destructive button.</summary>

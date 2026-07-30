@@ -16,6 +16,11 @@ namespace Ashburn.Radio
     /// concession to bandwidth. Every second of transmission goes onto the <see cref="NoiseBus"/>
     /// at a range between walking and running: saying something is about as loud as being seen.
     ///
+    /// Hearing costs the same. A voice coming out of a handset is a sound in the room whether or
+    /// not its owner is the one talking, so the listener gives themselves away too — see
+    /// <see cref="IsReceiving"/>. Otherwise the quiet half of the pair listens for free and the
+    /// radio stops being a decision either of them has to make.
+    ///
     /// Knows nothing about Photon. It announces that the channel is open and something else
     /// decides what that means — a voice SDK, a test loopback, or nothing at all.
     /// </summary>
@@ -41,6 +46,16 @@ namespace Ashburn.Radio
 
         /// <summary>True while the key is held.</summary>
         public bool IsTransmitting { get; private set; }
+
+        /// <summary>
+        /// True while somebody else's voice is coming out of this handset.
+        ///
+        /// Set by whatever is playing that voice — <see cref="PhotonRadioBridge"/> over the
+        /// network. Listening is as loud as talking here: the sound is in the room either way, and
+        /// a radio that only gave away the person speaking would make the other one a free pair of
+        /// ears. Turning the set off has to cost the pair something.
+        /// </summary>
+        public bool IsReceiving { get; set; }
 
         InputAction _pushToTalk;
         InputActionAsset _ownedActions;
@@ -118,7 +133,7 @@ namespace Ashburn.Radio
 
         void Update()
         {
-            if (!IsTransmitting || !makesNoise || Time.time < _nextNoiseTime)
+            if ((!IsTransmitting && !IsReceiving) || !makesNoise || Time.time < _nextNoiseTime)
                 return;
 
             _nextNoiseTime = Time.time + interval;

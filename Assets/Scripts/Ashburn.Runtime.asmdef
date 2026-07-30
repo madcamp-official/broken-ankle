@@ -8,6 +8,7 @@
         "PhotonRealtime",
         "PhotonVoice.API",
         "PhotonVoice",
+        "PhotonVoice.PUN",
         "PhotonUnityNetworking"
     ],
     "includePlatforms": [],

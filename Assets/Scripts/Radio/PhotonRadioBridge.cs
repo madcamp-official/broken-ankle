@@ -1,3 +1,5 @@
+using Ashburn.Player;
+using Photon.Voice.PUN;
 using Photon.Voice.Unity;
 using UnityEngine;
 
@@ -47,12 +49,52 @@ namespace Ashburn.Radio
         {
             _transmitter.Transmitting -= Apply;
             Apply(false);
+            _transmitter.IsReceiving = false;
         }
 
         void Apply(bool transmitting)
         {
             if (recorder != null)
                 recorder.TransmitEnabled = transmitting;
+        }
+
+        /// <summary>
+        /// Tells the handset when somebody else's voice is actually coming out of it.
+        ///
+        /// Read from the speaker rather than from a flag sent alongside the player's position.
+        /// Photon Voice already knows whether audio is arriving and playing, and asking it costs no
+        /// bandwidth and no version bump — a bool added to the position packet would have broken
+        /// every client that had not updated, for something the voice layer was already tracking.
+        ///
+        /// Any partner speaking counts. With two players there is only one, and with more the
+        /// handset is no quieter for the second voice.
+        /// </summary>
+        void Update()
+        {
+            var receiving = false;
+
+            foreach (var rig in PlayerRig.All)
+            {
+                if (rig == null || rig.IsViewer)
+                    continue;
+
+                var view = rig.GetComponent<PhotonVoiceView>();
+                if (view == null || !view.IsSpeaking)
+                    continue;
+
+                receiving = true;
+                break;
+            }
+
+            _transmitter.IsReceiving = receiving;
+        }
+
+        void OnDestroy()
+        {
+            // Nothing is going to clear it once this is gone, and a handset left believing it is
+            // playing somebody's voice would go on announcing itself in silence.
+            if (_transmitter != null)
+                _transmitter.IsReceiving = false;
         }
     }
 }

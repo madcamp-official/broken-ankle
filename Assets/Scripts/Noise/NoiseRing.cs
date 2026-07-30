@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Ashburn.Noise
 {
@@ -11,9 +12,11 @@ namespace Ashburn.Noise
     /// wedge, but sound arrives from every direction at once, so the ring has to answer three
     /// questions at a glance — which way, how loud, and who.
     ///
-    /// Colour carries the last one, and it is deliberately unreliable. A partner close by reads
-    /// green and the monster reads red, but once the partner is too far to place, both collapse to
-    /// yellow: the player can still hear that something is out there without being told what.
+    /// Colour carries the last one, and it is deliberately unreliable. Each sound is judged on its
+    /// own distance: close enough to place, a partner reads green and the monster reads red; too
+    /// far, and it collapses to yellow — something is out there, and that is all the headset will
+    /// say. So a monster at arm's length stays red while a partner shouting from across the map is
+    /// only a yellow smear, which is the reading that matters when both happen at once.
     /// </summary>
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class NoiseRing : MonoBehaviour
@@ -22,6 +25,7 @@ namespace Ashburn.Noise
         {
             public float Angle;      // radians, world space
             public float Strength;   // 0..1 at birth
+            public float Distance;   // world units to whatever made it, at birth
             public float BornAt;
             public NoiseKind Kind;
         }
@@ -72,8 +76,11 @@ namespace Ashburn.Noise
                  "is created when the game starts. Set it only to override that.")]
         [SerializeField] Transform ally;
 
-        [Tooltip("Past this distance the partner is too far to place, and colours collapse to unknown.")]
-        [SerializeField] float allyRecognitionRange = 9f;
+        [Tooltip("Past this distance a sound is too far to place, and reads as unknown. Judged per " +
+                 "sound, against whatever made it — a monster at arm's length is red even with the " +
+                 "partner across the map.")]
+        [FormerlySerializedAs("allyRecognitionRange")]
+        [SerializeField] float recognitionRange = 5f;
 
         readonly List<Ripple> _ripples = new();
         Mesh _mesh;
@@ -82,14 +89,14 @@ namespace Ashburn.Noise
         NoiseEars _ears;
         World.MapPresence _presence;
 
-        /// <summary>True while the partner is close enough for sounds to be told apart by colour.</summary>
+        /// <summary>True while the partner is close enough to be told apart by colour.</summary>
         public bool AllyInRange
         {
             get
             {
                 var partner = Ally();
                 return partner != null &&
-                       Vector2.Distance(partner.position, transform.position) <= allyRecognitionRange;
+                       Vector2.Distance(partner.position, transform.position) <= recognitionRange;
             }
         }
 
@@ -195,6 +202,10 @@ namespace Ashburn.Noise
             {
                 Angle = Mathf.Atan2(offset.y, offset.x),
                 Strength = strength,
+                // Measured now rather than looked up later: whatever made this has moved on by the
+                // time the ripple fades, and the colour should say how far away it was when it
+                // made the sound.
+                Distance = offset.magnitude,
                 BornAt = Time.time,
                 Kind = noise.Kind,
             });
@@ -244,7 +255,6 @@ namespace Ashburn.Noise
         void Redraw()
         {
             var spread = Mathf.Max(rippleSpread * Mathf.Deg2Rad, 0.01f);
-            var recognisable = AllyInRange;
 
             for (var i = 0; i < segments; i++)
             {
@@ -272,7 +282,7 @@ namespace Ashburn.Noise
                     // rather than the line simply swelling.
                     push += amount * Mathf.Cos(delta * rippleFrequency - age * Mathf.PI * 2f * rippleOscillations);
                     weight += amount;
-                    tint += ColourFor(ripple.Kind, recognisable) * amount;
+                    tint += ColourFor(ripple.Kind, ripple.Distance <= recognitionRange) * amount;
                 }
 
                 var colour = weight > 0.0001f ? tint / weight : restColour;
