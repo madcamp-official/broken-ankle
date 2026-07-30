@@ -84,6 +84,23 @@ namespace Ashburn.Interaction
             Changed?.Invoke();
         }
 
+        /// <summary>
+        /// Tells this character what to call itself in the menu.
+        ///
+        /// Told rather than read off the object, because the object's name does not survive the
+        /// game: Photon Voice renames whatever holds the Speaker to "Remote p#2 v#1" the moment
+        /// that player's voice stream arrives, and the pockets panel was headed with that instead
+        /// of Grant. Set from the same place the object is named, so the two cannot drift.
+        /// </summary>
+        public void SetOwnerName(string value)
+        {
+            if (ownerName == value)
+                return;
+
+            ownerName = value;
+            Changed?.Invoke();
+        }
+
         /// <summary>Whether this character in particular has it.</summary>
         public bool Has(string item) =>
             !string.IsNullOrEmpty(item) && WorldState.Has(WorldState.CarryFlag(slot, item));

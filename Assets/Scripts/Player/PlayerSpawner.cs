@@ -193,7 +193,14 @@ namespace Ashburn.Player
             // nothing else knows which player the copy is meant to be.
             var pockets = character.GetComponent<Interaction.Inventory>();
             if (pockets != null)
+            {
                 pockets.SetSlot(index);
+
+                // The name is handed over rather than read back off the object later. Photon Voice
+                // renames whatever carries the Speaker — the character root — to "Remote p#2 v#1"
+                // as soon as that player starts talking, and the pockets panel was headed with it.
+                pockets.SetOwnerName(character.name);
+            }
 
             // Which map this character is in, told rather than worked out. Everything that must not
             // cross a map — the noise bus, the power, the darkness — reads it from here.
