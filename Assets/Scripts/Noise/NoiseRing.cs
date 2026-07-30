@@ -67,7 +67,9 @@ namespace Ashburn.Noise
         [SerializeField, Range(0f, 1f)] float restAlpha = 0.18f;
 
         [Header("Partner")]
-        [Tooltip("The other player. Leave empty when playing alone: every sound then reads as unknown.")]
+        [Tooltip("The other player. Left empty it is looked for, which is the normal case: this " +
+                 "component rides the character prefab and a prefab cannot point at somebody who " +
+                 "is created when the game starts. Set it only to override that.")]
         [SerializeField] Transform ally;
 
         [Tooltip("Past this distance the partner is too far to place, and colours collapse to unknown.")]
@@ -78,15 +80,62 @@ namespace Ashburn.Noise
         Vector3[] _vertices;
         Color[] _colours;
         NoiseEars _ears;
+        World.MapPresence _presence;
 
         /// <summary>True while the partner is close enough for sounds to be told apart by colour.</summary>
-        public bool AllyInRange =>
-            ally != null && Vector2.Distance(ally.position, transform.position) <= allyRecognitionRange;
+        public bool AllyInRange
+        {
+            get
+            {
+                var partner = Ally();
+                return partner != null &&
+                       Vector2.Distance(partner.position, transform.position) <= allyRecognitionRange;
+            }
+        }
+
+        /// <summary>
+        /// The partner, found rather than assigned.
+        ///
+        /// Nothing could assign it. This rides the character prefab, and the other player is created
+        /// when the room fills up — so the field serialised as None on every character ever spawned
+        /// and the colours collapsed to unknown for the whole game. Green and red were unreachable.
+        ///
+        /// Asked for again whenever the answer has gone: a partner who disconnects leaves a
+        /// destroyed reference behind, and one who rejoins is a different object.
+        /// </summary>
+        Transform Ally()
+        {
+            if (ally != null)
+                return ally;
+
+            // Only ever runs on the viewer — the ring is switched off on a partner's copy — so any
+            // character that is not the viewer is the partner.
+            var here = _presence != null ? _presence.Zone : null;
+
+            foreach (var rig in Player.PlayerRig.All)
+            {
+                if (rig == null || rig.IsViewer)
+                    continue;
+
+                // Before the distance, and for the reason NoiseEars checks it first: a partner in
+                // another building is not somebody standing far away, and the two must not read the
+                // same. Their map sits a thousand units off, so distance alone would answer
+                // correctly today and stop doing so the moment the spacing is tuned.
+                var theirs = rig.GetComponentInParent<World.MapPresence>();
+                if (here != null && theirs != null && theirs.Zone != here)
+                    continue;
+
+                return ally = rig.transform;
+            }
+
+            return null;
+        }
 
         void Awake()
         {
             BuildMesh();
             _ears = GetComponentInParent<NoiseEars>();
+            _presence = GetComponentInParent<World.MapPresence>();
         }
 
         void OnEnable()
