@@ -167,6 +167,13 @@ namespace Ashburn.Net
                 // somewhere else.
                 _elsewhere = true;
 
+                // Said out loud, or the copy standing here goes on claiming the map it was last
+                // seen in. That claim is what everything else reads: their footsteps kept being
+                // heard from a room they had left, and the light they carry kept being drawn at
+                // the spot they walked out of — a ghost with a torch.
+                if (_presence != null && _presence.Zone != null)
+                    _presence.Elsewhere();
+
                 if (!_warnedMissingMap)
                 {
                     _warnedMissingMap = true;

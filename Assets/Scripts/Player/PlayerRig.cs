@@ -48,8 +48,9 @@ namespace Ashburn.Player
         [Tooltip("Sorting layer for the viewer's own body, excluded from their flashlight.")]
         [SerializeField] string localBodyLayer = "Character";
 
-        [Tooltip("Sorting layer for everyone else, so the viewer's beam can pick them out of the dark.")]
-        [SerializeField] string remoteBodyLayer = "Default";
+        [Tooltip("Sorting layer for everyone else. The same one as the viewer: a partner has to be " +
+                 "drawn over the floor they are standing on before anything about light matters.")]
+        [SerializeField] string remoteBodyLayer = "Character";
 
         [Header("Noise")]
         [Tooltip("Footsteps. The viewer's own are not drawn back to them; a partner's read as Ally.")]
@@ -104,6 +105,12 @@ namespace Ashburn.Player
                 if (go != null)
                     go.SetActive(viewer);
 
+            // A partner used to be moved to Default so the viewer's beam could light them, which is
+            // the one thing Character is excluded from. It cost far more than it bought: Default is
+            // the bottom of this project's stack, below Floor, Wall and Object, so every partner was
+            // drawn underneath the floor they were standing on and could not be seen at all — no
+            // amount of light reaches something the tilemap is painted over. Their own glow and the
+            // room's lamps both include Character, so they are lit there anyway.
             if (body != null)
             {
                 var layer = viewer ? localBodyLayer : remoteBodyLayer;

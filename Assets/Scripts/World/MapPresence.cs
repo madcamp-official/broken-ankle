@@ -37,5 +37,19 @@ namespace Ashburn.World
 
             Zone = zone;
         }
+
+        /// <summary>
+        /// Records that this character is somewhere this machine has not loaded.
+        ///
+        /// A partner who walks into a building the other player has not entered still has a copy
+        /// standing here, and that copy has to stop claiming to be in the map it was last seen in.
+        /// Left claiming it, everything that asks "is this character here" is answered yes about a
+        /// ghost: its footsteps go on being heard, and the light it carries goes on being drawn, at
+        /// whichever spot it was standing when it left.
+        ///
+        /// Says nothing to the console, unlike <see cref="Enter"/> with no zone. That warning is for
+        /// a character somebody failed to place; this is a character deliberately placed nowhere.
+        /// </summary>
+        public void Elsewhere() => Zone = null;
     }
 }

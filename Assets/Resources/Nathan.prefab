@@ -408,7 +408,7 @@ MonoBehaviour:
   - {fileID: 3425006476537733219}
   body: {fileID: 7209351696308771934}
   localBodyLayer: Character
-  remoteBodyLayer: Default
+  remoteBodyLayer: Character
   footsteps: {fileID: 8685373749486869375}
 --- !u!114 &2103446981574230118
 MonoBehaviour:
