@@ -89,7 +89,8 @@ namespace Ashburn.Cutscenes
             Vector2 noisePosition,
             int map,
             string raiseFlagOnComplete,
-            Func<bool> advanceSource = null)
+            Func<bool> advanceSource = null,
+            float autoAdvanceSeconds = 0f)
         {
             if (_playing)
                 return false;
@@ -104,7 +105,8 @@ namespace Ashburn.Cutscenes
             }
 
             _routine = StartCoroutine(Play(lines, lockInput, emitNoise, noiseRange, noisePosition,
-                                           map, raiseFlagOnComplete, eventId, advanceSource));
+                                           map, raiseFlagOnComplete, eventId, advanceSource,
+                                           autoAdvanceSeconds));
             return true;
         }
 
@@ -117,7 +119,8 @@ namespace Ashburn.Cutscenes
             int map,
             string raiseFlagOnComplete,
             string eventId,
-            Func<bool> advanceSource)
+            Func<bool> advanceSource,
+            float autoAdvanceSeconds)
         {
             _playing = true;
             _lockInput = lockInput;
@@ -144,7 +147,9 @@ namespace Ashburn.Cutscenes
 
                 yield return RevealLine(_line.Text);
                 if (!_advanceAfterReveal)
-                    yield return WaitForAdvance();
+                    yield return autoAdvanceSeconds > 0f
+                        ? WaitForAutoAdvance(autoAdvanceSeconds)
+                        : WaitForAdvance();
 
                 _lineIndex++;
             }
@@ -181,6 +186,31 @@ namespace Ashburn.Cutscenes
 
             _visibleCharacters = total;
             _revealing = false;
+        }
+
+        /// <summary>
+        /// Holds a finished line for a moment and then moves on by itself.
+        ///
+        /// For beats that carry the scene rather than wait on it. The company escape runs the
+        /// dialogue alongside the automatic run for the door, and the sequence cannot travel until
+        /// the last line is done — so a conversation nobody thought to press space through left the
+        /// two of them standing in the lobby with no way out. A line that plays while the players
+        /// are being carried somewhere is not a line they were asked to acknowledge.
+        ///
+        /// A press still skips ahead, so this only ever makes the beat faster.
+        /// </summary>
+        IEnumerator WaitForAutoAdvance(float seconds)
+        {
+            var remaining = seconds;
+
+            while (remaining > 0f)
+            {
+                if (AdvancePressed())
+                    yield break;
+
+                remaining -= Time.unscaledDeltaTime;
+                yield return null;
+            }
         }
 
         IEnumerator WaitForAdvance()

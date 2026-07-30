@@ -1,4 +1,5 @@
 using Ashburn.Interaction;
+using Ashburn.Player;
 using Ashburn.World;
 using UnityEngine;
 
@@ -20,12 +21,25 @@ namespace Ashburn.Cutscenes
         [SerializeField] string requiredFlag;
         [SerializeField] string raiseFlagOnComplete;
 
+        [Header("Who may use it")]
+        [Tooltip("-1 for either of them, 0 for Nathan, 1 for Grant. Records and sound gear are " +
+                 "Nathan's, plant is Grant's — see PlayerRole.")]
+        [SerializeField] int requiredSlot = PlayerRole.Anyone;
+
+        // Whoever is standing here, for a prompt that can name the right person. See the same
+        // field on SearchableCache.Spot for why this is read from CanInteract.
+        GameObject _asking;
+
         string UsedFlag => "interact:" + eventId;
 
-        public string Prompt => prompt;
+        public string Prompt => PlayerRole.Matches(_asking, requiredSlot)
+            ? prompt
+            : PlayerRole.Refusal(requiredSlot);
 
         public bool CanInteract(GameObject interactor)
         {
+            _asking = interactor;
+
             if (DialogueManager.IsPlaying)
                 return false;
 
@@ -35,12 +49,14 @@ namespace Ashburn.Cutscenes
             if (!string.IsNullOrEmpty(requiredFlag) && !WorldState.Has(requiredFlag))
                 return false;
 
+            // Deliberately not the role check. The wrong one of the two still targets this so the
+            // prompt can tell them whose job it is; Interact is where the refusal bites.
             return StoryProgression.CanPlay(eventId);
         }
 
         public void Interact(GameObject interactor)
         {
-            if (!CanInteract(interactor))
+            if (!CanInteract(interactor) || !PlayerRole.Matches(interactor, requiredSlot))
                 return;
 
             var manager = DialogueManager.Ensure();
