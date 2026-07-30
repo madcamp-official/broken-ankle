@@ -341,7 +341,7 @@ MonoBehaviour:
   hearSelf: 0
   hearAlly: 1
   hearMonster: 1
-  sensitivity: 1
+  sensitivity: 1.6
   memory: 4
 --- !u!114 &6369505412604317244
 MonoBehaviour:
