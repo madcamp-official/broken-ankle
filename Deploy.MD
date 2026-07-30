@@ -4,15 +4,13 @@ Windows 빌드를 만들어 팀 밖의 사람에게 건네는 절차. 규모는 
 
 ## 1. 지금 어디까지 되어 있나
 
-빌드 스크립트와 사전 준비는 저장소에 들어가 있다. 남은 것은 **에디터를 닫고 빌드를 돌리는 것**뿐이다.
-
 - [x] 씬 목록 확인 — `Systems` 가 0번, 맵 14개 전부 등록됨
 - [x] `gameVersion` 을 `3` 으로 올림 (코드 기본값과 `Systems.unity` 양쪽)
 - [x] `Assets/Editor/BuildWindows.cs` — 메뉴와 배치모드 양쪽에서 도는 빌드
 - [x] `Build/` 와 `*.zip` 을 gitignore 에 추가
-- [ ] 빌드 실행
-- [ ] 압축
-- [ ] GitHub Releases 에 올리기
+- [x] 빌드 실행 — `ea9c748` 기준, 414.8 MB, 214초, 오류 0
+- [x] 압축 — `Ashburn-v3-win64.zip`, 57.6 MB, 239개 항목 전부 정상 해제 확인
+- [ ] GitHub Releases 에 올리기 — 이 기계에 `gh` 가 없어 아직 못 올렸다
 
 ## 2. 빌드하기
 
@@ -50,8 +48,38 @@ IL2CPP 라도 문자열은 남으니 근본적인 차이는 아니다. 아래 Ap
 `Build/Windows` 폴더를 **통째로** 압축한다. `Ashburn.exe` 만 꺼내면 실행조차 되지
 않는다. `Ashburn_Data` 와 `UnityPlayer.dll` 이 옆에 있어야 한다.
 
+`*_BurstDebugInformation_DoNotShip` 은 뺀다. 이름 그대로 배포용이 아니다.
+
+### `Compress-Archive` 를 쓰지 말 것
+
+Windows PowerShell 5.1 의 `Compress-Archive` 도, .NET Framework 의
+`ZipFile.CreateFromDirectory` 도 zip 안의 경로 구분자를 **역슬래시로 쓴다.** zip 규격은
+슬래시이고, 이것을 지키지 않은 압축 파일은 Windows 기본 압축 해제에서만 폴더로 풀린다.
+7-Zip, macOS, Linux 에서는 `Ashburn_Data\level0` 이 폴더가 아니라 **그 이름의 파일 하나**가
+되어, 받은 사람이 `Ashburn.exe` 옆에 `Ashburn_Data` 폴더가 없는 상태를 보게 된다.
+
+항목 이름을 직접 넘겨야 한다.
+
+```powershell
+$src = "Build\Windows"; $zip = "Ashburn-v3-win64.zip"
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+$sep = [System.IO.Path]::DirectorySeparatorChar
+$fs = [System.IO.File]::Open($zip, [System.IO.FileMode]::CreateNew)
+$ar = New-Object System.IO.Compression.ZipArchive($fs, [System.IO.Compression.ZipArchiveMode]::Create)
+$prefix = (Resolve-Path $src).Path.TrimEnd($sep) + $sep
+foreach ($f in Get-ChildItem $src -Recurse -File) {
+  $rel = $f.FullName.Substring($prefix.Length).Replace($sep, [char]0x2F)
+  [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($ar, $f.FullName, $rel, 'Optimal') | Out-Null
+}
+$ar.Dispose(); $fs.Dispose()
 ```
-Compress-Archive -Path Build\Windows\* -DestinationPath Ashburn-v3-win64.zip
+
+확인은 역슬래시가 하나도 없는지 세는 것으로 충분하다.
+
+```powershell
+$a = [System.IO.Compression.ZipFile]::OpenRead("Ashburn-v3-win64.zip")
+@($a.Entries | Where-Object { $_.FullName.Contains([char]0x5C) }).Count   # 0 이어야 한다
 ```
 
 GitHub Releases 로 올린다. 저장소가 공개라 그대로 쓸 수 있고, 무엇보다 어느
@@ -90,7 +118,26 @@ App ID 는 비밀번호가 아니고 대시보드 접근 권한을 주지 않는
 범위의 팀 배포에서는 감수할 만하다. 공개 링크로 아무나 받게 할 생각이면 Photon
 커스텀 인증이 필요하고, 그것은 하루에 끝나는 일이 아니다.
 
-## 6. 다른 플랫폼
+## 6. 빌드 전에 확인할 것: 타일 GUID 충돌
+
+`Assets/Art/Tiles/LimeZu/` 는 gitignore 대상이라 저장소에 없다. 병원 서가가 쓰는 타일
+여섯 개만 `Assets/RequiredTiles/HospitalShelves/` 에 복사해 커밋해 두었는데, `.meta` 까지
+같이 복사돼 **원본과 GUID 가 같다.**
+
+둘 다 있는 기계(= LimeZu 를 받아 둔 팀원의 기계)에서는 Unity 가 충돌을 감지하고 복사본에
+새 GUID 를 발급한다. 임포트할 때마다 다시 발급하므로 `git status` 에 계속 뜬다.
+
+**그 변경을 커밋하면 안 된다.** 커밋되는 순간, LimeZu 를 갖고 있지 않은 사람 쪽에서
+`Hospital.unity` 가 가리키던 GUID 가 사라져 서가 타일이 통째로 빠진다.
+
+```
+git checkout -- Assets/RequiredTiles/
+```
+
+빌드 자체는 어느 쪽이든 같은 그림이 들어가므로 영향이 없다. 근본적으로는 복사본을 지우고
+필요한 타일 여섯 개만 gitignore 예외로 빼는 편이 낫다.
+
+## 7. 다른 플랫폼
 
 패키지를 더 받을 일은 없다. Unity Hub 에서 모듈을 체크하면 된다. PUN2 와 Voice 2 는
 iOS/Android/macOS 를 모두 지원한다.
