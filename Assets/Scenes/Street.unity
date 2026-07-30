@@ -2357,7 +2357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03e88b95d4448094cbe855274c9e0f20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.MapDoor
-  targetMap: House
+  targetMap: Container Box
   targetEntry: Default
   prompt: "\uCEE8\uD14C\uC774\uB108\uB85C \uB4E4\uC5B4\uAC00\uAE30"
   lockedPrompt: "\uC7A0\uACA8 \uC788\uB2E4"

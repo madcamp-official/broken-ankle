@@ -226,7 +226,7 @@ MonoBehaviour:
   actionMaps:
   - Player
   - Player2
-  startingMap: House
+  startingMap: Container Box
   startingEntry: 
   offlinePlayers: 2
   offlineViewerIndex: 0
