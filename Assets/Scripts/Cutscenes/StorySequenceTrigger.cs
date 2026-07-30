@@ -223,7 +223,10 @@ namespace Ashburn.Cutscenes
             if (properties.TryGetValue(AdvanceKey, out var advance) &&
                 TryReadInt(advance, out var counter))
             {
-                _advanceCounter = counter;
+                // A client can finish loading after the other player has already advanced one or
+                // more lines. Preserve those room-property pulses so it catches up instead of
+                // leaving an old dialogue panel behind when the sequence ends.
+                AdoptAdvance(counter);
             }
 
             if (properties.TryGetValue(StartKey, out var started) && IsTrue(started))

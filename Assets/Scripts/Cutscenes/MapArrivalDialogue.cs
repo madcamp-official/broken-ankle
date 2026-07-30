@@ -202,6 +202,7 @@ namespace Ashburn.Cutscenes
                 done is bool complete && complete)
             {
                 _doneSeen = true;
+                DialogueManager.Current?.FinishNetworkPlayback(eventId);
             }
 
             if (!properties.TryGetValue(AdvanceKey, out var value) ||

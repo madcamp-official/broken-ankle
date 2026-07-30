@@ -1,10 +1,13 @@
 using System.Collections;
+using System.Collections.Generic;
 using System;
 using Ashburn.Core;
 using Ashburn.Noise;
 using Ashburn.Player;
 using Ashburn.World;
+using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -17,8 +20,9 @@ namespace Ashburn.Cutscenes
     /// It intentionally draws with IMGUI like the existing menu/prompt screens, so story beats can
     /// be tested before a final Canvas, TMP font, portraits, and animation polish exist.
     /// </summary>
-    public class DialogueManager : MonoBehaviourPunCallbacks
+    public class DialogueManager : MonoBehaviourPunCallbacks, IOnEventCallback
     {
+        const byte SharedRequestEventCode = 91;
         const string SharedEventKey = "shared-dialogue:event";
         const string SharedSerialKey = "shared-dialogue:serial";
         const string SharedAdvanceKey = "shared-dialogue:advance";
@@ -50,7 +54,8 @@ namespace Ashburn.Cutscenes
         [SerializeField] float bottomMargin = 18f;
 
         public static DialogueManager Current { get; private set; }
-        public static bool IsPlaying => Current != null && Current._playing;
+        public static bool IsPlaying =>
+            Current != null && (Current._playing || Current._waitingForSharedStart);
 
         public static event Action<string> Finished;
 
@@ -66,9 +71,11 @@ namespace Ashburn.Cutscenes
         bool _lockInput;
         bool _advanceAfterReveal;
         Func<bool> _advanceSource;
+        string _playingEventId;
 
         bool _sharedNetworkPlaying;
         bool _sharedStartPending;
+        bool _waitingForSharedStart;
         int _sharedSerial = -1;
         int _sharedAdvanceCounter;
         int _sharedPendingAdvancePulses;
@@ -79,6 +86,22 @@ namespace Ashburn.Cutscenes
         Vector2 _pendingSharedNoisePosition;
         int _pendingSharedMap;
         string _pendingSharedRaiseFlag;
+        string _requestedSharedEventId;
+        string _activeSharedEventId;
+        SharedRequest _outgoingSharedRequest;
+        readonly Queue<SharedRequest> _sharedRequests = new();
+        readonly HashSet<string> _queuedSharedEvents = new(StringComparer.Ordinal);
+
+        sealed class SharedRequest
+        {
+            public string EventId;
+            public bool LockInput;
+            public bool EmitNoise;
+            public float NoiseRange;
+            public Vector2 NoisePosition;
+            public int Map;
+            public string RaiseFlag;
+        }
 
         void Awake()
         {
@@ -101,6 +124,7 @@ namespace Ashburn.Cutscenes
 
         void Update()
         {
+            TryPublishNextSharedDialogue();
             TryStartPendingSharedDialogue();
 
             if (_sharedNetworkPlaying && PhotonNetwork.InRoom && LocalAdvancePressed())
@@ -122,11 +146,37 @@ namespace Ashburn.Cutscenes
             _sharedStartPending = false;
             _sharedNetworkPlaying = false;
             _sharedPendingAdvancePulses = 0;
+            _waitingForSharedStart = false;
+            _requestedSharedEventId = null;
+            _activeSharedEventId = null;
+            _outgoingSharedRequest = null;
+            _sharedRequests.Clear();
+            _queuedSharedEvents.Clear();
 
             // A room disappearing halfway through a line should leave a playable solo dialogue,
             // not one waiting forever for the next network pulse.
             if (_playing && _advanceSource == NetworkAdvancePressed)
                 _advanceSource = null;
+        }
+
+        public override void OnMasterClientSwitched(Photon.Realtime.Player newMasterClient)
+        {
+            if (_waitingForSharedStart && !string.IsNullOrEmpty(_requestedSharedEventId))
+                ResendSharedRequest();
+        }
+
+        public void OnEvent(EventData photonEvent)
+        {
+            if (photonEvent.Code != SharedRequestEventCode ||
+                !PhotonNetwork.IsMasterClient ||
+                photonEvent.CustomData is not object[] data ||
+                !TryReadRequest(data, out var request))
+            {
+                return;
+            }
+
+            EnqueueSharedRequest(request);
+            TryPublishNextSharedDialogue();
         }
 
         public static DialogueManager Ensure()
@@ -136,6 +186,23 @@ namespace Ashburn.Cutscenes
 
             var go = new GameObject("DialogueManager");
             return go.AddComponent<DialogueManager>();
+        }
+
+        /// <summary>
+        /// Closes a local copy after the authoritative network flow has completed this event.
+        /// This is a loading-lag fallback; under normal timing both copies finish from the same
+        /// advance counter before the done property arrives.
+        /// </summary>
+        public bool FinishNetworkPlayback(string eventId)
+        {
+            if (!_playing || _playingEventId != eventId)
+                return false;
+
+            if (_routine != null)
+                StopCoroutine(_routine);
+
+            Finish();
+            return true;
         }
 
         public bool TryPlay(
@@ -207,11 +274,9 @@ namespace Ashburn.Cutscenes
             if (!PhotonNetwork.InRoom || advanceSource != null || string.IsNullOrEmpty(eventId))
                 return false;
 
-            // The company chase and split-role sequences already own a richer synchronized
-            // staging/auto-movement flow. Feeding those through this generic channel as well would
-            // start a second copy of the same beat.
-            return !eventId.StartsWith("corp_", StringComparison.Ordinal) &&
-                   !eventId.StartsWith("corp2_", StringComparison.Ordinal);
+            // This line auto-advances inside StorySequenceTrigger on both machines. Every other
+            // custom company beat supplies its own advance source and was already excluded above.
+            return eventId != "corp_escape_001";
         }
 
         bool RequestSharedDialogue(
@@ -223,7 +288,7 @@ namespace Ashburn.Cutscenes
             int map,
             string raiseFlagOnComplete)
         {
-            if (_playing || _sharedStartPending || PhotonNetwork.CurrentRoom == null)
+            if (PhotonNetwork.CurrentRoom == null)
                 return false;
 
             if (!StoryProgression.CanPlay(eventId))
@@ -235,28 +300,174 @@ namespace Ashburn.Cutscenes
                 return false;
             }
 
-            var room = PhotonNetwork.CurrentRoom;
-            var roomSerial = ReadInt(room.CustomProperties, SharedSerialKey, -1);
-            var serial = Mathf.Max(roomSerial, _sharedSerial) + 1;
-
-            room.SetCustomProperties(new Hashtable
+            var request = new SharedRequest
             {
-                { SharedEventKey, eventId },
-                { SharedSerialKey, serial },
-                { SharedAdvanceKey, 0 },
-                { SharedDoneKey, serial - 1 },
-                { SharedLockKey, lockInput },
-                { SharedNoiseKey, emitNoise },
-                { SharedNoiseRangeKey, noiseRange },
-                { SharedNoiseXKey, noisePosition.x },
-                { SharedNoiseYKey, noisePosition.y },
-                { SharedMapKey, map },
-                { SharedRaiseKey, raiseFlagOnComplete ?? string.Empty },
-            });
+                EventId = eventId,
+                LockInput = lockInput,
+                EmitNoise = emitNoise,
+                NoiseRange = noiseRange,
+                NoisePosition = noisePosition,
+                Map = map,
+                RaiseFlag = raiseFlagOnComplete,
+            };
 
-            QueueSharedDialogue(serial, eventId, lockInput, emitNoise, noiseRange,
-                                noisePosition, map, raiseFlagOnComplete);
-            TryStartPendingSharedDialogue();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                EnqueueSharedRequest(request);
+                TryPublishNextSharedDialogue();
+                return true;
+            }
+
+            _outgoingSharedRequest = request;
+            _requestedSharedEventId = eventId;
+            _waitingForSharedStart = SendSharedRequest(request);
+            if (!_waitingForSharedStart)
+            {
+                _outgoingSharedRequest = null;
+                _requestedSharedEventId = null;
+            }
+            return _waitingForSharedStart;
+        }
+
+        void EnqueueSharedRequest(SharedRequest request)
+        {
+            if (request == null || string.IsNullOrEmpty(request.EventId) ||
+                _queuedSharedEvents.Contains(request.EventId))
+            {
+                return;
+            }
+
+            _queuedSharedEvents.Add(request.EventId);
+            _sharedRequests.Enqueue(request);
+        }
+
+        void TryPublishNextSharedDialogue()
+        {
+            if (!PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient ||
+                PhotonNetwork.CurrentRoom == null || _playing || _sharedStartPending ||
+                _sharedNetworkPlaying || _sharedRequests.Count == 0)
+            {
+                return;
+            }
+
+            while (_sharedRequests.Count > 0)
+            {
+                var request = _sharedRequests.Peek();
+
+                // The request and its prerequisite WorldState flags are separate reliable
+                // messages. Keep it queued until the flags catch up instead of silently dropping
+                // the conversation on the faster packet.
+                if (!StoryProgression.CanPlay(request.EventId))
+                    return;
+
+                _sharedRequests.Dequeue();
+                if (!DialogueCatalog.TryGet(request.EventId, out var lines) || lines.Length == 0)
+                {
+                    _queuedSharedEvents.Remove(request.EventId);
+                    continue;
+                }
+
+                var room = PhotonNetwork.CurrentRoom;
+                var roomSerial = ReadInt(room.CustomProperties, SharedSerialKey, -1);
+                var serial = Mathf.Max(roomSerial, _sharedSerial) + 1;
+                _activeSharedEventId = request.EventId;
+
+                room.SetCustomProperties(new Hashtable
+                {
+                    { SharedEventKey, request.EventId },
+                    { SharedSerialKey, serial },
+                    { SharedAdvanceKey, 0 },
+                    { SharedDoneKey, serial - 1 },
+                    { SharedLockKey, request.LockInput },
+                    { SharedNoiseKey, request.EmitNoise },
+                    { SharedNoiseRangeKey, request.NoiseRange },
+                    { SharedNoiseXKey, request.NoisePosition.x },
+                    { SharedNoiseYKey, request.NoisePosition.y },
+                    { SharedMapKey, request.Map },
+                    { SharedRaiseKey, request.RaiseFlag ?? string.Empty },
+                });
+
+                QueueSharedDialogue(
+                    serial,
+                    request.EventId,
+                    request.LockInput,
+                    request.EmitNoise,
+                    request.NoiseRange,
+                    request.NoisePosition,
+                    request.Map,
+                    request.RaiseFlag);
+                TryStartPendingSharedDialogue();
+                return;
+            }
+        }
+
+        bool SendSharedRequest(SharedRequest request)
+        {
+            var data = new object[]
+            {
+                request.EventId,
+                request.LockInput,
+                request.EmitNoise,
+                request.NoiseRange,
+                request.NoisePosition.x,
+                request.NoisePosition.y,
+                request.Map,
+                request.RaiseFlag ?? string.Empty,
+            };
+
+            return PhotonNetwork.RaiseEvent(
+                SharedRequestEventCode,
+                data,
+                new RaiseEventOptions { Receivers = ReceiverGroup.MasterClient },
+                SendOptions.SendReliable);
+        }
+
+        void ResendSharedRequest()
+        {
+            if (_outgoingSharedRequest == null ||
+                !DialogueCatalog.TryGet(_outgoingSharedRequest.EventId, out var lines) ||
+                lines.Length == 0)
+            {
+                _waitingForSharedStart = false;
+                _requestedSharedEventId = null;
+                _outgoingSharedRequest = null;
+                return;
+            }
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                EnqueueSharedRequest(_outgoingSharedRequest);
+                TryPublishNextSharedDialogue();
+            }
+            else
+            {
+                _waitingForSharedStart = SendSharedRequest(_outgoingSharedRequest);
+            }
+        }
+
+        static bool TryReadRequest(object[] data, out SharedRequest request)
+        {
+            request = null;
+            if (data.Length < 8 ||
+                data[0] is not string eventId ||
+                data[1] is not bool lockInput ||
+                data[2] is not bool emitNoise)
+            {
+                return false;
+            }
+
+            request = new SharedRequest
+            {
+                EventId = eventId,
+                LockInput = lockInput,
+                EmitNoise = emitNoise,
+                NoiseRange = Convert.ToSingle(data[3]),
+                NoisePosition = new Vector2(
+                    Convert.ToSingle(data[4]),
+                    Convert.ToSingle(data[5])),
+                Map = Convert.ToInt32(data[6]),
+                RaiseFlag = data[7] as string,
+            };
             return true;
         }
 
@@ -294,7 +505,10 @@ namespace Ashburn.Cutscenes
                 return;
 
             if (done >= serial)
+            {
                 _sharedStartPending = false;
+                FinishNetworkPlayback(ReadString(properties, SharedEventKey));
+            }
 
             var advance = ReadInt(properties, SharedAdvanceKey, 0);
             if (advance <= _sharedAdvanceCounter)
@@ -362,6 +576,12 @@ namespace Ashburn.Cutscenes
 
             _sharedStartPending = false;
             _sharedNetworkPlaying = true;
+            if (_pendingSharedEventId == _requestedSharedEventId)
+            {
+                _waitingForSharedStart = false;
+                _requestedSharedEventId = null;
+                _outgoingSharedRequest = null;
+            }
         }
 
         void PublishSharedAdvance()
@@ -399,6 +619,7 @@ namespace Ashburn.Cutscenes
             _playing = true;
             _lockInput = lockInput;
             _advanceSource = advanceSource;
+            _playingEventId = eventId;
             _lines = lines;
             _lineIndex = 0;
 
@@ -517,6 +738,7 @@ namespace Ashburn.Cutscenes
             _visibleCharacters = 0;
             _advanceAfterReveal = false;
             _advanceSource = null;
+            _playingEventId = null;
             _sharedNetworkPlaying = false;
 
             if (_lockInput)
@@ -538,6 +760,11 @@ namespace Ashburn.Cutscenes
 
             PhotonNetwork.CurrentRoom.SetCustomProperties(
                 new Hashtable { { SharedDoneKey, _sharedSerial } });
+
+            if (!string.IsNullOrEmpty(_activeSharedEventId))
+                _queuedSharedEvents.Remove(_activeSharedEventId);
+
+            _activeSharedEventId = null;
         }
 
         void SuspendPlayers(bool suspended)

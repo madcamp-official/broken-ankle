@@ -30,6 +30,9 @@ namespace Ashburn.Cutscenes
             if (delay > 0f)
                 yield return new WaitForSeconds(delay);
 
+            if (playOnce && WorldState.Has(CompletedFlag))
+                yield break;
+
             var manager = DialogueManager.Ensure();
             var map = MapZone.IdOf(this);
 
@@ -40,6 +43,11 @@ namespace Ashburn.Cutscenes
 
                 while (DialogueManager.IsPlaying)
                     yield return null;
+
+                // The partner's copy may have started and completed this automatic sequence while
+                // this client was behind the title screen or loading the map.
+                if (playOnce && WorldState.Has(CompletedFlag))
+                    yield break;
 
                 if (!manager.TryPlay(dialogueId, lockInput: true, emitNoise: false, noiseRange: 0f,
                                      noisePosition: transform.position, map: map,
