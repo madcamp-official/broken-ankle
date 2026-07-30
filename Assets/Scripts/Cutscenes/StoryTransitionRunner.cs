@@ -166,7 +166,9 @@ namespace Ashburn.Cutscenes
                         MapTravel.Go(rig.gameObject, _targetMap, _targetEntry);
                 }
 
-                while (!AllControlledArrived())
+                // Each client moves only the character it owns. The post-escape dialogue cannot
+                // start while the partner is still in the company lobby.
+                while (!AllParticipantsArrived())
                     yield return null;
 
                 while (DialogueManager.IsPlaying)
@@ -220,14 +222,17 @@ namespace Ashburn.Cutscenes
             }
         }
 
-        bool AllControlledArrived()
+        bool AllParticipantsArrived()
         {
-            if (_controlled.Count == 0)
+            if (_participants.Count == 0)
                 return true;
 
-            foreach (var rig in _controlled)
+            foreach (var rig in _participants)
             {
-                if (rig == null || MapTravel.IsTravelling(rig.gameObject))
+                if (rig == null)
+                    return false;
+
+                if (rig.IsControlled && MapTravel.IsTravelling(rig.gameObject))
                     return false;
 
                 var presence = rig.GetComponent<MapPresence>();

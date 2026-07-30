@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Ashburn.Interaction;
+using Ashburn.Net;
 using Ashburn.Player;
 using Ashburn.World;
 using Photon.Pun;
@@ -103,6 +104,7 @@ namespace Ashburn.Cutscenes
         string CompletedFlag => "sequence:" + SequenceId;
         string StartKey => "cutscene:" + SequenceId + ":start";
         string AdvanceKey => "cutscene:" + SequenceId + ":advance";
+        string ExitReadyKey(int slot) => "cutscene:" + SequenceId + ":exitReady:" + slot;
 
         void Reset()
         {
@@ -309,6 +311,8 @@ namespace Ashburn.Cutscenes
                     yield return null;
 
                 _selfAdvancing = false;
+
+                yield return WaitForAllPlayersAtExit(participants);
 
                 if (!string.IsNullOrEmpty(raiseFlagAfterMovement))
                     WorldState.Raise(raiseFlagAfterMovement);
@@ -524,6 +528,47 @@ namespace Ashburn.Cutscenes
         {
             var inventory = rig != null ? rig.GetComponent<Inventory>() : null;
             return inventory != null ? inventory.Slot : 0;
+        }
+
+        IEnumerator WaitForAllPlayersAtExit(List<PlayerRig> participants)
+        {
+            if (!PhotonNetwork.InRoom || PhotonNetwork.CurrentRoom == null)
+                yield break;
+
+            var ready = new Hashtable();
+            foreach (var rig in participants)
+            {
+                if (rig == null || !rig.IsControlled)
+                    continue;
+
+                ready[ExitReadyKey(SlotOf(rig))] = true;
+            }
+
+            if (ready.Count > 0)
+                PhotonNetwork.CurrentRoom.SetCustomProperties(ready);
+
+            while (!AllRoomPlayersAtExit())
+                yield return null;
+        }
+
+        bool AllRoomPlayersAtExit()
+        {
+            var room = PhotonNetwork.CurrentRoom;
+            if (room == null)
+                return true;
+
+            foreach (var player in PhotonNetwork.PlayerList)
+            {
+                if (!player.CustomProperties.TryGetValue(NetworkGame.SlotKey, out var value) ||
+                    !TryReadInt(value, out var slot) ||
+                    !room.CustomProperties.TryGetValue(ExitReadyKey(slot), out var ready) ||
+                    !IsTrue(ready))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         static void SetControlledInput(List<PlayerRig> participants, bool suspended)

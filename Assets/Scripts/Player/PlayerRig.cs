@@ -74,6 +74,10 @@ namespace Ashburn.Player
         static readonly List<PlayerRig> _all = new();
 
         Monster.Downed _downed;
+        int _inputSuspendCount;
+
+        /// <summary>True while one or more systems still own an input lock.</summary>
+        public bool InputSuspended => _inputSuspendCount > 0;
 
         void Awake()
         {
@@ -101,9 +105,7 @@ namespace Ashburn.Player
             isViewer = viewer;
             isControlled = controlled;
 
-            foreach (var component in inputComponents)
-                if (component != null)
-                    component.enabled = controlled;
+            ApplyInputState();
 
             foreach (var component in viewerOnlyComponents)
                 if (component != null)
@@ -157,6 +159,11 @@ namespace Ashburn.Player
             if (!isControlled)
                 return;
 
+            if (suspended)
+                _inputSuspendCount++;
+            else if (_inputSuspendCount > 0)
+                _inputSuspendCount--;
+
             // A player on the floor does not stand up because a cutscene ended. Downed switches off
             // the movement and the interactor — the same two components listed here — and it is the
             // only thing entitled to switch them back on. Without this a story beat that finished
@@ -164,13 +171,14 @@ namespace Ashburn.Player
             // they walked about with their partner being offered 구출하기 over a healthy character,
             // and their own camera watching somebody else because the game had them lying there.
             if (!suspended && _downed != null && _downed.IsDown)
+            {
+                ApplyInputState();
                 return;
+            }
 
-            foreach (var component in inputComponents)
-                if (component != null)
-                    component.enabled = !suspended;
+            ApplyInputState();
 
-            if (!suspended)
+            if (!InputSuspended)
                 return;
 
             var body = GetComponent<Rigidbody2D>();
@@ -183,6 +191,19 @@ namespace Ashburn.Player
             var controller = GetComponent<PlayerController>();
             if (controller != null)
                 controller.Drive(Vector2.zero, MovementMode.Walk);
+        }
+
+        /// <summary>Reapplies input flags after another player state changed components.</summary>
+        public void RefreshInputState() => ApplyInputState();
+
+        void ApplyInputState()
+        {
+            var enabled = isControlled && !InputSuspended &&
+                          (_downed == null || !_downed.IsDown);
+
+            foreach (var component in inputComponents)
+                if (component != null)
+                    component.enabled = enabled;
         }
     }
 }

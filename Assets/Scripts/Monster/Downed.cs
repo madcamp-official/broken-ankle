@@ -179,6 +179,7 @@ namespace Ashburn.Monster
 
             IsDown = false;
             SetControlEnabled(true);
+            GetComponent<Player.PlayerRig>()?.RefreshInputState();
             DownChanged?.Invoke(false);
         }
 

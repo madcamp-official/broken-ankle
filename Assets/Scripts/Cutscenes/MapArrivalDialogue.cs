@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Ashburn.Player;
 using Ashburn.World;
 using Photon.Pun;
@@ -30,6 +31,7 @@ namespace Ashburn.Cutscenes
         bool _doneSeen;
         int _advanceCounter;
         int _pendingAdvancePulses;
+        readonly List<PlayerRig> _arrivalLocks = new();
 
         IEnumerator Start()
         {
@@ -44,40 +46,73 @@ namespace Ashburn.Cutscenes
             while (!HasControlledPlayer(zone))
                 yield return null;
 
+            // Lock on the arrival frame, before the delay or network wait can keep reading a held
+            // movement key.
+            HoldArrivedPlayers(zone);
+
             if (PhotonNetwork.InRoom)
                 Adopt(PhotonNetwork.CurrentRoom?.CustomProperties);
 
             if (playOnce && WorldState.Has(CompletedFlag))
+            {
+                ReleaseArrivalLocks();
                 yield break;
+            }
 
             if (!string.IsNullOrEmpty(requiredFlag) && !WorldState.Has(requiredFlag))
+            {
+                ReleaseArrivalLocks();
                 yield break;
+            }
 
             if (!StoryProgression.CanPlay(eventId))
+            {
+                ReleaseArrivalLocks();
                 yield break;
+            }
 
             if (delay > 0f)
-                yield return new WaitForSeconds(delay);
+            {
+                var remaining = delay;
+                while (remaining > 0f)
+                {
+                    HoldArrivedPlayers(zone);
+                    remaining -= Time.unscaledDeltaTime;
+                    yield return null;
+                }
+            }
 
             if (PhotonNetwork.InRoom)
             {
                 if (_doneSeen)
+                {
+                    ReleaseArrivalLocks();
                     yield break;
+                }
 
                 // A map loads independently on each machine. The host can arrive while the other
                 // client is still on its loading frame, so publishing immediately would let the
                 // whole conversation finish before that client even owns this component.
                 while (!AllRoomPlayersPresent(zone) && !_doneSeen)
+                {
+                    HoldArrivedPlayers(zone);
                     yield return null;
+                }
 
                 if (PhotonNetwork.IsMasterClient && !_startSeen)
                     PublishStart();
 
                 while (!_startSeen && !_doneSeen)
+                {
+                    HoldArrivedPlayers(zone);
                     yield return null;
+                }
 
                 if (_doneSeen)
+                {
+                    ReleaseArrivalLocks();
                     yield break;
+                }
             }
 
             while (DialogueManager.IsPlaying)
@@ -91,9 +126,14 @@ namespace Ashburn.Cutscenes
                                  advanceSource: _networkPlaying ? NetworkAdvancePressed : null))
             {
                 _networkPlaying = false;
+                ReleaseArrivalLocks();
                 Debug.LogWarning($"Could not start arrival dialogue '{eventId}'.", this);
                 yield break;
             }
+
+            // DialogueManager acquired its own lock synchronously. Release the arrival lock only
+            // after that handoff, leaving no frame in which the held key can leak through.
+            ReleaseArrivalLocks();
 
             while (DialogueManager.IsPlaying)
                 yield return null;
@@ -220,6 +260,37 @@ namespace Ashburn.Cutscenes
             }
 
             return false;
+        }
+
+        void HoldArrivedPlayers(MapZone zone)
+        {
+            foreach (var rig in PlayerRig.All)
+            {
+                if (rig == null || !rig.IsControlled || _arrivalLocks.Contains(rig))
+                    continue;
+
+                var presence = rig.GetComponent<MapPresence>();
+                if (presence == null || presence.Zone != zone)
+                    continue;
+
+                rig.SuspendInput(true);
+                _arrivalLocks.Add(rig);
+            }
+        }
+
+        void ReleaseArrivalLocks()
+        {
+            foreach (var rig in _arrivalLocks)
+                if (rig != null)
+                    rig.SuspendInput(false);
+
+            _arrivalLocks.Clear();
+        }
+
+        public override void OnDisable()
+        {
+            ReleaseArrivalLocks();
+            base.OnDisable();
         }
 
         static bool AllRoomPlayersPresent(MapZone zone)

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Ashburn.Interaction;
 using Ashburn.Player;
+using Ashburn.World;
 using UnityEngine;
 
 namespace Ashburn.Cutscenes
@@ -14,6 +15,18 @@ namespace Ashburn.Cutscenes
     /// </summary>
     public class CutsceneWaypointMover : MonoBehaviour
     {
+        readonly struct CollisionPair
+        {
+            public readonly Collider2D First;
+            public readonly Collider2D Second;
+
+            public CollisionPair(Collider2D first, Collider2D second)
+            {
+                First = first;
+                Second = second;
+            }
+        }
+
         [SerializeField] Transform[] waypoints;
         [SerializeField] float speed = 4.6f;
         [SerializeField] float arriveDistance = 0.08f;
@@ -35,20 +48,32 @@ namespace Ashburn.Cutscenes
         public IEnumerator PlayForAllControlledPlayersRoutine()
         {
             var moving = new List<Coroutine>();
+            var zone = MapZone.Of(this);
+            var ignoredCollisions = IgnoreParticipantCollisions();
 
-            foreach (var rig in FindObjectsByType<PlayerRig>(
-                         FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            try
             {
-                if (rig.IsControlled)
-                    moving.Add(StartCoroutine(Move(rig)));
+                foreach (var rig in FindObjectsByType<PlayerRig>(
+                             FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                {
+                    var presence = rig.GetComponent<MapPresence>();
+                    if (rig.IsControlled &&
+                        (zone == null || presence != null && presence.Zone == zone))
+                    {
+                        moving.Add(StartCoroutine(Move(rig)));
+                    }
+                }
+
+                IsMoving = moving.Count > 0;
+
+                foreach (var routine in moving)
+                    yield return routine;
             }
-
-            IsMoving = moving.Count > 0;
-
-            foreach (var routine in moving)
-                yield return routine;
-
-            IsMoving = false;
+            finally
+            {
+                RestoreParticipantCollisions(ignoredCollisions);
+                IsMoving = false;
+            }
         }
 
         IEnumerator Move(PlayerRig rig)
@@ -114,6 +139,51 @@ namespace Ashburn.Cutscenes
             return slotOffsets != null && slot >= 0 && slot < slotOffsets.Length
                 ? slotOffsets[slot]
                 : Vector2.zero;
+        }
+
+        List<CollisionPair> IgnoreParticipantCollisions()
+        {
+            var zone = MapZone.Of(this);
+            var colliders = new List<Collider2D[]>();
+
+            foreach (var rig in FindObjectsByType<PlayerRig>(
+                         FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            {
+                var presence = rig.GetComponent<MapPresence>();
+                if (zone != null && (presence == null || presence.Zone != zone))
+                    continue;
+
+                colliders.Add(rig.GetComponentsInChildren<Collider2D>(false));
+            }
+
+            var ignored = new List<CollisionPair>();
+            for (var firstRig = 0; firstRig < colliders.Count; firstRig++)
+            {
+                for (var secondRig = firstRig + 1; secondRig < colliders.Count; secondRig++)
+                {
+                    foreach (var first in colliders[firstRig])
+                    foreach (var second in colliders[secondRig])
+                    {
+                        if (first == null || second == null || first.isTrigger || second.isTrigger ||
+                            Physics2D.GetIgnoreCollision(first, second))
+                        {
+                            continue;
+                        }
+
+                        Physics2D.IgnoreCollision(first, second, true);
+                        ignored.Add(new CollisionPair(first, second));
+                    }
+                }
+            }
+
+            return ignored;
+        }
+
+        static void RestoreParticipantCollisions(List<CollisionPair> ignored)
+        {
+            foreach (var pair in ignored)
+                if (pair.First != null && pair.Second != null)
+                    Physics2D.IgnoreCollision(pair.First, pair.Second, false);
         }
     }
 }
