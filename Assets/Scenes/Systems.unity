@@ -137,14 +137,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.World.RoomCamera
   cinemachineCamera: {fileID: 0}
-  padding: 0.75
+  padding: 1.25
   transition: 0
   panSeconds: 0.45
   fadeOutSeconds: 0.22
   fadeInSeconds: 0.38
   maxSize: 6
-  clampToRoom: 1
-  followDeadZone: 0.42
+  clampToRoom: 0
+  followDeadZone: 0.33333334
   fallbackAspect: 1.7777778
 --- !u!1 &947414610
 GameObject:

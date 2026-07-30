@@ -24,7 +24,7 @@ namespace Ashburn.World
 
         [Tooltip("World units of empty space kept around the room, so walls are not flush with " +
                  "the screen edge.")]
-        [SerializeField] float padding = 0.75f;
+        [SerializeField] float padding = 1.25f;
 
         [Tooltip("How the view gets from one room to the next.\n\n" +
                  "Fade — black, move, back. The next room is simply there.\n" +
@@ -56,16 +56,14 @@ namespace Ashburn.World
                  "instead, and stops at its edges.")]
         [SerializeField] float maxSize = 6f;
 
-        [Tooltip("In a room too large to frame whole, keep the view inside the room's walls. On by " +
-                 "default, and it is what makes a room read as a room: without it a room that is " +
-                 "merely a little too wide for the screen stops being framed at all and the view " +
-                 "just trails the player around inside it.")]
-        [SerializeField] bool clampToRoom = true;
+        [Tooltip("In a room too large to frame whole, stop the camera at the room's walls. Leave " +
+                 "off when keeping the player readable matters more than hiding the outside map.")]
+        [SerializeField] bool clampToRoom;
 
         [Tooltip("Fraction of the visible half-size the player may move from the camera centre " +
                  "before a large room starts scrolling. Keeps rooms stable while still revealing " +
                  "their far edges.")]
-        [SerializeField, Range(0f, 0.9f)] float followDeadZone = 0.42f;
+        [SerializeField, Range(0f, 0.9f)] float followDeadZone = 1f / 3f;
 
         [Tooltip("Aspect to assume before a camera exists to ask. Only used on the first frame.")]
         [SerializeField] float fallbackAspect = 16f / 9f;
@@ -238,21 +236,9 @@ namespace Ashburn.World
 
             var area = room.Area;
             var z = cinemachineCamera.transform.position.z;
-            var halfHeight = size;
-            var halfWidth = size * Aspect();
-            var viewer = Viewer();
+            var centre = new Vector3(area.center.x, area.center.y, z);
 
-            if (viewer == null)
-                return new Vector3(area.center.x, area.center.y, z);
-
-            var x = area.size.x <= halfWidth * 2f
-                ? area.center.x
-                : ClampToRoom(viewer.position.x, area.min.x, area.max.x, halfWidth);
-            var y = area.size.y <= halfHeight * 2f
-                ? area.center.y
-                : ClampToRoom(viewer.position.y, area.min.y, area.max.y, halfHeight);
-
-            return new Vector3(x, y, z);
+            return FitsWholeRoom(area) ? centre : PositionFor(room, size, centre);
         }
 
         Vector3 PositionFor(RoomBounds room, float size, Vector3 current)
@@ -272,20 +258,21 @@ namespace Ashburn.World
             if (viewer == null)
                 return centre;
 
-            // On an axis the room is smaller than the view there is nothing to track along, so the
-            // room stays centred. On an axis it is larger — a corridor's length — the view follows
-            // the player, and by default it follows them the whole way: clamped, it stops half a
-            // screen from each end and leaves the player walking out to the edge of their own
-            // view, which is exactly where the darkness stops being able to cover the screen.
-            var x = area.size.x <= halfWidth * 2f
-                ? area.center.x
-                : Track(current.x, viewer.position.x, area.min.x, area.max.x, halfWidth);
+            // A room that fits stays composed as one shot. Once any axis makes the room too large
+            // to frame, both axes track so the player remains readable near a nominally fitting
+            // edge. A one-third dead zone keeps the route ahead visible.
+            if (FitsWholeRoom(area))
+                return centre;
 
-            var y = area.size.y <= halfHeight * 2f
-                ? area.center.y
-                : Track(current.y, viewer.position.y, area.min.y, area.max.y, halfHeight);
+            var x = Track(current.x, viewer.position.x, area.min.x, area.max.x, halfWidth);
+            var y = Track(current.y, viewer.position.y, area.min.y, area.max.y, halfHeight);
 
             return new Vector3(x, y, z);
+        }
+
+        bool FitsWholeRoom(Bounds area)
+        {
+            return SizeFor(area) <= maxSize + 0.001f;
         }
 
         float Track(float current, float viewer, float min, float max, float half)
