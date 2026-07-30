@@ -1000,7 +1000,7 @@ MonoBehaviour:
   restColour: {r: 0.5, g: 0.55, b: 0.7, a: 1}
   restAlpha: 0.18
   ally: {fileID: 0}
-  allyRecognitionRange: 5
+  recognitionRange: 5
 --- !u!1 &5462522140775758744
 GameObject:
   m_ObjectHideFlags: 0
