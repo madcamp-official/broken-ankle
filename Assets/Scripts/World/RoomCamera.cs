@@ -301,6 +301,31 @@ namespace Ashburn.World
             Release();
         }
 
+        /// <summary>
+        /// Temporarily watches a surviving partner. Passing null returns to the tagged local player.
+        /// </summary>
+        public void SetSpectatorTarget(Transform target)
+        {
+            _viewer = target;
+            _viewerPresence = target != null
+                ? target.GetComponentInParent<MapPresence>()
+                : null;
+
+            if (_groupFraming)
+                return;
+
+            if (_framed)
+            {
+                cinemachineCamera.Follow = null;
+                return;
+            }
+
+            if (_binder != null)
+                _binder.enabled = target == null;
+
+            cinemachineCamera.Follow = Viewer();
+        }
+
         void UpdateGroupFrame()
         {
             for (var i = _groupTargets.Count - 1; i >= 0; i--)

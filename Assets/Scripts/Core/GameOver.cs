@@ -1,4 +1,5 @@
 using Ashburn.Monster;
+using Ashburn.Player;
 using Ashburn.World;
 using Photon.Pun;
 using UnityEngine;
@@ -42,6 +43,8 @@ namespace Ashburn.Core
         float _liveSince;
         GUIStyle _title;
         GUIStyle _line;
+        Transform _spectating;
+        RoomCamera _spectatorCamera;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Install()
@@ -56,6 +59,8 @@ namespace Ashburn.Core
 
         void Update()
         {
+            UpdateSpectatorCamera();
+
             if (_over)
             {
                 if (Restarted())
@@ -72,6 +77,17 @@ namespace Ashburn.Core
                 return;
             }
 
+            // Network objects do not necessarily register on the same frame. A lone downed local
+            // player is not a wipe while a second room member's character is still arriving.
+            var expectedPlayers = PhotonNetwork.InRoom && PhotonNetwork.CurrentRoom != null
+                ? PhotonNetwork.CurrentRoom.PlayerCount
+                : Downed.All.Count;
+            if (Downed.All.Count < expectedPlayers)
+            {
+                _liveSince = 0f;
+                return;
+            }
+
             if (_liveSince <= 0f)
                 _liveSince = Time.time;
 
@@ -80,6 +96,52 @@ namespace Ashburn.Core
 
             if (!Downed.AnyStanding)
                 _over = true;
+        }
+
+        void UpdateSpectatorCamera()
+        {
+            PlayerRig viewer = null;
+            foreach (var rig in PlayerRig.All)
+            {
+                if (rig != null && rig.IsViewer)
+                {
+                    viewer = rig;
+                    break;
+                }
+            }
+
+            Transform target = null;
+            var viewerDowned = viewer != null ? viewer.GetComponent<Downed>() : null;
+            var viewerPresence = viewer != null ? viewer.GetComponent<MapPresence>() : null;
+
+            if (viewerDowned != null && viewerDowned.IsDown)
+            {
+                foreach (var candidate in Downed.All)
+                {
+                    if (candidate == null || candidate.IsDown || candidate == viewerDowned)
+                        continue;
+
+                    var rig = candidate.GetComponent<PlayerRig>();
+                    var presence = candidate.GetComponent<MapPresence>();
+                    if (rig != null && presence != null && presence.Zone != null &&
+                        (viewerPresence == null || viewerPresence.Zone == presence.Zone))
+                    {
+                        target = rig.transform;
+                        break;
+                    }
+                }
+            }
+
+            var camera = RoomCamera.Current;
+            if (_spectating == target && _spectatorCamera == camera)
+                return;
+
+            if (_spectatorCamera != null && _spectatorCamera != camera)
+                _spectatorCamera.SetSpectatorTarget(null);
+
+            _spectating = target;
+            _spectatorCamera = camera;
+            _spectatorCamera?.SetSpectatorTarget(target);
         }
 
         static bool Restarted()

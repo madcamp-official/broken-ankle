@@ -47,7 +47,7 @@ namespace Ashburn.Cutscenes
             },
             ["corp_escape_001"] = new[]
             {
-                Say("Nathan", "뒤 돌아보지 마!"),
+                Say("Nathan", "뒤 돌아 보지마!"),
                 Say("Grant", "보고 싶지도 않아!"),
                 Say("소음 관리자", "복도 소음 증가. 추적 우선순위 상승."),
             },
