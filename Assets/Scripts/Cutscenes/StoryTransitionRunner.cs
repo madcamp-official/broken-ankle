@@ -30,6 +30,27 @@ namespace Ashburn.Cutscenes
         int _pendingAdvancePulses;
         bool _running;
 
+        /// <summary>
+        /// Whether the tail of a beat is playing, and the one place that tells
+        /// <see cref="StoryBeat"/> so. Same reasoning as StorySequenceTrigger's.
+        /// </summary>
+        bool Running
+        {
+            get => _running;
+            set
+            {
+                if (_running == value)
+                    return;
+
+                _running = value;
+
+                if (value)
+                    StoryBeat.Begin();
+                else
+                    StoryBeat.End();
+            }
+        }
+
         public static bool Begin(
             string sequenceId,
             string completedFlag,
@@ -129,7 +150,7 @@ namespace Ashburn.Cutscenes
 
         IEnumerator Run()
         {
-            _running = true;
+            Running = true;
 
             try
             {
@@ -195,7 +216,7 @@ namespace Ashburn.Cutscenes
 
                 _participants.Clear();
                 _controlled.Clear();
-                _running = false;
+                Running = false;
             }
         }
 

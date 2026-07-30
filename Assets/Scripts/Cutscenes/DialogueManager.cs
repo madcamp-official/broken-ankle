@@ -125,8 +125,14 @@ namespace Ashburn.Cutscenes
             _lines = lines;
             _lineIndex = 0;
 
+            // Counted as a beat only when it locks input. A line that plays while the players can
+            // still walk is not a moment they are unable to defend themselves in, and making the
+            // monster harmless through it would cover most of the game.
             if (_lockInput)
+            {
+                StoryBeat.Begin();
                 SuspendPlayers(true);
+            }
 
             while (_lineIndex < _lines.Length)
             {
@@ -205,7 +211,10 @@ namespace Ashburn.Cutscenes
             _advanceSource = null;
 
             if (_lockInput)
+            {
                 SuspendPlayers(false);
+                StoryBeat.End();
+            }
 
             _lockInput = false;
         }

@@ -60,6 +60,17 @@ namespace Ashburn.Monster
             if (Time.time < _readyAt)
                 return;
 
+            // Not during a scripted beat. A cutscene takes the players' hands off the keys and walks
+            // them to marks it chose, so anybody caught there was given no way out — and this is the
+            // beat that introduces the monster, so it was standing over them by design. Going down
+            // is meant to be the price of a mistake.
+            //
+            // Asked globally rather than of the player. Both clients run the same beat at the same
+            // time, and the copy of a partner this machine holds is not the one their cutscene
+            // suspended — the keyboard driving them is on the other machine.
+            if (Cutscenes.StoryBeat.Running)
+                return;
+
             Physics2D.OverlapCircle((Vector2)transform.position, reach, _filter, _hits);
 
             foreach (var hit in _hits)
