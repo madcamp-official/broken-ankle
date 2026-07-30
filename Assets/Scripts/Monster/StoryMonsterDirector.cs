@@ -39,7 +39,8 @@ namespace Ashburn.Monster
                 "Corp_Lobby",
                 "Warden_Corp_FirstEncounter",
                 new Vector2(18f, 10.8f),
-                "Story:CorpFirstWardenAwake"),
+                "Story:CorpFirstWardenAwake",
+                "Story:CorpFirstWardenEscaped"),
 
             new("Greybox_Hanger", "Warden_Hangar_A1", new Vector2(-13f, 5.5f),
                 StoryProgression.HangarComplete),

@@ -99,16 +99,18 @@ namespace Ashburn.Cutscenes
 
         void Update()
         {
-            if (!_running || !PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient ||
+            if (!_running || !PhotonNetwork.InRoom ||
                 !DialogueManager.IsPlaying || !LocalAdvancePressed())
             {
                 return;
             }
 
-            _advanceCounter++;
-            _pendingAdvancePulses++;
+            var expected = _advanceCounter;
+            var next = expected + 1;
+
             PhotonNetwork.CurrentRoom?.SetCustomProperties(
-                new Hashtable { { _advanceKey, _advanceCounter } });
+                new Hashtable { { _advanceKey, next } },
+                new Hashtable { { _advanceKey, expected } });
         }
 
         public override void OnRoomPropertiesUpdate(Hashtable changed)

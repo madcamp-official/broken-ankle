@@ -56,6 +56,20 @@ namespace Ashburn.Net
             // first action map. Picking it by slot would hand player B the half-keyboard bindings
             // meant for two people sitting at one desk.
             spawner.Configure(gameObject, Slot, viewer: mine, controlled: mine, splitKeyboard: false);
+
+            if (!mine)
+            {
+                // A remote body is positioned from network snapshots. Leaving it dynamic makes the
+                // local physics solver push it one way while PlayerSync pulls it back the other,
+                // which reads as shaking even when its owner is standing still.
+                var body = GetComponent<Rigidbody2D>();
+                if (body != null)
+                {
+                    body.linearVelocity = Vector2.zero;
+                    body.bodyType = RigidbodyType2D.Kinematic;
+                    body.interpolation = RigidbodyInterpolation2D.Interpolate;
+                }
+            }
         }
 
         /// <summary>

@@ -59,6 +59,7 @@ namespace Ashburn.Net
         Light2D[] _lights;
         bool _visible = true;
         bool _warnedMissingMap;
+        bool _placeable;
 
         /// <summary>Set by Resolve: they named a map and this machine does not have it open.</summary>
         bool _elsewhere;
@@ -205,6 +206,7 @@ namespace Ashburn.Net
             // Their map may have been opened or closed on this machine since the last packet: a
             // partner becomes placeable the moment this player follows them through the door.
             var placed = Resolve();
+            _placeable = placed;
 
             // Hidden only for being somewhere this machine has not loaded. Not knowing yet where
             // somebody is is not grounds for making them disappear — that turns one late packet
@@ -213,13 +215,6 @@ namespace Ashburn.Net
 
             if (!placed)
                 return;
-
-            var here = _body != null ? _body.position : (Vector2)transform.position;
-
-            if (Vector2.Distance(here, _netPosition) > teleportOver)
-                Place(_netPosition);
-            else
-                Place(Vector2.SmoothDamp(here, _netPosition, ref _velocity, catchUpSeconds));
 
             // Handed to the controller rather than to the animator, so everything that reads a
             // character's movement — the animator, the footsteps, the interactor — sees a partner
@@ -243,6 +238,34 @@ namespace Ashburn.Net
             // asking them to change it would send their state back to them.
             if (downed != null && downed.IsDown != _netDowned)
                 downed.Apply(_netDowned);
+        }
+
+        void FixedUpdate()
+        {
+            if (photonView.IsMine || !_heard || !_placeable)
+                return;
+
+            var here = _body != null ? _body.position : (Vector2)transform.position;
+            if (Vector2.Distance(here, _netPosition) > teleportOver)
+            {
+                Place(_netPosition);
+                return;
+            }
+
+            var next = catchUpSeconds <= 0f
+                ? _netPosition
+                : Vector2.SmoothDamp(
+                    here,
+                    _netPosition,
+                    ref _velocity,
+                    catchUpSeconds,
+                    Mathf.Infinity,
+                    Time.fixedDeltaTime);
+
+            if (_body != null)
+                _body.MovePosition(next);
+            else
+                transform.position = new Vector3(next.x, next.y, transform.position.z);
         }
 
         /// <summary>
@@ -272,9 +295,13 @@ namespace Ashburn.Net
         void Place(Vector2 position)
         {
             if (_body != null)
+            {
                 _body.position = position;
+                _body.linearVelocity = Vector2.zero;
+            }
 
             transform.position = new Vector3(position.x, position.y, transform.position.z);
+            _velocity = Vector2.zero;
         }
     }
 }

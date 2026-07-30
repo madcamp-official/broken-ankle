@@ -39910,6 +39910,7 @@ MonoBehaviour:
   emitOpeningNoise: 1
   openingNoiseRange: 11
   raiseFlagBeforeMovement: Story:CorpFirstWardenAwake
+  raiseFlagAfterMovement: Story:CorpFirstWardenEscaped
   transitionMap: Village Map
   transitionEntry: Corp
   requireBothPlayers: 1

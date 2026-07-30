@@ -30,6 +30,7 @@ namespace Ashburn.Cutscenes
         [SerializeField] bool emitOpeningNoise = true;
         [SerializeField] float openingNoiseRange = 11f;
         [SerializeField] string raiseFlagBeforeMovement;
+        [SerializeField] string raiseFlagAfterMovement;
 
         [Header("Post-sequence travel")]
         [SerializeField] string transitionMap;
@@ -90,7 +91,7 @@ namespace Ashburn.Cutscenes
         {
             if (_running)
             {
-                PublishAdvanceFromMaster();
+                PublishAdvanceFromLocalPlayer();
                 return;
             }
 
@@ -225,6 +226,9 @@ namespace Ashburn.Cutscenes
                 while (DialogueManager.IsPlaying)
                     yield return null;
 
+                if (!string.IsNullOrEmpty(raiseFlagAfterMovement))
+                    WorldState.Raise(raiseFlagAfterMovement);
+
                 if (!string.IsNullOrEmpty(transitionMap))
                 {
                     _handedOff = StoryTransitionRunner.Begin(
@@ -356,18 +360,20 @@ namespace Ashburn.Cutscenes
             return true;
         }
 
-        void PublishAdvanceFromMaster()
+        void PublishAdvanceFromLocalPlayer()
         {
-            if (_localPreview || !PhotonNetwork.InRoom || !PhotonNetwork.IsMasterClient ||
+            if (_localPreview || !PhotonNetwork.InRoom ||
                 !DialogueManager.IsPlaying || !LocalAdvancePressed())
             {
                 return;
             }
 
-            _advanceCounter++;
-            _pendingAdvancePulses++;
+            var expected = _advanceCounter;
+            var next = expected + 1;
+
             PhotonNetwork.CurrentRoom?.SetCustomProperties(
-                new Hashtable { { AdvanceKey, _advanceCounter } });
+                new Hashtable { { AdvanceKey, next } },
+                new Hashtable { { AdvanceKey, expected } });
         }
 
         void AdoptAdvance(int counter)
