@@ -29,6 +29,12 @@ namespace Ashburn.Player
 
         public bool IsOn { get; private set; }
 
+        /// <summary>
+        /// The lit object itself, so a partner's darkness mask can let this beam through.
+        /// Exposed rather than found by name: which object is the beam is already decided here.
+        /// </summary>
+        public GameObject Beam => beam;
+
         InputAction _toggleAction;
         InputActionAsset _ownedActions;
 
