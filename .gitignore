@@ -158,3 +158,8 @@ InitTestScene*.unity*
 /[Aa]ssets/[Aa]rt/[Tt]iles/[Ll]ime[Zz]u.meta
 /[Aa]ssets/[Aa]rt/[Pp]rops/[Ll]ime[Zz]u/
 /[Aa]ssets/[Aa]rt/[Pp]rops/[Ll]ime[Zz]u.meta
+
+# Out-of-band licensed asset bundles. Keep the notes in share/, but never let a
+# paid-asset archive slip into the public repository.
+/share/*.zip
+/share/*.7z

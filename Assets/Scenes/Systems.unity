@@ -226,7 +226,7 @@ MonoBehaviour:
   actionMaps:
   - Player
   - Player2
-  startingMap: House
+  startingMap: Container Box
   startingEntry: 
   offlinePlayers: 2
   offlineViewerIndex: 0
@@ -391,8 +391,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7012885015134446013, guid: 36a9d85cdd4ad9241a03d93550aa5673, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -10.16559
+      objectReference: {fileID: 0}
+    - target: {fileID: 7012885015134446013, guid: 36a9d85cdd4ad9241a03d93550aa5673, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5
+      value: 0.2579
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
