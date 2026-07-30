@@ -64,6 +64,34 @@ namespace Ashburn.Cutscenes
                 Say("Grant", "병원 냄새가 안 나. 먼지 냄새도 아니고... 그냥 비어 있는 냄새야."),
                 Say("Nathan", "응급실 쪽을 보자. 화재 사고면 그쪽에 흔적이 남았을 거야."),
             },
+            ["hospital_records_room_001"] = new[]
+            {
+                Say("Nathan", "카드가 맞았어. 여기가 기록 보관실이야."),
+                Say("Grant", "서가가 여섯인가. 라벨은 전부 떨어졌고."),
+                Say("Nathan", "하나씩 열어볼 수밖에. 소리는 최대한 줄이고."),
+                Say("Grant", "서랍 하나 여는 게 이렇게 무서운 건 처음이야."),
+            },
+            ["hospital_shelf_empty_001"] = new[]
+            {
+                Say("Nathan", "청구서 뭉치뿐이야. 환자 기록은 없어."),
+                Say("Grant", "병원이 조용해지기 전까지 돈은 잘 받았나 보네."),
+            },
+            ["hospital_shelf_empty_002"] = new[]
+            {
+                Say("Grant", "이 칸은 비었어. 먼지 자국만 남았는데."),
+                Say("Nathan", "누가 통째로 빼갔어. 그것도 아주 최근은 아니고."),
+            },
+            ["hospital_shelf_empty_003"] = new[]
+            {
+                Say("Nathan", "엑스레이 필름이야. 전부 흉부."),
+                Say("Grant", "화재면 폐를 보는 게 맞지. 근데 귀는 아무도 안 찍었네."),
+            },
+            ["hospital_shelf_empty_004"] = new[]
+            {
+                Say("Grant", "여긴 비품 대장. 마스크, 산소, 진통제 발주 기록."),
+                Say("Nathan", "귀마개. 그것도 직원용으로 이백 개."),
+                Say("Grant", "...직원한테는 준 거네."),
+            },
             ["hospital_record_001"] = new[]
             {
                 Say("Nathan", "이상해. 화상 환자 기록보다 청각 손상 기록이 더 많아."),
@@ -75,6 +103,28 @@ namespace Ashburn.Cutscenes
             {
                 Say("Grant", "여긴 병원보다 더 멀쩡해 보여서 더 싫은데."),
                 Say("Nathan", "신고 접수실, 증거보관실. 둘 다 확인하자. 회사 이름이 나오는지 봐야 해."),
+            },
+            ["police_evidence_room_001"] = new[]
+            {
+                Say("Grant", "서장실을 지나야만 들어올 수 있는 방이라니. 캐비닛만 스무 개는 되겠는데."),
+                Say("Nathan", "도장이 겹쳐 찍힌 것부터 봐. 여러 번 손댄 서류가 제일 시끄러워."),
+                Say("Grant", "종결, 합의, 기밀. 세 개가 같은 봉투에 찍혀 있으면 그건 뭐야?"),
+                Say("Nathan", "세 번 닫았다는 뜻이지. 한 번으로는 안 닫혔다는 뜻이기도 하고."),
+            },
+            ["police_fire_calls_room_001"] = new[]
+            {
+                Say("Grant", "수화기가 전부 내려져 있어. 끊은 게 아니라 놓은 거야."),
+                Say("Nathan", "접수대에 앉아 있다가 한꺼번에 일어섰다는 얘기네."),
+                Say("Grant", "녹음 장치는? 저건 아직 불이 들어와 있는데."),
+                Say("Nathan", "그날 접수분부터 걸어 보자. 시작점이 어딘지 이 방이 알고 있어."),
+            },
+            ["police_gas_station_lead_001"] = new[]
+            {
+                Say("Nathan", "신고가 들어온 좌표를 순서대로 찍어 봤어. 전부 주유소 반경 200미터야."),
+                Say("Grant", "폭발이 먼저고 비명이 나중. 순서는 사고랑 똑같네."),
+                Say("Nathan", "그런데 상쇄된 건 구조 요청뿐이야. 폭발음은 그대로 남았어."),
+                Say("Grant", "소리를 못 들은 게 아니라 골라 들었다는 거잖아."),
+                Say("Nathan", "주유소로 가자. 그 밤에 뭐가 먼저 깨어났는지는 거기서만 알 수 있어."),
             },
             ["police_sentil_files_001"] = new[]
             {
@@ -143,6 +193,12 @@ namespace Ashburn.Cutscenes
                 Say("Nathan", "문서 표현은 그래. 그런데 회사에서 본 그 장비가 현장 대응 장치라면..."),
                 Say("Grant", "소리가 아니라 소리를 낸 사람을 지웠겠지."),
                 Say("Nathan", "엘리베이터 권한 풀렸어. 지하로 내려갈 수 있어."),
+            },
+            ["corp2_elevator_ready_001"] = new[]
+            {
+                Say("Grant", "전원부 우회 끝났고, 층 선택도 풀렸어. 이제 B가 눌려."),
+                Say("Nathan", "내려갈 수 있다는 거지."),
+                Say("Grant", "갈 수는 있지. 가고 싶은지는 다른 얘기고."),
             },
             ["hangar_enter_001"] = new[]
             {
