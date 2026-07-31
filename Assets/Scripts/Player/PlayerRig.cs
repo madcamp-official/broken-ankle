@@ -164,6 +164,10 @@ namespace Ashburn.Player
             else if (_inputSuspendCount > 0)
                 _inputSuspendCount--;
 
+            // TEMP DIAGNOSTIC: 회사 탈출 후 이동 잠금이 안 풀리는 버그 추적용. 원인 잡히면 지운다.
+            Debug.Log($"[InputLock] {name} {(suspended ? "+1" : "-1")} -> {_inputSuspendCount}\n" +
+                      new System.Diagnostics.StackTrace(1, false));
+
             // A player on the floor does not stand up because a cutscene ended. Downed switches off
             // the movement and the interactor — the same two components listed here — and it is the
             // only thing entitled to switch them back on. Without this a story beat that finished

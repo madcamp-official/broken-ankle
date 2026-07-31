@@ -767,11 +767,29 @@ namespace Ashburn.Cutscenes
             _activeSharedEventId = null;
         }
 
+        // The rigs this dialogue actually suspended, so the release goes to exactly them. Looking
+        // the players up again at release time misses a rig that went inactive in between — a map
+        // travel mid-line — and a suspend nobody releases is a character frozen for the session.
+        readonly List<PlayerRig> _suspendedRigs = new();
+
         void SuspendPlayers(bool suspended)
         {
-            foreach (var rig in FindObjectsByType<PlayerRig>(
-                         FindObjectsInactive.Exclude, FindObjectsSortMode.None))
-                rig.SuspendInput(suspended);
+            if (suspended)
+            {
+                foreach (var rig in FindObjectsByType<PlayerRig>(
+                             FindObjectsInactive.Include, FindObjectsSortMode.None))
+                {
+                    rig.SuspendInput(true);
+                    _suspendedRigs.Add(rig);
+                }
+                return;
+            }
+
+            foreach (var rig in _suspendedRigs)
+                if (rig != null)
+                    rig.SuspendInput(false);
+
+            _suspendedRigs.Clear();
         }
 
         bool AdvancePressed()
