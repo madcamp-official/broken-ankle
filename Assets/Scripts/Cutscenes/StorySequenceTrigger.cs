@@ -343,10 +343,14 @@ namespace Ashburn.Cutscenes
             }
             finally
             {
+                // This sequence releases the lock it acquired even when the transition runner has
+                // taken over. StoryTransitionRunner acquires its own lock synchronously in Begin,
+                // so control never leaks through and neither side has to guess which lock belongs
+                // to the other.
+                SetControlledInput(participants, suspended: false);
+
                 if (!_handedOff)
                 {
-                    SetControlledInput(participants, suspended: false);
-
                     if (RoomCamera.Current != null)
                         RoomCamera.Current.EndGroupFrame();
                 }

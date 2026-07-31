@@ -32,6 +32,7 @@ namespace Ashburn.Cutscenes
         int _advanceCounter;
         int _pendingAdvancePulses;
         bool _running;
+        bool _ownsInputLocks;
 
         /// <summary>
         /// Whether the tail of a beat is playing, and the one place that tells
@@ -120,6 +121,14 @@ namespace Ashburn.Cutscenes
                 if (rig.IsControlled)
                     _controlled.Add(rig);
             }
+
+            // Own a separate lock before the source sequence releases its own. The old handoff
+            // relied on this runner releasing a lock acquired by StorySequenceTrigger. In a room,
+            // the two clients can build slightly different participant lists while the remote copy
+            // catches up, leaving one owner's count at one forever after arriving in Village Map.
+            // Each system now releases exactly the lock it acquired, with no unlocked frame between
+            // them because Prepare runs synchronously inside Begin.
+            AcquireInputLocks();
         }
 
         void Update()
@@ -221,9 +230,7 @@ namespace Ashburn.Cutscenes
             }
             finally
             {
-                foreach (var rig in _controlled)
-                    if (rig != null)
-                        rig.SuspendInput(false);
+                ReleaseInputLocks();
 
                 if (RoomCamera.Current != null)
                     RoomCamera.Current.EndGroupFrame();
@@ -232,6 +239,34 @@ namespace Ashburn.Cutscenes
                 _controlled.Clear();
                 Running = false;
             }
+        }
+
+        void AcquireInputLocks()
+        {
+            if (_ownsInputLocks)
+                return;
+
+            _ownsInputLocks = true;
+            foreach (var rig in _controlled)
+                if (rig != null)
+                    rig.SuspendInput(true);
+        }
+
+        void ReleaseInputLocks()
+        {
+            if (!_ownsInputLocks)
+                return;
+
+            _ownsInputLocks = false;
+            foreach (var rig in _controlled)
+                if (rig != null)
+                    rig.SuspendInput(false);
+        }
+
+        public override void OnDisable()
+        {
+            ReleaseInputLocks();
+            base.OnDisable();
         }
 
         bool AllControlledArrivedLocally()
