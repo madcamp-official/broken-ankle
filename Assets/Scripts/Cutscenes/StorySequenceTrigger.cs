@@ -71,6 +71,7 @@ namespace Ashburn.Cutscenes
         int _advanceCounter;
         int _pendingAdvancePulses;
         bool _handedOff;
+        List<PlayerRig> _lockedParticipants;
 
         // True while a dialogue is running itself off a clock. Presses must not be published then:
         // nothing is consuming them, and the pulses would survive into the closing dialogue and
@@ -238,16 +239,24 @@ namespace Ashburn.Cutscenes
 
         void StartSequence(bool localPreview)
         {
-            if (_running || WorldState.Has(CompletedFlag) ||
-                !StoryProgression.CanPlay(openingDialogueId))
+            if (_running || WorldState.Has(CompletedFlag))
             {
+                // Consumed even though it is refused. This is the author's own start echoing back
+                // from the room while the beat is already under way — on the master the property
+                // and the direct call both land here. Left standing, it outlives the run: Run's
+                // finally clears _running before the runner raises the completed flag, and in that
+                // gap Update replayed the whole beat into a map about to unload, whose destroyed
+                // coroutine never gave the input lock back.
+                _startHeard = false;
                 return;
             }
 
-            // Consumed, not left standing. Once it has taken effect the beat is under way, and a
-            // pending start that outlived it would run the whole thing a second time the moment
-            // Run's finally clears _running — which happens before the flag that marks it done,
-            // whenever the ending is handed to StoryTransitionRunner.
+            // Not ready is different from already done: the start and its gating WorldState flag
+            // cross as separate room properties and race, so this start is kept for Update to
+            // retry rather than dropped. See OnRoomPropertiesUpdate.
+            if (!StoryProgression.CanPlay(openingDialogueId))
+                return;
+
             _startHeard = false;
 
             _localPreview = localPreview;
@@ -267,6 +276,11 @@ namespace Ashburn.Cutscenes
 
             var participants = ParticipantsInZone();
             SetControlledInput(participants, suspended: true);
+
+            // Remembered for Cleanup. A destroyed coroutine never reaches its finally, and by the
+            // time OnDisable runs the participants have usually left this zone, so looking them up
+            // again would release nobody.
+            _lockedParticipants = participants;
 
             var cameraTargets = new List<Transform>();
             foreach (var participant in participants)
@@ -348,6 +362,7 @@ namespace Ashburn.Cutscenes
                 // so control never leaks through and neither side has to guess which lock belongs
                 // to the other.
                 SetControlledInput(participants, suspended: false);
+                _lockedParticipants = null;
 
                 if (!_handedOff)
                 {
@@ -592,13 +607,20 @@ namespace Ashburn.Cutscenes
             if (!_running)
                 return;
 
+            // Whatever else is true, an interrupted run gives its input lock back. This is the only
+            // path a run killed by scene unload has — its coroutine's finally never executes — and
+            // the stored list is used because the players have usually left this zone by now.
+            if (_lockedParticipants != null)
+            {
+                SetControlledInput(_lockedParticipants, suspended: false);
+                _lockedParticipants = null;
+            }
+
             if (_handedOff)
             {
                 Running = false;
                 return;
             }
-
-            SetControlledInput(ParticipantsInZone(), suspended: false);
 
             if (RoomCamera.Current != null)
                 RoomCamera.Current.EndGroupFrame();
