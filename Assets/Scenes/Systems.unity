@@ -376,6 +376,60 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1470022501
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1470022502}
+  - component: {fileID: 1470022503}
+  m_Layer: 0
+  m_Name: TitleScreen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1470022502
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1470022501}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1470022503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1470022501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ac2f0f33087602c86d054c0f194070e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Net.TitleScreen
+  game: {fileID: 0}
+  alphabet: ABCDEFGHJKLMNPQRSTUVWXYZ23456789
+  codeLength: 4
+  guiDepth: -2000
+  titleSize: 26
+  fontSize: 13
+  textColour: {r: 0.93, g: 0.93, b: 0.97, a: 1}
+  dimColour: {r: 0.03, g: 0.03, b: 0.05, a: 0.96}
+  panelColour: {r: 0.09, g: 0.09, b: 0.12, a: 0.98}
+  mismatchHintSeconds: 25
 --- !u!1001 &1700497067
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -436,6 +490,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CameraRig
       objectReference: {fileID: 0}
+    - target: {fileID: 4829571731899463754, guid: 36a9d85cdd4ad9241a03d93550aa5673, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5098609256479939286, guid: 36a9d85cdd4ad9241a03d93550aa5673, type: 3}
       propertyPath: field of view
       value: 40
@@ -484,72 +542,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 265484945}
   m_SourcePrefab: {fileID: 100100000, guid: 36a9d85cdd4ad9241a03d93550aa5673, type: 3}
---- !u!1 &1727549898
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1727549900}
-  - component: {fileID: 1727549899}
-  m_Layer: 0
-  m_Name: ControlsOverlay
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1727549899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1727549898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 456208d8ef61c454b9525ae4d037aa22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Core.ControlsOverlay
-  inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
-  viewerTag: Player
-  actionMap: Player
-  actions:
-  - Move
-  - Sprint
-  - Crouch
-  - Interact
-  - ToggleFlashlight
-  - ToggleHearing
-  labels:
-  - "\uC774\uB3D9"
-  - "\uB2EC\uB9AC\uAE30"
-  - "\uC6C5\uD06C\uB9AC\uAE30"
-  - "\uC0C1\uD638\uC791\uC6A9"
-  - "\uC190\uC804\uB4F1"
-  - "\uC18C\uC74C \uB9C1"
-  margin: {x: 12, y: 12}
-  fontSize: 13
-  textColour: {r: 0.92, g: 0.92, b: 0.96, a: 1}
-  panelColour: {r: 0, g: 0, b: 0, a: 0.55}
-  toggleKey: 94
---- !u!4 &1727549900
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1727549898}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2099118209
 GameObject:
   m_ObjectHideFlags: 0
@@ -583,7 +575,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Net.NetworkGame
   spawner: {fileID: 1148376437}
   roomName: ashburn
-  gameVersion: 3
+  gameVersion: 4
 --- !u!4 &2099118211
 Transform:
   m_ObjectHideFlags: 0
@@ -621,7 +613,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c92d547b3ff17674990f0d9c6c0a2f88, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Monster.StoryMonsterDirector
   monsterPrefab: {fileID: 7388136391222354942, guid: 97940211c67d07841aa9c1c34d092afd, type: 3}
 --- !u!1 &2118870470
@@ -701,53 +693,8 @@ SceneRoots:
   - {fileID: 1700497067}
   - {fileID: 1148376438}
   - {fileID: 947414612}
-  - {fileID: 1727549900}
   - {fileID: 2099118211}
   - {fileID: 2118870472}
   - {fileID: 1176205782}
   - {fileID: 335546824}
   - {fileID: 1470022502}
---- !u!1 &1470022501
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1470022502}
-  - component: {fileID: 1470022503}
-  m_Layer: 0
-  m_Name: TitleScreen
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1470022502
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1470022501}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1470022503
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1470022501}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0ac2f0f33087602c86d054c0f194070e, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Ashburn.Runtime::Ashburn.Net.TitleScreen

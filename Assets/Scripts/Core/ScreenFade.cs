@@ -6,7 +6,7 @@ namespace Ashburn.Core
     /// <summary>
     /// Covers the screen, so a change of view can happen where nobody is looking.
     ///
-    /// Drawn in OnGUI like <see cref="ControlsOverlay"/> rather than through a Canvas, because it
+    /// Drawn in OnGUI like <see cref="PauseMenu"/> rather than through a Canvas, because it
     /// is one rectangle and a Canvas would mean a prefab, a sorting order and a thing to forget to
     /// put in the scene. This has nothing to wire.
     ///

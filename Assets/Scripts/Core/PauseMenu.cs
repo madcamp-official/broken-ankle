@@ -17,11 +17,10 @@ namespace Ashburn.Core
     /// player's hands off the keys instead — see <see cref="PlayerRig.SuspendInput"/> — which is also
     /// the honest thing to tell them, and the footer says so.
     ///
-    /// Drawn with IMGUI, like <see cref="ControlsOverlay"/> beside it. Not because IMGUI is the right
-    /// answer for a shipped menu, but because a Canvas is a pile of scene objects to author and this
-    /// is one file that works the moment it is dropped in. Replacing it with uGUI once there is menu
-    /// art means deleting this and keeping <see cref="GameSettings"/>, which is where the decisions
-    /// actually live.
+    /// Drawn with IMGUI. Not because IMGUI is the right answer for a shipped menu, but because a
+    /// Canvas is a pile of scene objects to author and this is one file that works the moment it is
+    /// dropped in. Replacing it with uGUI once there is menu art means deleting this and keeping
+    /// <see cref="GameSettings"/>, which is where the decisions actually live.
     /// </summary>
     public class PauseMenu : MonoBehaviour
     {
@@ -94,9 +93,9 @@ namespace Ashburn.Core
         /// <summary>
         /// Whether any menu is up.
         ///
-        /// Static because the thing that needs to know is the controls card, which draws in the same
-        /// corner of the same screen and has no reason to hold a reference to this. With the menu open
-        /// the card is both redundant — the 조작 tab is the same list — and directly on top of it.
+        /// Static because the thing that needs to know — <see cref="InteractionPrompt"/>, which hides
+        /// the interact key while the menu dims the picture and takes the player's hands off the
+        /// keys — has no reason to hold a reference to this.
         /// </summary>
         public static bool AnyOpen { get; private set; }
 
@@ -375,12 +374,6 @@ namespace Ashburn.Core
                            GameSettings.Fullscreen ? "켬" : "끔", _button))
                 GameSettings.Fullscreen = !GameSettings.Fullscreen;
 
-            y += line * 1.9f;
-            GUI.Label(new Rect(body.x, y, labelWidth, line), "조작키 카드", _label);
-            if (GUI.Button(new Rect(controlX, y, controlWidth * 0.5f, line * 1.3f),
-                           GameSettings.ShowControlsCard ? "켬" : "끔", _button))
-                GameSettings.ShowControlsCard = !GameSettings.ShowControlsCard;
-
             y += line * 2.4f;
             if (GUI.Button(new Rect(body.x, y, body.width * 0.5f, line * 1.4f), "기본값으로", _button))
                 GameSettings.Reset();
@@ -423,11 +416,11 @@ namespace Ashburn.Core
         {
             // The settings tab is a hand-placed layout rather than a list; the number is what
             // DrawSettings advances y by, and the two have to be changed together.
-            return _tab == Tab.Controls ? _controlLabels.Count : 8f;
+            return _tab == Tab.Controls ? _controlLabels.Count : 6f;
         }
 
         // A static outlives a play session when the editor skips its domain reload, and one left true
-        // by a session stopped with the menu open would hide the controls card for the whole of the
+        // by a session stopped with the menu open would hide the interact prompt for the whole of the
         // next one.
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetOnLoad() => AnyOpen = false;

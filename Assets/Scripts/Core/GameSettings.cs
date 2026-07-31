@@ -18,10 +18,8 @@ namespace Ashburn.Core
     {
         const string VolumeKey = "settings.masterVolume";
         const string FullscreenKey = "settings.fullscreen";
-        const string ControlsCardKey = "settings.showControlsCard";
 
         static float _masterVolume = 1f;
-        static bool _showControlsCard = true;
         static bool _loaded;
 
         /// <summary>Everything the game plays, 0 to 1.</summary>
@@ -103,22 +101,6 @@ namespace Ashburn.Core
                                  FullScreenMode.Windowed);
         }
 
-        /// <summary>Whether the controls card sits in the corner. See <see cref="ControlsOverlay"/>.</summary>
-        public static bool ShowControlsCard
-        {
-            get { Load(); return _showControlsCard; }
-            set
-            {
-                Load();
-                if (_showControlsCard == value)
-                    return;
-
-                _showControlsCard = value;
-                PlayerPrefs.SetInt(ControlsCardKey, value ? 1 : 0);
-                PlayerPrefs.Save();
-            }
-        }
-
         /// <summary>
         /// Reads the stored values in and applies them, once.
         ///
@@ -135,7 +117,6 @@ namespace Ashburn.Core
             _loaded = true;
 
             _masterVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(VolumeKey, 1f));
-            _showControlsCard = PlayerPrefs.GetInt(ControlsCardKey, 1) != 0;
 
             AudioListener.volume = _masterVolume;
 
@@ -158,7 +139,6 @@ namespace Ashburn.Core
         {
             PlayerPrefs.DeleteKey(VolumeKey);
             PlayerPrefs.DeleteKey(FullscreenKey);
-            PlayerPrefs.DeleteKey(ControlsCardKey);
             PlayerPrefs.Save();
 
             _loaded = false;

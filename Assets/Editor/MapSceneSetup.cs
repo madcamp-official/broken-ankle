@@ -201,7 +201,6 @@ namespace Ashburn.EditorTools
             Take<PlayerRig>(removed);
 
             Take<ScreenFade>(removed);
-            Take<ControlsOverlay>(removed);
             Take<RoomCamera>(removed);
             Take<CinemachineCamera>(removed);
             Take<CinemachineBrain>(removed);

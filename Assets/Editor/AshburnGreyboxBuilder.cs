@@ -201,7 +201,6 @@ namespace Ashburn.EditorTools
             // On its own object, never shared: it survives every map change, and anything sitting
             // with it would be dragged along too.
             new GameObject(nameof(ScreenFade)).AddComponent<ScreenFade>();
-            new GameObject(nameof(ControlsOverlay)).AddComponent<ControlsOverlay>();
 
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             EditorSceneManager.SaveScene(scene, path);
@@ -975,7 +974,6 @@ namespace Ashburn.EditorTools
 
             Take<PlayerSpawner>(removed);
             Take<ScreenFade>(removed);
-            Take<ControlsOverlay>(removed);
             Take<RoomCamera>(removed);
             Take<CinemachineCamera>(removed);
             Take<CinemachineBrain>(removed);
